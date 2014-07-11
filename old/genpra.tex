@@ -1,0 +1,144 @@
+\documentclass{amsart}
+\input{decls}
+\autodefs{\nId\nList}
+\begin{document}
+
+\section{A funny universal property}
+\label{sec:funny-univ-prop}
+
+Let $G_0,G_1:\sC\to\sD$ be functors and $\gm:G_1\to G_0$ a natural transformation.
+We write $(\sD/G_0)$ for the comma category whose objects are triples $(X\in\sD, Y\in\sC, X\to G_0 Y)$ and similarly $(\sD/G_1)$.
+Let $\bbthree = (a\to b \to c)$, so that $\sC^\bbthree$ is the category of commutative triangles in \sC.
+Let $S$ be the walking span $(b \ot a \to c)$ and thus $\sC^S$ the category of spans in \sC.
+
+The solid arrows in the following diagram are forgetful or composition functors, with $i:S\to \bbthree$ the inclusion suggested by our naming of the objects.
+\begin{equation}
+  \vcenter{\xymatrix{
+      (\sD/G_1) \ar@{-->}[rr]\ar[d]_{\gamma^*} &&
+      \sC^\bbthree \ar[d]^{i^*}\\
+      (\sD/G_0) \ar@{-->}[rr] \ar[dr] &&
+      \sC^S \ar[dl]^{c^*}\\
+      & \sC
+      }}
+\end{equation}
+We say that $\gamma$ is a \emph{right adjoint parametrization} (I'm open to names for this!)\ if the dashed horizontal arrows exist rendering the lower triangle commutative and the upper square a pullback.
+In concrete terms, this means that for any morphism $X\xto{g} G_0 Y$, there is a diagram of solid arrows:
+\begin{equation}\label{eq:Lspan}
+  \vcenter{\xymatrix{
+      L_0(g)\ar[r]\ar[d] &
+      Y\\
+      L_1(g)
+    }}
+\end{equation}
+and a natural bijection between dashed arrows rendering the following triangles commutative:
+\begin{equation}\label{eq:Lbij}
+  \vcenter{\xymatrix{
+      &
+      G_1 Y\ar[d]\\
+      X\ar[r]_g\ar@{-->}[ur] &
+      G_0 Y
+      }}
+    \qquad\text{and}\qquad
+  \vcenter{\xymatrix{
+      L_0(g)\ar[r]\ar[d] &
+      Y\\
+      L_1(g) \ar@{-->}[ur]
+    }}
+\end{equation}
+This sure looks funny.
+It's not even obvious to me that this data is uniquely determined if it exists.
+But it's what I was led to by looking for a common generalization of the following situations.
+
+\begin{eg}
+  Let $G_1$ be a right adjoint functor, with left adjoint $L_1$, and $G_0$ be constant at the terminal object, with $\gm$ the unique map.
+  Then we can take $L_0(g)=\emptyset$ to be the initial object and $L_1(g) = L_1(X)$, and the bijection is just the adjunction $L_1\dashv G_1$.
+\end{eg}
+
+\begin{eg}
+  More generally, let $G_1$ be a parametric right adjoint, with left adjoint $L_1: \sD/G_1(1) \to \sC$.
+  Let $G_0$ be constant at $G_1(1)$, with $\gm_X:G_1(X) \to G_1(1)$ the image under $G_1$ of $X\to 1$.
+  Then we can again take $L_0(g)=\emptyset$, with $L_1$ the parametric left adjoint of $G_1$.
+\end{eg}
+
+\begin{eg}
+  Suppose that both $G_0$ and $G_1$ are right adjoints, with left adjoints $L_0$ and $L_1$, and $\gm$ an arbitrary natural transformation.
+  Then we can take $L_0(g)=L_0(X)$ and $L_1(g)=L_1(X)$, with $L_0 \to L_1$ the mate of $\gm$.
+\end{eg}
+
+\section{Quad-algebras}
+\label{sec:quadalg}
+
+Suppose given a commutative square of natural transformations between endofunctors of some category \sC:
+\begin{equation}\label{eq:quadinput}
+  \vcenter{\xymatrix{
+      F_0\ar[r]^\al\ar[d]_\be &
+      G_1\ar[d]^\gm\\
+      F_1\ar[r]_\de &
+      G_0
+      }}
+\end{equation}
+A \emph{quad-algebra} (again, better names are welcome) for these data is an object $X\in\sC$ together with a dashed filler in the square:
+\begin{equation}
+  \vcenter{\xymatrix{
+      F_0 X\ar[r]^{\al_X}\ar[d]_{\be_X} &
+      G_1 X\ar[d]^{\gm_X}\\
+      F_1 X\ar[r]_{\de_X} \ar@{-->}[ur] &
+      G_0 X
+      }}
+\end{equation}
+Of course, we have a category of quad-algebras, and we can consider a sort of generalized inductive type that is a quad-algebra over which every quad-algebra fibration has a quad-algebra section.
+
+\begin{thm}\label{thm:quadalg}
+  If \sC is locally presentable, all the functors in~\eqref{eq:quadinput} are accessible, and $\gm$ is a right adjoint parametrization, then the category of quad-algebras is monadic over \sC.
+  In particular, it has an initial object.
+\end{thm}
+\begin{proof}
+  Let $L_0$ and $L_1$ be as in \S\ref{sec:funny-univ-prop} for $\gm$, and let $H \to L_1(\de)$ be the map from the pushout:
+  \begin{equation}
+    \vcenter{\xymatrix{
+        L_0(\de\be)\ar[r]\ar[d] &
+        L_0(\de)\ar[d] \ar[ddr]\\
+        L_1(\de\be)\ar[r] \ar[drr] &
+        H \pushoutcorner \ar@{-->}[dr]\\
+        && L_1(\de)
+      }}
+  \end{equation}
+  We have a map $L_0(\de) \to \nId_\sC$ coming from the horizontal map in~\eqref{eq:Lspan}, and its restriction to $L_0(\de\be)$ extends to $L_1(\de\be) = L_1(\gm\al)$ by~\eqref{eq:Lbij} applied to $\al$.
+  Thus, we have a map $\th:H\to \nId_\sC$, such that an extension of $\th_X:HX \to X$ to $L_1(\de_X)$ is equivalent to a quad-algebra structure on $X$.
+  Therefore, the category of quad-algebras is the category of $K$-monad-algebras, where $K$ is the monad pushout
+  \begin{equation}
+  \vcenter{\xymatrix{
+      \overline{H}\ar[r]\ar[d] &
+      \nId_\sC\ar[d]\\
+      \overline{L_1(\de)}\ar[r] &
+      K
+      }}
+  \end{equation}
+  with $\overline{(-)}$ denoting the free monad on an endofunctor.
+\end{proof}
+
+In all the examples below we have $F_0X=\emptyset$, but it seemed more symmetrical to include a nontrivial $F_0$.
+
+\begin{eg}
+  Of course, $G_0X=1$, we have just a dialgebra.
+  If moreover $G_1=\nId$, we have just an algebra for an endofunctor, and this reduces to the usual construction of initial algebras.
+  If $G_1$ is not the identity but has a left adjoint, then we obtain an initial dialgebra.
+\end{eg}
+
+\begin{eg}
+  If $G_1$ is a parametric right adjoint and $G_0$ is constant at $G_1(1)$, then we have the sort of ``inductive types whose constructors output elements of some other type'' which you suggested.
+  For instance, if $G_1(X) = X\times X$, then it is a literal right adjoint with left adjoint $X\mapsto X+X$, so that we can define inductive types whose constructors output pairs rather than single elements.
+  If $G_1(X) = \nList(X)$, then it is a parametric right adjoint with $\nList(1)=\mathbb{N}$, so that we can define inductive types whose constructors output lists as long as they specify the length of the list.
+\end{eg}
+
+\begin{eg}
+  For a higher (1-)inductive type, we take $G_0(X)=X\times X$ and $G_1(X)=P(X)$, with \gm the path-space fibration.
+  As long as we are in a simplicial model category with $P(X) = X^{\Delta^1}$, then both $G_0$ and $G_1$ are right adjoints, so $\gm$ is again a right adjoint parametrization.
+  In this case \autoref{thm:quadalg} isn't quite sufficient as stated; we need~\eqref{eq:quadinput} to be a diagram of functors from the category of $n$-algebras to \sC, so that $\de$ (which assigns the source and target of the path-constructor) can refer to the previously given constructors.
+  But I think the same sorts of tricks should work, mixing up this monad pushout with the monad for $n$-algebras, and yielding essentially the same construction we already have.
+
+  For a higher $k$-inductive type, we can let $G_0X = X^{\partial\lG^k}$  and $G_1 X = X^{\lG^k}$, where $\lG^k$ is the $k$-globe and $\partial\lG^k$ its boundary.
+  Again, both of these are right adjoints.
+\end{eg}
+
+\end{document}

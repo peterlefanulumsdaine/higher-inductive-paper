@@ -1,0 +1,526 @@
+\documentclass{amsart}
+\input{decls}
+\title{Higher Inductive Types}
+\author{Peter LeFanu Lumsdaine}
+\author{Michael Shulman}
+
+\autodefs{\bCat\fType\nPoly\nArg\nCxt\nTy}
+\autodefs{\nConstr\nArity\nInd\nfold\ffold\nelim\felim}
+
+% Categorical constructions:
+\newcommand{\Alg}[1]{{#1}\text{-}\mathbf{Alg}}
+\newcommand{\Dialg}[2]{(#1,2)\text{-}\mathbf{Dialg}}
+
+% Type theory syntax:
+\newcommand{\inpind}{\mathrm{inp\text{-}ind}}
+\newcommand{\outpind}{\mathrm{outp\text{-}ind}}
+\newcommand{\sig}{\mskip\thickmuskip \mathsf{sig}}
+\newcommand{\alg}[1]{\mskip\thickmuskip {#1}\text{-}\mathsf{alg}}
+
+\autodefs{\mform\mintro\melim\mcomp}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+\label{sec:intro}
+
+It is well-known that there is a close connection between the extensional version of Martin-L\"of's dependent type theory (with dependent products and identity types) and locally cartesian closed categories.
+Specifically, every extensional type theory has a category of contexts which is LCC, while every LCC category has an internal type theory (modulo some strictification questions which we will address later).
+These operations form an adjunction between the two worlds (which can sometimes be made into an equivalence).
+\todo{(Maybe some references here.)}
+
+Additional structure can be added to both sides of this correspondence.
+For instance, extensional type theory with quotient types corresponds to Barr-exact LCCCs.
+The most important example for us is that ``inductive types'' in type theory correspond to ``free structures'' in category theory.
+By the latter we mean precisely ``initial algebras for dependent polynomial endofunctors'', which we view as an ``elementary'' expression of the assertion that we can build infinite objects by infinite (and perhaps transfinite) iteration.
+In particular, such initial algebras exist in any LCCC which is ``locally presentable''.
+
+Note that by~\cite[C2.2.8(ix)]{ptj:elephant}, if an LCCC is locally presentable, balanced, and exact, then it must be a Grothendieck topos.
+Thus, extensional DTT with inductive types and quotient types comes very close to a complete description of the ``internal logic'' of Grothendieck toposes.
+
+Recently, it has emerged that the \emph{intensional} version of DTT is similarly related to \emph{higher} categories: specifically, to ``$(\infty,1)$-categories,'' by way of their common presentation in homotopy theory using weak factorization systems and Quillen model categories.
+\todo{(Maybe some references here.)}
+In this paper, we will describe a generalization of inductive types, which we call \emph{higher inductive types}, that is appropriate for this higher correspondence.
+Roughly, the idea is that in addition to constructors that build elements of a type itself, as for an ordinary inductive type, a HIT can also have constructors that build paths between elements, or paths between such paths, and so on.
+It is helpful to think by analogy with cell complexes in topology.
+
+Up to some technical conditions, ordinary inductive types can be modeled in locally presentable LCCCs.  Similarly, we will show that higher inductive types can be modeled in locally presentable, cofibrantly generated, LCC model categories (again modulo some stability conditions).
+Since any (Grothendieck) $(\infty,1)$-topos can be presented by such a model category (namely, a Bousfield localization of an injective model category of simplicial presheaves), HITs have semantics in any $(\infty,1)$-topos.  \comment{(Indulging in a bit of wishful thinking here\dots)}
+
+Note that by~\cite[6.1.6.8]{lurie:higher-topoi} (due to Charles Rezk), if an $(\infty,1)$-category is locally presentable, LCC, and has ``object classifiers'', then it must be an $(\infty,1)$-topos.
+The type-theoretic notion corresponding to $(\infty,1)$-categorical object classifiers is Voevodsky's \emph{univalence axiom}.  \comment{(Some more wishful thinking there\dots)}
+Thus, intensional DTT with HITs and univalence comes very close to a complete description of the ``internal logic'' of $(\infty,1)$-toposes.
+(For comparison with the 1-categorical version of this mentioned above, it is worth noting that in extensional DTT, HITs are basically equivalent to ordinary inductive types together with quotient types.
+\comment{(Is that true?  I don't remember talking about it, but it seems plausible to me; maybe we could prove something along those lines formally?)}
+In intensional DTT, they become much more interesting.)
+
+In fact, it could be argued that an LCC $(\infty,1)$-category which models HITs and univalence is a good notion of ``elementary $(\infty,1)$-topos''.
+The 1-categorical analogue of this definition would be a ``$\Pi W$-pretopos with universes'', which has been advanced by e.g.~\cite{mp:ttcst} as a good notion of ``predicative elementary topos''.
+One could add to the above-proposed notion of ``elementary $(\infty,1)$-toposes'' a classifier for all subobjects (rather than just those that live in some universe) to obtain an impredicative version more akin to the usual notion of elementary topos, but a predicative notion seems more natural in higher topos theory (see for instance~\cite{predicativist}).
+
+\section{Dependent type theory and inductive types}
+\label{sec:type-theory}
+
+\todo{Some sort of summary of DTT.
+  My current thoughts are something like
+  \begin{enumerate}
+  \item DTT with $\Pi$-types
+  \item Identity types
+  \item Extensionality/UIP/Axiom K
+  \item Inductive types, including indices and parameters (and how identity types are a special case)
+  \end{enumerate}
+}
+
+\subsection{Rules for (0-dimensional) inductive types}
+
+The rules for inductive types can be presented in a range of ways.
+Towards the extravagant extreme is the approach taken by the calculus of constructions: its rules are very lengthy to specify, but give inductive types in a highly general form, and are quite convenient for working with.
+At the more parsimonious end are the original $W$-types of Martin-Löf \cite{martin-lof:bibliopolis}: their rules are much more concise to state (and hence easier to verify in models), and in combination with other basic constructors ($\Pi$-, $\Sigma$-, $\Id$-types, finite disjoint sums, and a modicum of functional extensionality) they are sufficient to interpret the more general inductive familes, via some slightly fiddly encoding \todo{Ref?? several places mention this (eg Nordstrom-Petersson-Smith), but I can’t remember anywhere it’s actually proved}.
+
+Here we take a middle road.
+We give rules in a form similar to $W$-types, but slightly more general; essentially, this seems to be the most concise form that adapts well to analogues for 1-inductive types.
+\todo{Possibly add some informal intuition for these, explaining the idea (as trees, or as elements of a term algebra?) and the names of the constructors.}
+
+\[
+\inferrule*[right=$W$-form]
+  {
+    \Gamma \types \nInd \type \\ 
+    \Gamma \types \nConstr \type \\
+    \Gamma,\, c \of \nConstr \types \outpind(c) : \nInd \\
+    \Gamma,\, c \of \nConstr \types \nArity \type \\
+    \Gamma,\, c \of \nConstr,\, a \of \nArity(c) \types \inpind(c,a) : \nInd
+  }
+  {
+    \Gamma,\, i \of \nInd \types \rW_{\nInd,\nConstr,(c.\outpind),(c.\nArity),(c,a.\inpind(c,a))}(x) \type
+  }
+\]
+
+\[
+\inferrule*[right=$W$-intro]
+  {
+    \Gamma \types \nInd \type \\ 
+    \Gamma \types \nConstr \type \\
+    \Gamma,\, c \of \nConstr \types \outpind(c) : \nInd \\
+    \Gamma,\, c \of \nConstr \types \nArity \type \\
+    \Gamma,\, c \of \nConstr,\, a \of \nArity(c) \types \inpind(c,a) : \nInd
+  }
+  {
+    \Gamma,\, c \of \nConstr,\, f \of \Pi_{a \of \nArity(c)} \rW_{[\ldots]}(\inpind(a))
+       \types \ffold^\rW(c,f) \of \rW_{[\ldots]}(\outpind(c))
+  }
+\]
+
+\[
+\inferrule*[right=$W$-elim]
+  {
+    [\text{premises of $W$-\mform/$W$-\mintro}] \\\\
+    \Gamma,\, x \of \nInd,\, y \of \rW_{[\ldots]}(x) \types B(x,y) \type \\
+    \Gamma,\, c \of \nConstr,\, f \of \Pi_{a\of \nArity(c)}\rW_{[\ldots]}(\inpind(a)),\,g \of \Pi_{a\of \nArity(c)} B(\inpind(a), f a) \\ 
+    \types \nfold^B(c,f,g) : B(\outpind(c), \ffold^\rW_{[\ldots]}(c,f))
+  }
+  {
+    \Gamma,\, x \of \nInd,\, y \of \rW_{[\ldots]}(x)
+       \types \felim^\rW_{[\ldots],(x,y.B(x,y);\,c,f,g.\nfold^B(c,f,g))}(x,y) : B(x,y)
+  }
+\]
+ 
+\[
+\inferrule*[right=$W$-comp]
+  {
+    [\text{premises of $W$-\melim}] \\
+  }
+  {
+   \Gamma,\, c \of \nConstr,\, f \of \Pi_{a\of \nArity(c)}\rW_{[\ldots]}(\inpind(a)) \\\\
+       \types \felim^\rW_{[\ldots],(x,y.B(x,y);\,c,f,g.\nfold^B(c,f,g))}(\outpind(c),\ffold^\rW_{[\ldots]}(c,f)) \\\\
+       = \nfold^B(c,\, f,\, \lambda a.\;\felim^\rW_{[\ldots],[\ldots]}(\inpind(a),fa)) : B(\outpind(c),\ffold^\rW_{[\ldots]}(c,f))
+  }
+\]
+ 
+These rules are a little unwieldy!  \todo{They also currently look terrible!  Recall how to control alignment in multi-line premises/conclusions.}
+To abbreviate them, we define some supplementary judgements.
+
+The joint premises of $\rW$-\mform and $\rW$-\mintro lay out the basic specification from which a $W$-type is defined.
+For $\bS = (\nInd_\bS,\nConstr_\bS,\outpind_\bS,\nArity_\bS,\inpind_\bS)$, write
+\[ \Gamma \types \bS \sig \]
+to abbreviate the premises of the rules $W$-\textsc{form} and $W$-\textsc{elim} above.
+We say then that $\bS$ is a \emph{signature} (later a \emph{0-signature}) over $\Gamma$.
+
+Given a signature $\bS$ over $\Gamma$, the conclusions of $\rW$-\mform and $\rW$-\mintro, taken together, assert the existence of a certain kind of structure, which we call an \emph{$\bS$-algebra}.
+Write 
+\[ \Gamma \types (A,\nfold^A) \alg{\bS} \]
+to abbreviate the judgements
+\[ \Gamma,\, x \of \nInd_\bS \types A(x) \type, \]
+\[ \Gamma,\, c \of \nConstr_\bS,\, f \of \Pi_{a \of \nArity_\bS(c)} A(\inpind(a))
+     \types \nfold^A(c,f) \of A(\outpind(c)). \]
+
+The first two rules can now be stated together as:
+\[ \inferrule*[right={$W$-form,$W$-intro}]{\Gamma \types \bS \sig}{\Gamma \types (\rW_\bS,\ffold^\rW_\bS) \alg{\bS}} \]
+
+The second two rules, $\rW$-\melim and $\rW$-\mcomp, again share their premises.
+If $(B,\nfold^B)$ are as in these premises, then the dependent context $(\rW_\bS,B)$, together with the context map $(\ffold^\rW_\bS,\nfold^B)$, forms a structure just like an $\bS$-algebra (apart from being a context rather than a single type); and the dependent projection $(\rW_\bS,B) \to \rW_\bS$ commutes with the algebra structure maps.
+So in this situation, we say that $(B,\nfold^B)$ is a \emph{dependent $\bS$-algebra over $(\rW_\bS,\ffold^\rW_\bS)$}.
+And, indeed, this notion makes sense not only over $(\rW_\bS,\ffold^\rW_\bS)$, but over any $\bS$-algebra $(A,\nfold^A)$.
+
+Formally, if $\Gamma \types \bS \sig$ and $\Gamma \types (A,\nfold^A) \alg{\bS}$, write
+\[ \Gamma \; ;\; (A,\nfold^A) \types (B,\nfold^B) \alg{\bS}\]
+to abbreviate the judgements
+\[ \Gamma,\, x \of \nInd_\bS,\, y \of A(x) \types B(x,y) \type \]
+\begin{multline*}
+  \Gamma,\, c \of \nConstr_\bS,\, f \of \Pi_{a\of \nArity_\bS(c)} A(\inpind_\bS(a)),\,g \of \Pi_{a\of \nArity_\bS(c)} B(\inpind_\bS(a), f a)\\
+      \types \nfold^B(c,f,g) : B(\outpind_\bS(c), \nfold^A(c,f)).
+\end{multline*}
+
+Now the conclusions of the second two rules, taken together, posit exactly a section of the dependent projection $(\rW_\bS,B) \to \rW_\bS$ commuting with the algebra structure maps—in other words, a \emph{section} of $(B,\nfold^B)$ as a dependent $\bS$-algebra.  In general, if $\Gamma \; ;\; x \of (A,\nfold^A) \types (B,\nfold^B) \alg{\bS}$, write
+\[\Gamma \; ;\; (A,\nfold^A) \types s : (B,\nfold^B) \]
+to abbreviate the judgements
+\begin{equation*} 
+  \Gamma,\, x \of \nInd_\bS,\, y \of A(x) \types s(x,y) : B(x,y),
+\end{equation*}
+\begin{multline*}
+  \Gamma,\, c \of \nConstr_\bS,\, f \of \Pi_{a\of \nArity_\bS(c)}A(\inpind_\bS(a)) \\
+    \types s(\outpind_\bS(c),\nfold^A(c,f)) = \nfold^B(c,\, f,\, \lambda a.\;s(\inpind_\bS(a),fa)) \\
+      : B(\outpind_\bS(c),\nfold^A(c,f)).
+\end{multline*}
+
+The second two rules may now likewise be stated together concisely:
+\[
+\inferrule*[right={$W$-form,$W$-intro}]
+  {\Gamma \types \bS \sig \\
+   \Gamma \;;\; (\rW_\bS,\ffold^\rW_\bS) \types (B,\nfold^B) \alg{\bS} }
+  {\Gamma \;;\; (\rW_\bS,\ffold^\rW_\bS) \types \felim^\rW_{\bS,(B,\nfold^B)} : (B,\nfold^B) \alg{\bS}}
+\]
+
+Additional rules are then assumed ensuring that definitional equality remains a congruence for all the constructors involved; and finally, as with the other rules of the theory, there is one extra condition not explicitly given as a rule but following automatically from the form of the syntax: the types constructed with these rules are strictly stable under substitution in the ambient context of parameters $\Gamma$.
+
+\section{General categorical semantics}
+\label{sec:categories}
+
+Here we recall generally what structure a category should possess in order to model the base theory, and extend this picture to higher inductive types.
+We mostly defer until the next section the task of giving examples where this exists.
+
+\subsection{Base Theory}
+
+We assume basic familiarity with the standard categorical semantics; we recall the most important notions for our purposes.
+See \cite{pitts:categorical-logic}, \cite{jacobs:categorical-logic} for general introductions, and \cite{lumsdaine:thesis} for comparisons of the various categorical notions. \comment{Are these the right references to give?}
+
+\begin{defn}[Jacobs \cite{jacobs:comprehension-categories}]
+A \emph{comprehension category} is…
+\end{defn}
+
+\todo{Introduce some \texttt{Notation}s.}
+
+This quite categorically natural notion departs from the syntactic definition of the type theory in three ways.
+Firstly, the pullbacks are coherent only up to isomorphism.
+Secondly, morphisms between types may be independent of morphisms between contexts.
+Thirdly, the contexts themselves need not be built up from types.
+
+\begin{defn}
+A comprehension category is \emph{split} if $\cod \cdot \cP$ is a split fibration; is \emph{full} if $\cP$ is full and faithful; and \emph{contextual} if there is a unique object $[]$ which does not arise as the comprehension of any type, and every other object may be expressed uniquely as some string of comprehensions $[],\, A_0,\, \ldots A_n$. 
+\end{defn}
+
+Full, split comprehension categories are equivalent to \emph{categories with attributes} \cite{cwa-reference?} and various other notions.
+Full, split, contextual comprehension categories are equivalent to the \emph{contextual categories} of \cite{streicher:book}, and for brevity, we will call them simply this.
+
+Most importantly, contextual categories are precisely equivalent to the structural core of the type theory; and so, by direct translation, contextual categories with certain extra structure and properties are equivalent to type theories with various logical constructors and rules.
+
+\todo{Probably give an example of this direct translation here---$\Pi$-types, perhaps?}
+
+\begin{eg}[Seely \cite{seely:lcccs}, whoever it was that fixed the coherence\cite{lcccs-coherence-ref?}]
+Locally cartesion categories.
+\end{eg}
+
+\todo{Discuss the coherence problem.}
+
+The following theorem, due essentially to Voevodsky, shows that a universe may be used to “coherentify” categorical models:
+ 
+\begin{thm}[Coherence from universes (Voevodsky, \cite{lumsdaine-warren:coherence})] \label{thm:coherence-from-universes}
+\todo{[pll 2011-10-08] Will put this in once I’ve finished the proof of it in my notes with MW!}
+Roughly: from a contextual category with weakly stable constructors, get a CwA with strictly coherent constructors.
+\end{thm}
+
+\subsection{Inductive types}
+
+\todo{Flesh out the following skeleton, obviously!}
+
+We approach a categorical semantics for $W$-families in two steps.
+First, we fix a signature, and consider what it means for a type to satisfy the $W$-type axioms for this signature in isolation.
+Only with this well under our belts do we tackle issues of stability and say what it means for a categorical model to have $W$-types in the large.
+
+\comment{[pll 2011-08-10] Blech; if I weren’t writing this, I wouldn’t want to read it.
+How best to slim it down to make the technicalities less mind-numbing?
+Can we find a way to eliminate or combine some parts entirely, without obfuscating the fact that it really is all just incremental, routine technicalities?
+Or maybe simply lead off with a proviso “for the reader not excited about technicalities, the key points are Definition (def of the polynomial functor) and Theorem (final theorem saying: if we have (weakly) stable initial algebras, then we have inductive types)”?}
+
+\comment{However, I think it’s good for now to work things out as broadly as possible, and then re-condense once all the options are on the table; does that sound OK to you?}
+
+First: direct translation.
+(How much detail to give this in?)
+
+Secondly, assume $\eta$-conversion (for $\Pi$-types).
+Then, construct the functor $\nPoly_\bS$.
+Introduce dialgebras.
+Then, context-dialgebras, basic fibrations, trivial cofibrancy(?) structures.
+
+\comment{Notation here: what do we want to call the (endo)functors induced by signatures?  $\nArg_\bS$?  $\nPoly_\bS$?  Ideally something that is both meaningful and, if not standard, then at least pre-existing.
+Read around to find options!}
+
+\begin{prop}
+Let $\bC$ be a full split comprehension category with $\Pi$-types, satisfying ($\Pi$-$\eta$), and $\bS$ a signature over $\Gamma$ in $\bC$.
+Then a $W$-type for $\bS$ is exactly an object of $\Dialg{\nPoly_\bS}{U}$, together with $\nelim^X$ exhibiting it as trivially cofibrant in $\Dialg{\nPoly_\bS}{U}^{\nCxt}$. \qed
+\end{prop}
+
+Now move from “trivially cofibrant” to “initial”:
+
+\begin{prop}
+Let $\bC$, $\Gamma$, $\bS$ be as above, and suppose moreover $\bC$ has unit and $\Sigma$-types.
+Then an initial object of $\Dialg{\nPoly_\bS}{U}$ is automatically cofibrant in $\Dialg{\nPoly_\bS}{U}^{\nCxt}$.
+\end{prop}
+
+\begin{proof}
+Using the unit and $\Sigma$-types, every context is a retract of a type.
+From this, every context-dialgebra is a retract of a type-dialgebra.
+Hence, an initial type-dialgebra is also initial as a context-dialgebra, and hence \emph{a fortiori} cofibrant.
+\end{proof}
+
+\comment{Possibly worth also unwinding to explicitly show how this gives the eliminator?  Maybe see later how we’re going on length/clarity in general.}
+
+In general, initiality is strictly stronger than cofibrancy.
+However, in extensional models, they are equivalent \cite{initial-equiv-cofibrant-ref?}.
+
+In many categorical models, the picture can be expressed even more nicely, in terms not of dialgebras but of algebras for an endofunctor.
+In extensional models, this is clear, since $U$ is an equivalence.
+More generally, though, if $U$ has a left adjoint $F$, then dialgebras for $\nPoly_\bS$ over $U$ are equivalent to algebras for the endofunctor $F \cdot \nPoly_\bS$.
+
+\begin{prop}
+Let $\bC$, $\bS$ be as above, and suppose moreover that the comprehension functor $\nTy(\Gamma) \to \bC/\Gamma$ has a left adjoint.
+Then an initial object of $\Alg{\nPoly_\bS}$ gives a $W$-type for $\bS$.
+\end{prop}
+
+\comment{Damn — I think I’ve set things up in slightly the wrong order.
+For this to apply for us, $\nTy(\Gamma)$ here will have to mean the algebraic category.
+So we we need to generalise to possibly-non-full comprehension categories \emph{before} shifting from cofibrant to initial and from algebras to dialgebras.
+So, to do: work out what statement along these lines will serve.}
+
+Now we are ready to tackle the question of stability and coherence.
+Unfix $\Gamma$, $\bS$, and reset the assumptions on $\bC$.
+
+First: for the cofibrant dialgebra picture.
+
+Let $\bS$ be a signature over $\Gamma$, and $f \colon \Delta \to \Gamma$.
+Define the obvious $f^*\bS$ in $\bC/\Delta$.
+Show commutations with $\nPoly$, and induced functors between cats of dialgebras.
+
+Now, suppose $X$ and $\nelim^X$ form a $W$-type for $\bS$, and similarly $Y$, $\nelim^Y$ for $f^* \bS$.
+We say that $X$ and $Y$ are \emph{strictly $f$-related} if $Y = f^* X$, and for any basic fibration $Z \to X$ in $\Dialg{\nPoly_\bS}{U}^{\nCxt}$, $f^* \nelim^X(Z) = \nelim^Y(f^* Z)$.
+
+\begin{prop}
+Suppose $\bC$ is a full split comprehension category with $\Pi$- types, satisfying ($\Pi$-$\eta$).
+Then equipping the theory $\Th(\bC)$ with $W$-types corresponds to specifying, for each context $\Gamma$ and signature $\bS$ over $\Gamma$, a $W$-type $(\rW_\bS,\felim_\bS)$, such that for each $f \colon \Delta \to \Gamma$ and signature $\bS$ over $\Gamma$, the $W$-types $(\rW_\bS,\felim_\bS)$ and $(\rW_{f^*\bS},\felim_{f^*\bS})$ are strictly $f$-related.
+\end{prop}
+
+\todo{Now, go on through the picture; note particularly how it gets simpler when we move from “cofibrant” to “initial”, since the second half of $f$-relatedness then comes for free.}
+
+\subsection{1-inductive types}
+
+\comment{It gets trickier here.  There isn’t really nearly such a nice picture in wide generality as there is for 0-inductive types; it’s only when we have quite a lot of the loc pres setting alreay in place that we can put it into any kind of nice categorical setup, as far as I can see.  Maybe this suggests that separating the general semantics from the specific examples isn’t the right route to go down after all.}
+
+Direct translation: $\bS_1$-algebras, dependent, cofibrant ones.  These are what the syntax wants, but these aren’t categorically well-behaved at all.  Call them $\Alg{\bS}$ — although it’s far from clear when they’re even a category.
+
+First transposition: suppose we have free monads for 0-inductive types, plus binary coproducts and functorial cylinder objects.  Then we have a fairly nice category $\Alg{\bS_1}'$ — not exactly algebras in any standard sense, a mixture of monad-algebras and dialgebras.  
+
+The relationship between $\Alg{\bS}$ and $\Alg{\bS}'$ isn’t (afaics) anything particularly nice, but it’s just good enough to show: a trivially cofibrant object of $\Alg{\bS}'$ (hence a fortiori an initial object) is also trivially cofibrant in $\Alg{\bS}$.
+
+Second transposition: now, given also the “free fibration” functor, we have $\Alg{\bS_1}''$ — a mix of monad-algebras and endofunctor-algebras.
+
+Now, by algebraically-free monads on endofunctors, this is equivalent to a category of monad-algebras; and we’re done.
+
+
+\section{Locally presentable categories and transfinite constructions}
+\label{sec:lpres}
+
+Let \ka be a regular cardinal.
+A category \bI is said to be \textbf{\ka-filtered} if any diagram in \bI of size $<\ka$ admits a cocone.
+A colimit is \textbf{\ka-filtered} if its indexing category is so.
+An object $A$ of a locally small category \bC is \textbf{\ka-compact} (or \emph{\ka-small} or \emph{\ka-presentable}) if the representable functor $\bC(A,-)$ preserves \ka-filtered colimits.
+Finally, \bC is \textbf{locally presentable} if it is cocomplete and there exists some \ka such that \bC is generated under \ka-filtered colimits by a small set of \ka-compact objects.
+
+\begin{rmk}
+  There is a trend beginning with~\cite{lurie:higher-topoi} according to which locally \mbox{(\ka-)}presentable categories are called merely ``\mbox{(\ka-)}presentable''.
+  However, this creates an ambiguity, since ``\ka-presentable category'' also has the obvious meaning of a \ka-presentable (i.e.\ \ka-compact) object in \bCat.
+  It would, however, be correct to call locally presentable categories \emph{presentably cocomplete}, since they are exactly those cocomplete categories that admit small presentations \emph{as cocomplete categories}.
+\end{rmk}
+
+A functor (usually, for us, between locally presentable categories) is called \textbf{accessible} if it preserves \ka-filtered colimits for some \ka.
+Such a functor is also said to \emph{have a rank} (that rank being \ka).
+
+There is an extensive theory of locally presentable categories (see~\cite{ar:loc-pres}), which among other things characterizes them as the accessibly-reflective subcategories of presheaf categories.
+However, for us the most important consequence of the definition is the following, which can be found in~\cite{kelly:transfinite}.
+Before stating it, we recall that an \textbf{endofunctor-algebra} for an endofunctor $S\colon \bC\to\bC$ is an object $X$ equipped with a morphism $x\colon S X\to X$.
+If $S$ is a \emph{pointed endofunctor}, i.e.\ equipped with a natural transformation $\si\colon\Id_\bC \to S$, by a \textbf{pointed-endofunctor-algebra} for $S$ we mean an endofunctor-algebra such that $x \si_X = \id_X$.
+
+\begin{thm}\label{thm:trfin}
+  Let \bC be locally presentable.
+  \begin{enumerate}
+  \item Any accessible endofunctor $S$ on \bC generates an \textbf{algebraically-free monad}, i.e.\ a monad $T$ on \bC (which is also accessible) such that the category of monad-algebras for $T$ is equivalent over \bC to the category of endofunctor-algebras for $S$.\label{item:trfin1}
+  \item As in~\ref{item:trfin1}, but for a pointed endofunctor and pointed-endofunctor-algebras.
+  \item Any small diagram $\{T_i\}$ of accessible monads on \bC has an \textbf{algebraic colimit}, i.e.\ a monad $T$ (which is also accessible) such that a $T$-algebra structure on any object $X$ is precisely a compatible family of $T_i$-algebra structures.
+  \end{enumerate}
+\end{thm}
+
+We will also need the following facts from~\cite{ar:loc-pres}.
+
+\begin{thm}\label{thm:slice-lpres}
+  If \bC is locally presentable, then so is any slice category $\bC/X$.
+\end{thm}
+
+\begin{thm}\label{thm:adjt-acc}
+  Any left or right adjoint between locally presentable categories is accessible, and any composite of accessible functors is accessible.
+\end{thm}
+
+
+\section{Inductive types in extensional type theory}
+\label{sec:inductive-ext}
+
+We begin by reviewing the construction of models for inductive types in extensional type theory, with an eye towards generalization.
+Thus, in this section we let \bC be a locally presentable, locally cartesian closed category.
+
+Recall that the data for an (unparametrized, unindexed) $W$-type is a dependent type $x\colon C \vdash A(x)\colon\fType$, where $C$ is the type of constructors and $A(x)$ the arity of the constructor $x$.
+In the extensional semantics in \bC, this is represented by an arbitrary morphism $p\colon A\to C$.
+The non-dependent eliminator for the desired $W$-type asserts that it is a weakly initial algebra for the \emph{polynomial endofunctor}
+\[ \nPoly_p\colon \bC \xto{A^*} \bC/A \xto{\Pi_p} \bC/C \xto{\Sigma_C} \bC. \]
+
+In general, an arbitrary endofunctor on an arbitrary category may not have even a weakly initial algebra.
+However, if the base category has an initial object and the endofunctor generates an algebraically-free monad, then it must have a (strictly) initial algebra, since free monad-algebras always exist and the free monad-algebra on an initial object is an initial algebra.
+Thus, since \bC is locally presentable, by \autoref{thm:trfin} it suffices to show that any polynomial endofunctor is accessible.
+But this follows from Theorems~\ref{thm:slice-lpres} and~\ref{thm:adjt-acc}, since it is a composite of left and right adjoints between locally presentable categories.
+We have almost proven:
+
+\begin{thm}
+  Unparametrized, unindexed $W$-types can be modeled extensionally in any locally presentable LCCC.
+\end{thm}
+\begin{proof}
+  It remains only to consider the \emph{dependent} eliminator.
+  However, the hypotheses for eliminating into a dependent type $x \of W \types P(x) \type$ assert that the total object $P$ is itself a $\nPoly_p$-algebra and the projection $P\to W$ is a $\nPoly_p$-morphism.
+  Therefore, since $W$ is a \emph{strictly} initial algebra, the projection $P\to W$ has a (unique) section that is a $\nPoly_p$-morphism, which is precisely what is required.
+\end{proof}
+
+The case of indexed inductive types is almost identical.
+% [pll 2011-08-03] Since we’re taking C, A as single types not contexts, I think for consistency it makes sense to do the same for I? 
+Now we have a type $I$ of indices, a type $C$ of constructors together with a term $c \of C \types i : I$ assigning indices to each constructor, a dependent type $c \of C \types A(c) \type$ of arities, and a term
+\[ c \of C, a \of A(c) \types d : I \]
+assigning an index to each arity.
+In the LCCC \bC, this data corresponds to a diagram
+\[ I \xot{d} A \xto{p} C \xto{i} I \]
+and the non-dependent eliminator for the desired inductive type asserts that it is a weakly initial algebra for the \emph{dependent polynomial endofunctor}
+\[ \nPoly_{d,p,q}\colon \bC/I \xto{d^*} \bC/A \xto{\Pi_p} \bC/C \xto{\Sigma_i} \bC/I. \]
+This endofunctor is accessible for the same reasons as before, and the rest of the proof is identical.
+
+\begin{thm}
+  Indexed inductive types can be modeled extensionally in any locally presentable LCCC.\qed
+\end{thm}
+
+In the parametrized case, if the parameters are all terms, there is nothing more to say, since term parameters can be considered as indices which do not vary.
+\comment{(There's some difference in the exact form of the eliminators, though, right?)}
+However, type parameters require some more work.
+
+One way to deal with type parameters is to have a universe, as in CIC, and regard the type parameters as term parameters whose type is the universe.
+If we don't have a universe internal to the type theory, we can still mimic this approach using the ambient universe which we introduced in order to strictify our pullbacks.
+We simply observe that nothing in the above construction required the objects of \bC to be small or named, so we can incorporate copies of the ambient universe into the context of indices $\vec I$.
+This gives us an initial algebra for some endofunctor of $\bC/I$ where $I$ is large, and then for any instantiation of the type parameters we can define the corresponding instance of the parametrized $W$-type by pulling back (strictly) this initial algebra to a suitable context.
+\todo{(I suppose we should probably be more explicit about that, once we've written down something about how the ambient universe works back in \S\ref{sec:categories}.)}
+
+\begin{thm}
+  Parametrized, indexed inductive types can be modeled extensionally in any locally presentable LCCC.\qed
+\end{thm}
+
+We end this section by considering how this construction specializes to identity types, when they are seen as particular indexed inductive types.
+The inductive definition of identity types has one type parameter, $X$, and two indices $x,y\colon X$.
+(One of these indices can instead be made a parameter, if desired.)
+Thus, if $U$ is the ambient universe and $E\to U$ is the universal named type, we end up working in the slice category over $E\times_U E$ to represent the context $X\colon \fType, x\colon X, y\colon X$.
+
+Now the identity type has one constructor for each $x\colon X$ (recall that the non-recursive arguments to a constructor are simply folded into the type of constructors).
+The output index of this constructor is $x,x$, and its arity is zero, since it takes no recursive arguments.
+Thus, the dependent polynomial endofunctor data is
+\[ E\times_U E \leftarrow 0 \to E \xto{\Delta} E\times_U E \]
+and the endofunctor itself is \emph{constant} at $\Delta \in \bC/(E\times_U E)$.
+A constant endofunctor always has an initial algebra, namely the object at which it is constant, so the inductive type we generate is just the diagonal of $E$ over $U$.
+When pulled back to any small named type $A$, this results in the diagonal $A\to A\times A$, which is exactly how we interpreted identity types in LCCCs in \S\ref{sec:categories}.
+
+
+\section{Inductive types in intensional type theory}
+\label{sec:inductive-int}
+
+In most of the literature on homotopy type theory, the difference between models of extensional and intensional type theory is described in terms of how we interpret identity types: extensionally they are diagonals, while intensionally they are ``path objects''.
+However, if we regard identity types as a particular case of inductive types, then this difference must be attributable to some deeper reason.
+We assert that the deeper distinction is that for extensional type theory, a dependent type over $A$ can be interpreted by \emph{any} morphism into $A$, while in intensional type theory we interpret dependent types only by a restricted class of morphisms called \emph{display maps} or \emph{fibrations}.
+
+What properties must the class of fibrations have?
+Obviously, it must be stable under pullback, but we require more.
+To isolate the crucial property, let $x\colon A \vdash f(x)\colon B$ be any term, corresponding to a morphism $f\colon A\to B$, and consider the $B$-indexed inductive type with $A$ its type of constructors, each of arity zero, and $f$ the morphism that assigns indices to constructors.
+
+The resulting dependent polynomial endofunctor of $\bC/B$ is constant at $f$, so in an extensional model, its initial algebra would be simply $f$.
+However, if $f$ is not a fibration, then this cannot be the case, since the inductive type must be dependent on its indices.
+What we need instead is a \emph{weak reflection} of $f$ into the category of fibrations over $B$, i.e.\ a factorization of $f$ as $A \xto{u} C \xfib{p} B$ such that for any fibration $Q \xfib{q} B$, any commutative triangle
+\[ \xymatrix@-1pc{ A \ar[rr] \ar[dr]_f && Q \ar@{->>}[dl]^q\\ & B }\] 
+factors through $u$.
+This is what the non-dependent eliminator says; the dependent one asserts moreover that for any fibration $Q \xfib{q} C$ such that $u$ factors as $q r$, there is a section $s\colon C\to Q$ such that $q s = \id_C$ and $s u = r$.
+Since fibrations are stable under pullback, this is equivalent to asserting that given any commutative square
+\[ \xymatrix{ A \ar[d]_u \ar[r] & Q \ar@{->>}[d]^q \\ C \ar@{-->}[ur] \ar[r] & D } \]
+in which $q$ is a fibration, there exists a dashed filler making both triangles commute.
+
+In homotopy-theorists' language, this means that $u$ must have the \emph{left lifting property} with respect to fibrations; thus we have factored $f$ as the composite of a fibration and a map that has the LLP with respect to fibrations.
+This means that the fibrations must be (contained in) the right class of a \emph{weak factorization system} on \bC.
+\todo{(I guess at some point we should review WFS's.)}
+
+We have just concluded that in order to model inductive types in an LCCC, it is \emph{necessary} that the fibrations be the right class of a WFS.
+(The extensional case is just when the WFS is the trivial one (isomorphisms, all maps).)
+We now show that that a (suitably well-behaved) WFS on a locally presentable LCCC is also \emph{sufficient} in order to interpret \emph{all} inductive types.
+This includes identity types; we will see the usual path-object formulation arising naturally.
+
+Thus, from now on, in addition to being locally presentable and LCC, we assume that \bC is equipped with a \emph{cofibrantly generated} WFS, whose left and right classes we refer to as trivial cofibrations and fibrations, respectively.
+(Technically, it is now probably only necessary to assume that all fibrations are exponentiable, rather than that the whole category is LCC.)
+We also assume \comment{(I guess)} that trivial cofibrations are stable under pullback along fibrations.
+
+\todo{(Review algebraic WFS's, etc.)}
+
+The construction of unparametrized, unindexed inductive types works exactly as in the extensional case, so we begin with the indexed case.
+Let 
+\[ I \xot{d} A \xfib{p} C \xto{i} I \]
+be the diagram in \bC corresponding to the inductive type we wish to construct, noting that only $p$ is necessarily a fibration.
+We can build the corresponding polynomial endofunctor $\nPoly_{d,p,i}$, which as before will generate an algebraically-free monad $T_{d,p,i}$ and thus have an initial algebra in $\bC/I$, but now this algebra will not in general be a fibration.
+
+However, we have just remarked that the category of algebraic fibrations into $I$ is monadic over $\bC/I$ via an accessible monad $R$, and that every fibration admits some algebraicization.
+We combine these two structures in the simplest possible way: let $T'$ be the (algebraic) coproduct of $T_{d,p,i}$ and $R$, so that a $T'$-algebra is precisely a $\nPoly_{d,p,i}$-algebra which is also equipped with the (unrelated) structure of an algebraic fibration.
+
+Let $W$ be the initial $T'$-algebra.
+Then any $\nPoly_{d,p,i}$-algebra which is a fibration can be equipped with some $R$-algebra structure, making it into a $T'$-algebra which therefore admits a unique $T'$-morphism from $W$.
+This $T'$-morphism is, in particular, a $\nPoly_{d,p,i}$-morphism, which is exactly what the non-dependent eliminator requires.
+Note that it is not unique as a mere $\nPoly_{d,p,i}$-morphism, only as a $T'$-morphism for our arbitrarily chosen $R$-algebra structure on its target.
+\comment{(Do we need some naturality here that would require us to, say, choose an $R$-algebra structure once on $E\to U$ and pull it back to every small named fibration?)}
+
+\begin{thm}
+  Indexed inductive types can be modeled in any locally presentable LCCC with a good WFS.
+\end{thm}
+\begin{proof}
+  It remains to deal with the dependent eliminator.
+  Suppose that $P\fib W$ is a fibration which is a $\nPoly_{d,p,i}$-morphism; we require it to have a section over $I$ that is also a $\nPoly_{d,p,i}$-morphism.
+  By construction $W\fib I$ is an $R$-algebra, and we can choose an $R$-algebra structure on the fibration $P\fib W$.
+  By~[?], the composite $P\fib W \fib I$ acquires a natural $R$-algebra structure in such a way that the square
+  \[ \xymatrix{ P \ar@{->>}[r] \ar@{->>}[d] & W \ar@{->>}[d] \\ I \ar@{=}[r] & I } \]
+  is an $R$-algebra map---hence also a $T'$-algebra map.
+  By construction of $W$, therefore, we have a unique $T'$-algebra map from $W\fib I$ to $P\fib I$, which when composed with the above square must be the unique $T'$-algebra map from $W\fib I$ to itself---that is, the identity.
+  Therefore, this $T'$-algebra map from $W$ to $P$ is the desired section over $I$.
+\end{proof}
+
+We deal with parameters in exactly the same way that we did in the extensional case.
+
+\todo{(Say something about identity types.)}
+
+
+\bibliographystyle{alpha}
+\bibliography{hit}
+
+\end{document}
