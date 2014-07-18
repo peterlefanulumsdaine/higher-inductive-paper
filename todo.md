@@ -24,3 +24,5 @@ Side notes for “Semantics of Higher Inductive Types”
 ## To decide
 
 - ?
+
+# Misc notes, questions
