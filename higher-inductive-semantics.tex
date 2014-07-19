@@ -2,9 +2,14 @@
 
 \input{decls}
 
+\usepackage[mode=multiuser,layout=margin,status=draft]{fixme}
+\FXRegisterAuthor{ms}{ams}{MS}  % Use \msnote, \mswarning, \mserror, \msfatal
+\FXRegisterAuthor{pl}{apl}{PLL} % Use \plnote, \plwarning, \plerror, \plfatal
+\fxusetheme{color}
+
 %%%%%%
 % Draft annotations
-\newcommand{\comment}[1]{\textcolor{red}{#1}}
+%\newcommand{\comment}[1]{\textcolor{red}{#1}}
 \newcommand{\todo}[1]{\textcolor{red}{#1}}
 
 
