@@ -2,16 +2,40 @@
 
 \input{decls}
 
+%%%%%%
+% Draft annotations
+
 \usepackage[mode=multiuser,layout=margin,status=draft]{fixme}
 \FXRegisterAuthor{ms}{ams}{MS}  % Use \msnote, \mswarning, \mserror, \msfatal
 \FXRegisterAuthor{pl}{apl}{PLL} % Use \plnote, \plwarning, \plerror, \plfatal
 \fxusetheme{color}
 
-%%%%%%
-% Draft annotations
 %\newcommand{\comment}[1]{\textcolor{red}{#1}}
 \newcommand{\todo}[1]{\textcolor{red}{#1}}
 
+%%%%%%
+% Theorem-style environments
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}[section]
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+%%%%%
+% General macros
+
+% Categorical/logical constructions
+\newcommand{\paths}[2][]{\cP_{#1}(#2)}
+\newcommand{\pathsover}[3][]{\cP_{#1}(#3;#2)}
+\newcommand{\circtype}{S^1}
+
+% Categories
+\newcommand{\Alg}[2][]{{#2}\text{-}\mathbf{Alg}_{#1}}
+
+% Arrows
+\newcommand{\fibto}{\to}
+
+%%%%%
 
 \title{Semantics of Higher Inductive Types}
 
@@ -71,12 +95,68 @@ Precisely, we show that \todo{\ldots} .
 
 \section{Semantics of simple HITs}
 
-\todo{Circle: set up cat of ‘algebras’ by hand, note that rules ask exactly for ‘trivially cofibrant’ algebra, in particular initial is enough.}
+\subsection{Circle}
 
-\todo{Construct initial algebra as pushout.}
+As we did for inductive types above, to model the circle we first set up a (fibered) category of “algebras”, with a notion of “fibration”, and observe that a stably trivially cofibrant object in this category will model the rules for the circle.
+%
+In the case of the circle, it is then easy to construct such an object by hand.
 
-\todo{Other simple examples?  Suspension?}
+\begin{definition}
+A \emph{fibrant circle algebra} over $\Gamma \in \cE$ is a fibration $X \fibto \Gamma$ equipped with a section $b : \Gamma \to X$, and a map $l : \Gamma \to \paths[\Gamma]{X}$ over $(b,b) : \Gamma \to X \times_\Gamma X$.
+%
+If $(X,b,l)$ is a fibrant circle algebra over $\Gamma$, then any $f : \Gamma' \to \Gamma$ induces a pullback fibrant circle algebra $f^*(X,b,l) := (f^*X,f^*b,f^*l)$ over $\Gamma'$.
+\end{definition}
 
+The formation and introduction rules say exactly that the circle $\circtype$ is a fibrant circle algebra over $1$.
+
+\begin{definition}
+A \emph{dependent circle algebra} over a fibrant circle algebra $(X,b,l)$ over $\Gamma$ consists of a fibration $Y \fibto X$, equipped with a map $bbar : \Gamma \to Y$ over $b$, and a map $lbar : \Gamma \to \pathsover[\Gamma]{X}{Y}$ over $(bbar,l,bbar) : \Gamma \to Y \times_X \paths[\Gamma]{X} \times_X Y$. 
+\end{definition}
+
+The premises of the elimination and computation rules, in context $\Gamma$, posit precisely a dependent circle algebra over the pullback of $\circtype$ along $\Gamma \to 1$.
+
+\begin{definition}
+A \emph{(strict) section} of a dependent circle algebra $(Y,\bbar,\lbar)$ over $(X,b,l)$, $\Gamma$ is a section $s$ of the fibration $Y \fibto X$, such that $s(b) = \bbar$, $\paths[\Gamma](s)(l) = \lbar$.
+
+If $Y = (Y,\bbar,\lbar)$ is a dependent circle algebra over $X = (X,b,l)$, in context $\Gamma$, then pulling back along $f : \Gamma' \to \Gamma$ induces a dependent circle algebra $f^*Y$ over $f^*X$.
+\end{definition}
+
+The eliminator, together with the (judgemental) computation rules, provide a section for every dependent circle algebra over any pullback of  $\circtype$, along with stability conditions, which we disregard for now but will return to in Lemma~\ref{lemma:circle-coherence} below.
+%
+Based on this, we define:
+\begin{definition}
+A fibrant circle algebra is \emph{trivially cofibrant} if every dependent circle algebra over it has a section, and \emph{stably trivially cofibrant} if every pullback of it is trivially cofibrant.
+\end{definition}
+
+So far, we have set up these definitions following the syntactic presentation as closely as possible, and not relying on any features particular to the model-categorical setting.
+%
+However, in this setting---in particular, with strict functoriality of $\paths{-}$---these fit into a rather cleaner big picture:
+
+\begin{definition}
+There is an $\cE$-indexed category $\Alg[\cE]{S^1}$, with an $\cE$-indexed forgetful functor $U : \Alg[\cE]{S^1} \to \cE/-$.
+
+Objects of $\Alg[\cE]{S^1}$ consist of triples $(p:X \to \Gamma,b,l)$, as before, but with $p$ not assumed to be a fibration.
+%
+Maps of $(X',b',l') \to (X,b,l)$ in $\Alg[\cE](\Gamma)$ consist of maps $f : X' \to X$ over $\Gamma$, with $f(b') = b$, $\paths[\Gamma](f)(l') = l$.
+
+The functor $U$ sends a circle algebra $(X,b,l)$ over $\Gamma$ to its underlying map $p:X \to \Gamma$.
+
+Moreover, $U$ induces an indexed subcategory of \emph{fibrations} in $\Alg[\cE]{S^1}$. 
+\end{definition}
+
+With this setting, a fibrant circle algebra over $\Gamma$, as originally defined, is exactly a fibrant object of $\Alg[\cE]{S^1}(\Gamma)$; a dependent circle algebra over $(X,b,l)$ is just a fibration over $(X,b,l)$ in $\Alg[\cE]{S^1}$; and a section of one is exactly a section in the usual sense.
+
+\todo{Construct stable initial algebra as pushout; then, stably triv cof alg as fibrant replacement.}
+
+\todo{State local universes lemma: “weakly stable triv cof alg in $\cE$ gives strictly stable circle type in $\cE_!$”.}
+
+\subsection{Suspension}
+
+\todo{Same pattern as for circle, but including fibrant replacement, and now only weakly stable}
+
+\todo{Other simple examples?}
+
+\subsection{Propositional truncation}
 \todo{$(–1)$-truncation: set up the (now less trivial) category of algebras by hand. Note again that an initial one will model the types.}
 
 \todo{Recall \emph{dialgebras}; recognise the algebras above as (iterated) dialgebras.}
