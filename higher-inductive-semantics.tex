@@ -32,15 +32,155 @@ Precisely, we show that \todo{\ldots} .
 
 \section{Introduction}
 
-\todo{General setting: state of the field, motivation for introducing HITs.}
+The homotopy-theoretic interpretation of constructive type theory~\cite{...}, like any bridge between previously unrelated subjects, allows ideas and theorems to percolate in both directions.
+On the one hand, because any well-behaved homotopy theory admits a model of type theory, we can use formal type-theoretic methods to prove homotopy-theoretic theorems.
+On the other hand, examination of these models suggests new principles that can be added to type theory, making it more powerful and expressive, and also increasing the range of homotopy-theoretic theorems that can be proven formally.
+So far, there are two important new type-theoretic principles that have been suggested by homotopy-theoretic models.
+The first is Voevodsky's \emph{univalence axiom}; this has been discussed in detail elsewhere~\cite{...}, and we will have very little to say about it in this paper.
+Our concern here is with the second, known as \emph{higher inductive types (HITs)}.
 
-\todo{Sketch a few examples of HITs}
+The basic idea of HITs was initially conceived at the Oberwolfach meeting in February 2011 by the present authors along with Bauer and Warren.
+Their first real application was the second author's formalized proof that $\pi_1(\circtype)=\lZ$, using a HIT definition of the circle $\circtype$~\cite{ls:pi1s1}.
+Since then, many people have contributed to the further development of HITs; we will summarize some of their contributions in \S\ref{sec:hit-apps} below.
+The syntax and use of HITs is explained in detail in Chapter 6 of the Homotopy Type Theory book~\cite{hott:book}, while many of their recent applications can be found in its Chapter 8.
 
-\todo{Survey work done with HITs in \cite{hott:book}}
+However, what is still missing from the literature is a proof that HITs really do exist in homotopy-theoretic models of type theory, analogous to the proofs in~\cite{klv:ssetmodel,shulman:invdia,shulman:elreedy} that the univalence axiom holds in (some) such models.
+This is what we aim to provide in the present paper.
+The central ideas of the construction were developed by the authors in the summer of 2011, and disseminated as talks and sketchy notes over the next few years, but have not been written out comprehensively until now.
 
-\todo{Outline of this paper}
+\subsection{What are HITs?}
+\label{sec:what-are-hits}
+
+There are many different ways to motivate higher inductive types.
+From a homotopy-theoretic point of view, HITs provide a way to construct interesting homotopy types in type theory.
+Homotopy type theory (with univalence, but without HITs) excels at proving formal theorems about \emph{general} homotopy types, such as the ``5-lemma'' for fibration sequences or an ``unstable octahedral axiom'' for composites of fibrations.
+But it suffers from a paucity of ways to obtain \emph{particular} homotopy types, such as spheres, tori, manifolds, Eilenberg--MacLane spaces, etc.
+Higher inductive types remedy this situation, and can be thought of a type-theoretic analogue of the basic homotopical notion of \emph{cell complexes}.
+They include both ``small, concrete'' cell complexes, such as CW presentations of spheres and tori, and ``large, abstract'' cell complexes such as those appearing in the construction of Postnikov towers and localizations by Quillen's small object argument.
+Moreover, they provide a concise language for speaking about the latter that avoids referring explicitly to small objects and transfinite compositions.
+(From this perspective, ordinary inductive types are \emph{0-dimensional} cell complexes.)
+
+From a type-theoretic point of view, HITs provide a way to postulate equalities and construct quotients, obviating the need for ``setoids'' and all their corresponding hassles.
+Bishop~\cite{...} famously claimed that to specify a \emph{set}, one must specify how to construct its elements, and also specify when two such elements are equal.
+Ordinary inductive types in type theory excel at specifying how to construct the elements of a set, but leave no flexibility in how to specify their equalities.
+The standard solution is to equip each type with a secondary ``type of equalities'', forming a structure called a \emph{setoid}; this mostly works but results in a terrific amount of bookkeeping to carry around the setoid equalities everywhere.
+Instead, higher inductive types augment ordinary inductive types with a basic way to ``specify the equalities between elements''.
+The resulting equalities are actual equalities in the Leibniz sense, hence require no bookkeeping; they are automatically respected by everything in sight.
+
+From a category-theoretic point of view, HITs provide a concise language for presentations of monads.
+It is well-known that categorically, ordinary inductive types are free algebras for polynomial endofunctors.
+Here an ``algebra for an endofunctor'' $F$ means nothing more than an object $X$ with a map $FX \to X$.
+If $F$ is additionally a \emph{monad}, then we also have ``monad-algebras'', for which the map $FX \to X$ must satisfy associativity and unitality conditions.
+In well-behaved categories, every polynomial endofunctor $F$ gives rise to a \emph{free monad} $\freemonad{F}$, so that that $F$-endofunctor-algebras are equivalent to $\freemonad{F}$-monad-algebras; thus we could equally well say that ordinary inductive types are free algebras for free monads.
+However, the monads that arise naturally in mathematics are usually not free; but they are \emph{presented}, meaning that they are a colimit in the category of monads of a diagram consisting of free monads.
+Higher inductive types, then, provide free algebras for these more general \emph{presented} monads.
+
+Note that the type-theoretic and category-theoretic motivations presented above say nothing about homotopy theory.
+(Although they can be easily extended to do so: the homotopical analogue of a setoid is an $\infty$-groupoid in type theory~\cite{coquand...}, and homotopically presented monads are simply colimits in the $(\infty,1)$-category of $(\infty,1)$-monads.)
+Indeed, higher inductive types \emph{could} have been invented completely independently of the homotopical interpretation of type theory.
+Although historically, it was the first, homotopy-theoretic, motivation which gave rise to them, they are still interesting and highly nontrivial even in Extensional Type Theory, where there is no higher homotopical information.
+In particular, they supply well-behaved quotients and free algebras of all sorts, going beyond what exists in elementary toposes, and even beyond what can be constructed in ZF set theory without the axiom of choice, while nevertheless remaining constructive (at least in many, and conjecturally all, senses of the word).
+
+
+\subsection{Some examples of HITs}
+\label{sec:hit-egs}
+
+Recall that an ordinary \emph{inductive type} is specified by some number of \emph{constructors}, which take as input some data (possibly recursively involving the inductive type being defined) and output an element of the inductive type.
+For instance, the natural numbers are generated by a constructor \fzero that requires no input and a constructor \fsucc that takes a natural number as input; the unit type is generated by a single constructor \ftt that requires no input; and the empty type is generated by no constructors at all.
+
+Roughly speaking, a \emph{higher} inductive type can have these same sorts of constructor, but also ``constructors'' whose output is not an \emph{element} of the type being defined, but an \emph{equality} between two such elements.
+In homotopy type theory, equalities are identified with \emph{paths}, and so we call this new sort of constructor a \emph{path-constructor}.
+The old sort of constructors may then be called \emph{point-constructors} for clarity.
+
+It is of central importance that the paths constructed by path-constructors, like the points constructed by point-constructors, are \emph{new} paths, not coinciding with any path that ``already existed''.
+For example, consider perhaps the simplest nontrivial HIT, the \textbf{circle} $\circtype$: this is generated by one point-constructor, called \fbase, and one path-constructor, called \floop, which constructs a path from \fbase to \fbase.
+Of course, we already knew that \fbase was equal to \fbase, by reflexivity; but the path given by \floop is a \emph{new} such path that is not equal to reflexivity.%
+\footnote{More precisely, it is not \textit{a priori} equal to reflexivity.
+  Actually \emph{proving} that it is not equal to reflexivity is analogous to proving that the injections of a sum type are disjoint, and requires the univalence axiom; see~\cite{hott:book,ls:pi1s1}.}
+From the homotopical point of view, we are describing the circle $\circtype$ as a cell complex with one 0-cell (\fbase) and one 1-cell (\floop).
+
+The existence of \floop also entails the existence of many other paths from \fbase to \fbase; for instance, we can compose \floop with itself (i.e.\ apply the transitivity of equality), or invert it (i.e.\ apply the symmetry of equality), and so on.
+Saying that \floop is an inductive generator of $\circtype$ means that \emph{none} of these paths are (\textit{a priori}) equal to each other.
+(The theorem that $\pi_1(\circtype)=\lZ$ amounts to showing that, in the presence of the univalence axiom, we get \emph{exactly} the paths $\floop^n$ for $n$ an integer.)
+
+Of course, we can also add paths between points that were not previously equal at all.
+For instance, the \textbf{interval} $I$ is generated by two point-constructors, \fzero and \fone, and one path-constructor \fseg which constructs a path from \fzero to \fone.
+Unsurprisingly, this turns out to be equivalent to the unit type (but it is not completely boring either, e.g.\ its existence implies function extensionality).
+
+Additionally, since we are interested not only in \emph{whether} two points are equal, but \emph{how many} paths there are between them, we also allow path-constructors which construct \emph{paths between paths}, or \emph{paths between paths between paths}, and so on.
+Homotopically, these correspond to cells of higher dimension in a cell complex, and indeed any (finite) cell complex can be presented as a HIT.
+For instance, the \textbf{torus} $\torustype$ has one point-constructor \fbase, two path-constructors $\fmerid_1$ and $\fmerid_2$ giving paths from \fbase to itself, and one ``2-path-constructor'' giving a path relating the composites of $\fmerid_1$ and $\fmerid_2$ in both orders.
+And the \textbf{2-sphere} $\spheretype 2$ has one point-constructor \fbase and one 2-path-constructor \fsurf giving a path from the \emph{reflexivity} path of \fbase to itself.
+
+The ability to assert equalities also means that we can construct \textbf{colimits} of types.
+With ordinary inductive types we can construct coproducts (sum types) and an initial object (the empty type), but not other colimits such as coequalizers or pushouts.
+With HITs, however, these are easy to do.
+
+The real power of HITs starts to show itself when we introduce path-constructors with recursive inputs, analogous to recursive point-constructors like \fsucc for the natural numbers.
+The first such example is the \textbf{squash} or \textbf{bracket type}~\cite{ab:bracket-types} of a type $A$, which is intended to be a type $\brck{A}$ that contains at most one element, and does so exactly if $A$ has an element.
+We can define this as a HIT with one point-constructor that takes as input an element of $A$, and one path-constructor which gives for any two elements $x$ and $y$ \emph{of $\brck{A}$ itself}, a path from $x$ to $y$.
+The point-constructor ensures that if $A$ is inhabited then so is $\brck{A}$, while the path-constructor ensures that $\brck{A}$ has no more than one element.%
+\footnote{In homotopy type theory, the question is a little more subtle: in addition to ensuring that any two elements of $\brck{A}$ are related by a path, we would want to ensure that any two \emph{paths} are related by a 2-dimensional path, and so on.
+  Fortunately, the single path-constructor of $\brck{A}$ is sufficient to ensure this automatically.}
+
+The bracket type is also known as the \textbf{$(-1)$-truncation}: it universally truncates $A$ into a $(-1)$-type, a homotopy type that is contractible if inhabited.
+We can also construct $n$-truncations for all higher $n$.
+For instance, the \textbf{$0$-truncation} $\trunc 0 A$, also known as $\pi_0(A)$, has the same point-constructor as $\brck{A}$, along with a 2-path-constructor saying that for any two elements $x$ and $y$ of $\trunc 0 A$, and any two paths $p$ and $q$ from $x$ to $y$, there is a path from $p$ to $q$.
+In homotopy theory, the $n$-truncations of a type are called its \emph{Postnikov tower}.
+
+By including both recursive point-constructors and recursive path-constructors, we can directly construct \textbf{free algebras} of any desired sort.
+For instance, the \textbf{free group} $\freegroup{A}$ on a type $A$
+\mswarning{Of course, to make $\freegroup{A}$ a set, we need to truncate it.  Should we mention that or sweep it under the rug?}
+is generated by one point-constructor taking input from $A$; three point-constructors taking respectively no input (the identity element), two inputs from $\freegroup{A}$ itself (the multiplication), and one input from $\freegroup{A}$ (the inversion); and various path-constructors asserting the group axioms.
+The resulting induction principle of the HIT $\freegroup{A}$ says almost verbatim that it \emph{is} the free group on $A$.
+In this way, HITs enable us to ``construct'' free structures of all sorts merely by asserting their universal property.
+
+One final example will serve to suggest the extreme flexibility of HITs.
+Let $f:A\to B$ be a given function and $X$ a type, and consider the HIT $\local{f}{X}$ with the following constructors: (1) a point-constructor taking input from $X$, (2) a point-constructor \fext taking as input a function $g:A\to \local{f}{X}$ and an element $b:B$, (3) a path-constructor saying that for any $g:A\to \local{f}{X}$ and $a:A$ we have $\fext(g,f(a))=g(a)$, and (4) a path-constructor saying that for any $h:B\to \local{f}{X}$ and $b:B$ we have $\fext(h\circ f,b)=h(b)$.
+\mswarning{Of course, this isn't quite right, it's a qinv rather than an equivalence.}
+Then $\local{f}{X}$ is none other than the \textbf{localization} of $X$ at $f$: the universal type equipped with a map from $X$ which is \textbf{$f$-local} in the sense that $(\blank\circ f):(\local{f}{X})^B \to (\local{f}{X})^A$ is an equivalence.
+Localizations are ubiquitous in homotopy theory, generally being constructed as transfinite cell complexes with the small object argument; HITs allow us to construct them just like free groups, merely by asserting their universal property.
+
+
+\subsection{Applications of HITs}
+\label{sec:hit-apps}
+
+To show the usefulness and fruitfulness of HITs, we briefly survey some known applications.
+Many of these results can be found in~\cite{hott:book}.
+
+A fair amount of work so far has concentrated on reproducing homotopy-theoretic calculations in type theory, such computations of homotopy groups of spheres.
+Here the $n^{\mathrm{th}}$ homotopy group $\pi_n(X)$ of a type $X$ (equipped with a basepoint) is defined to be the $0$-truncation of its $n$-fold loop space $\Omega^n X$ (the latter being definable without HITs).
+The first such computation, as mentioned above, was the second author's proof that $\pi_1(\circtype)=\lZ$, and also $\pi_n(\circtype)=0$ for $n>1$, by showing that in fact $\Omega \circtype = \lZ$.
+Licata~\cite{...} later improved this proof, isolating a general method now known as ``encode--decode'' for computing with loop spaces of HITs.
+Using this method, he and Brunerie calculated $\pi_k(\spheretype n) = 0$ for $k<n$ and $\pi_n(\spheretype n) = \lZ$.
+The first author and Brunerie used the Hopf fibration to show $\pi_3(\spheretype 2) = \lZ$, and Brunerie used the James construction to show $\pi_4(\spheretype 3) = \lZ/2$.
+
+HITs have also proven useful in more abstract homotopy-theoretic theorems.
+The first author proved the Freudenthal suspension theorem in type theory, and with Licata and Finster generalized it to the Blakers--Massey theorem; the role of HITs being to construct suspensions and pushouts (as well as define homotopy groups by truncation).
+The second author proven the van Kampen theorem, and Hou developed the theory of covering spaces.
+Licata and Finster~\cite{...} have constructed Eilenberg--MacLane spaces $K(G,n)$, enabling the represented definition of cohomology and verification of the Eilenberg--Steenrod axioms.
+Finally, Voevodsky constructed the long exact sequence associated to a fibration, and the second author used this to construct the cohomological Serre spectral sequence.
+There is every prospect that this formalization of homotopy theory in type theory will continue fruitfully.
+
+As suggested above, HITs also have applications outside of homotopy theory.
+Spitters and Rijke~\cite{...} have used HIT colimits to show that the subcategory of ``sets'' in homotopy type theory is a $\Pi W$-pretopos.
+Note that these ``sets'' are just types whose Leibniz equality satisfies UIP, not ``setoids'' equipped with any additional equality structure.
+Awodey has constructed a ``cumulative hierarchy'' of ``membership-based sets'' as a HIT, which satisfies a constructive version of the ZF axioms.
+Bauer has defined a set of ``Cauchy real numbers'' as a HIT (more precisely, a higher inductive-inductive type) that, unlike a simple quotient of Cauchy sequences, is constructively Cauchy-complete.
+And the second author has defined a constructive version of Conway's surreal numbers as a higher inductive-inductive type, generalizing Taylor's ``plump ordinals''.
+
+Finally, HITs may even have direct applications to theoretical computer science.
+Angiuli, Morehouse, Licata, and Harper~\cite{...} have used them to model a theory of ``patches'' for version control systems.
+
+
+\subsection{An outline of this paper}
+\label{sec:outline}
+
+\todo{We can wait to write this until the rest of the paper settles down.}
+
 
 \section{Syntax of HITs}
+\label{sec:syntax}
 
 \todo{Pipe dream: general CIC-like presentation}
 
