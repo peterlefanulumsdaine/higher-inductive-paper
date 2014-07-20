@@ -13,7 +13,7 @@ Side notes for “Semantics of Higher Inductive Types”
 
 ## Small
 
-- ??
+- add UTF8 input encoding
 
 # Conventions #
 
@@ -23,6 +23,8 @@ Side notes for “Semantics of Higher Inductive Types”
 
 ## To decide
 
-- ?
+- (dependent) path spaces?  currently: macro `\paths[\Gamma](X)`, implemented
+- how to distinguish fibrations in diagrams/inline arrows?  currently: macro `\fibto`, defined as just `\to`.
+- how to write `\ap`?  Just as functorial action of `\paths` on arrows?
 
 # Misc notes, questions
