@@ -1,41 +1,8 @@
 \documentclass{amsart}
 
 \input{decls}
-
-%%%%%%
-% Draft annotations
-
-\usepackage[mode=multiuser,layout=margin,status=draft]{fixme}
-\FXRegisterAuthor{ms}{ams}{MS}  % Use \msnote, \mswarning, \mserror, \msfatal
-\FXRegisterAuthor{pl}{apl}{PLL} % Use \plnote, \plwarning, \plerror, \plfatal
-\fxusetheme{color}
-
-%\newcommand{\comment}[1]{\textcolor{red}{#1}}
-\newcommand{\todo}[1]{\textcolor{red}{#1}}
-
-%%%%%%
-% Theorem-style environments
-
-\theoremstyle{theorem}
-\newtheorem{theorem}{Theorem}[section]
-\theoremstyle{definition}
-\newtheorem{definition}[theorem]{Definition}
-
-%%%%%
-% General macros
-
-% Categorical/logical constructions
-\newcommand{\paths}[2][]{\cP_{#1}(#2)}
-\newcommand{\pathsover}[3][]{\cP_{#1}(#3;#2)}
-\newcommand{\circtype}{S^1}
-
-% Categories
-\newcommand{\Alg}[2][]{{#2}\text{-}\mathbf{Alg}_{#1}}
-
-% Arrows
-\newcommand{\fibto}{\to}
-
-%%%%%
+\input{macros}
+\setcounter{tocdepth}{1}
 
 \title{Semantics of Higher Inductive Types}
 
@@ -102,7 +69,7 @@ As we did for inductive types above, to model the circle we first set up a (fibe
 In the case of the circle, it is then easy to construct such an object by hand.
 
 \begin{definition}
-A \emph{fibrant circle algebra} over $\Gamma \in \cE$ is a fibration $X \fibto \Gamma$ equipped with a section $b : \Gamma \to X$, and a map $l : \Gamma \to \paths[\Gamma]{X}$ over $(b,b) : \Gamma \to X \times_\Gamma X$.
+A \emph{fibrant circle algebra} over $\Gamma \in \E$ is a fibration $X \fibto \Gamma$ equipped with a section $b : \Gamma \to X$, and a map $l : \Gamma \to \paths[\Gamma]{X}$ over $(b,b) : \Gamma \to X \times_\Gamma X$.
 %
 If $(X,b,l)$ is a fibrant circle algebra over $\Gamma$, then any $f : \Gamma' \to \Gamma$ induces a pullback fibrant circle algebra $f^*(X,b,l) := (f^*X,f^*b,f^*l)$ over $\Gamma'$.
 \end{definition}
@@ -133,22 +100,22 @@ So far, we have set up these definitions following the syntactic presentation as
 However, in this setting---in particular, with strict functoriality of $\paths{-}$---these fit into a rather cleaner big picture:
 
 \begin{definition}
-There is an $\cE$-indexed category $\Alg[\cE]{S^1}$, with an $\cE$-indexed forgetful functor $U : \Alg[\cE]{S^1} \to \cE/-$.
+There is an $\E$-indexed category $\Alg[\E]{\circtype}$, with an $\E$-indexed forgetful functor $U : \Alg[\E]{\circtype} \to \Eself$.
 
-Objects of $\Alg[\cE]{S^1}$ consist of triples $(p:X \to \Gamma,b,l)$, as before, but with $p$ not assumed to be a fibration.
+Objects of $\Alg[\E]{\circtype}$ consist of triples $(p:X \to \Gamma,b,l)$, as before, but with $p$ not assumed to be a fibration.
 %
-Maps of $(X',b',l') \to (X,b,l)$ in $\Alg[\cE](\Gamma)$ consist of maps $f : X' \to X$ over $\Gamma$, with $f(b') = b$, $\paths[\Gamma](f)(l') = l$.
+Maps of $(X',b',l') \to (X,b,l)$ in $\Alg[\E](\Gamma)$ consist of maps $f : X' \to X$ over $\Gamma$, with $f(b') = b$, $\paths[\Gamma](f)(l') = l$.
 
 The functor $U$ sends a circle algebra $(X,b,l)$ over $\Gamma$ to its underlying map $p:X \to \Gamma$.
 
-Moreover, $U$ induces an indexed subcategory of \emph{fibrations} in $\Alg[\cE]{S^1}$. 
+Moreover, $U$ induces an indexed subcategory of \emph{fibrations} in $\Alg[\E]{\circtype}$. 
 \end{definition}
 
-With this setting, a fibrant circle algebra over $\Gamma$, as originally defined, is exactly a fibrant object of $\Alg[\cE]{S^1}(\Gamma)$; a dependent circle algebra over $(X,b,l)$ is just a fibration over $(X,b,l)$ in $\Alg[\cE]{S^1}$; and a section of one is exactly a section in the usual sense.
+With this setting, a fibrant circle algebra over $\Gamma$, as originally defined, is exactly a fibrant object of $\Alg[\E]{\circtype}(\Gamma)$; a dependent circle algebra over $(X,b,l)$ is just a fibration over $(X,b,l)$ in $\Alg[\E]{\circtype}$; and a section of one is exactly a section in the usual sense.
 
 \todo{Construct stable initial algebra as pushout; then, stably triv cof alg as fibrant replacement.}
 
-\todo{State local universes lemma: “weakly stable triv cof alg in $\cE$ gives strictly stable circle type in $\cE_!$”.}
+\todo{State local universes lemma: “weakly stable triv cof alg in $\E$ gives strictly stable circle type in $\E_!$”.}
 
 \subsection{Suspension}
 

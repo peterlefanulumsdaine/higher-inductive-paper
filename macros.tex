@@ -1,0 +1,51 @@
+%%%%%%
+% Draft annotations
+
+\usepackage[mode=multiuser,layout=margin,status=draft]{fixme}
+\FXRegisterAuthor{ms}{ams}{MS}  % Use \msnote, \mswarning, \mserror, \msfatal
+\FXRegisterAuthor{pl}{apl}{PLL} % Use \plnote, \plwarning, \plerror, \plfatal
+\fxusetheme{color}
+
+%\newcommand{\comment}[1]{\textcolor{red}{#1}}
+\newcommand{\todo}[1]{\textcolor{red}{#1}}
+
+%%%%%%
+% Theorem-style environments
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}[section]
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+%%%%%
+% Text in typefaces
+
+\autodefs{\fzero\fsucc\ftt\fbase\floop\fone\fseg\fmerid\fsurf\fext}
+
+\let\E\cE
+
+%%%%%
+% General macros
+
+% Placeholders
+\newcommand{\blank}{\mathord{\hspace{1pt}\text{--}\hspace{1pt}}}
+
+% Categorical/logical constructions
+\newcommand{\paths}[2][]{\cP_{#1}(#2)}
+\newcommand{\pathsover}[3][]{\cP_{#1}(#3;#2)}
+\newcommand{\circtype}{\ensuremath{S^1}\xspace}
+\newcommand{\torustype}{\ensuremath{T^2}\xspace}
+\newcommand{\trunc}[2]{\mathopen{}\left\Vert #2\right\Vert_{#1}\mathclose{}}
+\newcommand{\brck}[1]{\trunc{}{#1}}
+\newcommand{\freegroup}[1]{F #1}
+\newcommand{\local}[2]{L_{#1} #2}
+
+% Categories
+\newcommand{\Alg}[2][]{{#2}\text{-}\mathbf{Alg}_{#1}}
+\newcommand{\Eself}{\E/\blank}  % self-indexing
+
+% Functors and monads
+\newcommand{\freemonad}[1]{\overline{#1}}
+
+% Arrows
+\newcommand{\fibto}{\to}
