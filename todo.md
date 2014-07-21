@@ -27,5 +27,7 @@ Side notes for “Semantics of Higher Inductive Types”
 - how to distinguish fibrations in diagrams/inline arrows?  currently: macro `\fibto`, defined as just `\to`.
 - how to write `\ap`?  Just as functorial action of `\paths` on arrows?
 - font for definitions: `\emph` or `\textbf`?
+- Unicode quotation marks?
+- American or British spelling?
 
 # Misc notes, questions
