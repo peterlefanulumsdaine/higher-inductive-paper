@@ -1,0 +1,3 @@
+[submodule "basictex"]
+	path = basictex
+	url = git@github.com:mikeshulman/basictex.git
