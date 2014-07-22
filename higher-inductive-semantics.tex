@@ -294,13 +294,13 @@ If $(X,b,l)$ is a fibrant circle algebra over $\Gamma$, then any $f : \Gamma' \t
 The formation and introduction rules say exactly that the circle $\circtype$ is a fibrant circle algebra over $1$.
 
 \begin{definition}
-A \emph{dependent circle algebra} over a fibrant circle algebra $(X,b,l)$ over $\Gamma$ consists of a fibration $Y \fibto X$, equipped with a map $bbar : \Gamma \to Y$ over $b$, and a map $lbar : \Gamma \to \pathsover[\Gamma]{X}{Y}$ over $(bbar,l,bbar) : \Gamma \to Y \times_X \paths[\Gamma]{X} \times_X Y$. 
+A \emph{dependent circle algebra} over a fibrant circle algebra $(X,b,l)$ over $\Gamma$ consists of a fibration $Y \fibto X$, equipped with a map $\bbar : \Gamma \to Y$ over $b$, and a map $lbar : \Gamma \to \pathsover[\Gamma]{X}{Y}$ over $(\bbar,l,\bbar) : \Gamma \to Y \times_X \paths[\Gamma]{X} \times_X Y$. 
 \end{definition}
 
 The premises of the elimination and computation rules, in context $\Gamma$, posit precisely a dependent circle algebra over the pullback of $\circtype$ along $\Gamma \to 1$.
 
 \begin{definition}
-A \emph{(strict) section} of a dependent circle algebra $(Y,\bbar,\lbar)$ over $(X,b,l)$, $\Gamma$ is a section $s$ of the fibration $Y \fibto X$, such that $s(b) = \bbar$, $\paths[\Gamma](s)(l) = \lbar$.
+A \emph{(strict) section} of a dependent circle algebra $(Y,\bbar,\lbar)$ over $(X,b,l)$, $\Gamma$ is a section $s$ of the fibration $Y \fibto X$, such that $s(b) = \bbar$, $\paths[\Gamma]{s}(l) = \lbar$.
 
 If $Y = (Y,\bbar,\lbar)$ is a dependent circle algebra over $X = (X,b,l)$, in context $\Gamma$, then pulling back along $f : \Gamma' \to \Gamma$ induces a dependent circle algebra $f^*Y$ over $f^*X$.
 \end{definition}
@@ -321,7 +321,7 @@ There is an $\E$-indexed category $\Alg[\E]{\circtype}$, with an $\E$-indexed fo
 
 Objects of $\Alg[\E]{\circtype}$ consist of triples $(p:X \to \Gamma,b,l)$, as before, but with $p$ not assumed to be a fibration.
 %
-Maps of $(X',b',l') \to (X,b,l)$ in $\Alg[\E](\Gamma)$ consist of maps $f : X' \to X$ over $\Gamma$, with $f(b') = b$, $\paths[\Gamma](f)(l') = l$.
+Maps of $(X',b',l') \to (X,b,l)$ in $\Alg[\E]{\circtype}(\Gamma)$ consist of maps $f : X' \to X$ over $\Gamma$, with $f(b') = b$, $\paths[\Gamma]{f}(l') = l$.
 
 The functor $U$ sends a circle algebra $(X,b,l)$ over $\Gamma$ to its underlying map $p:X \to \Gamma$.
 
