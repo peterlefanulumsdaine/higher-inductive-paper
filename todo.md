@@ -27,4 +27,6 @@ Side notes for “Semantics of Higher Inductive Types”
 - font for definitions: `\emph` or `\textbf`?
 - American or British spelling?
 
+- Notation for (H)IT specifications: Coq-like, Agda-like, informal?
+
 # Misc notes, questions

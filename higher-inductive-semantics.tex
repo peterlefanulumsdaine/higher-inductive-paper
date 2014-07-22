@@ -177,21 +177,87 @@ Angiuli, Morehouse, Licata, and Harper~\cite{amlh:htpy-patch} have used them to 
 \subsection{An outline of this paper}
 \label{sec:outline}
 
-\todo{We can wait to write this until the rest of the paper settles down.}
+Unlike for ordinary inductive types, there is not yet a general presentation of what ``a higher inductive type'' entails.
+Some fairly general schemata have been given (some of which we will discuss), but none of them includes all the examples of higher inductive types that have been proposed.
+In particular, this means that our semantic construction of HITs cannot yet be phrased as a single theorem.
+
+However, the \emph{methods} that we present in this paper can in fact be applied to all proposed examples of HITs that we are aware of.
+For this reason, and also for expositional clarity, the structure of this paper is largely example-based.
+
+\todo{We can wait to write the rest until the rest of the paper settles down.}
 
 
 \section{Syntax of HITs}
 \label{sec:syntax}
 
-We begin by describing the type-theoretic rules for higher inductive types, so that we know what we want to model in the semantics.
-Unlike for ordinary inductive types, there is not yet a general presentation of what ``a higher inductive type'' entails.
-Some fairly general schemata have been given (some of which we will discuss later), but none of them includes all the examples of higher inductive types that have been proposed.
+In this section we will describe the type-theoretic rules for higher inductive types, so that we know what we want to model in the semantics.
+We will begin with simple specific examples and work up to fairly general ones (although, as we have said, a fully general specification of what should count as ``a higher inductive type'' is not yet known).
 
-In particular, this means that the semantic construction of HITs cannot yet be phrased as a single theorem.
-However, the \emph{methods} that we present in this paper can in fact be applied to all proposed examples of HITs that we are aware of.
+As mentioned in \S\ref{sec:hit-egs}, a higher inductive type is specified like an ordinary inductive type, except that in addition to \emph{point-constructors} whose ouput is an \emph{element} of the type being defined, we allow \emph{path-constructors} whose output is a \emph{path} (i.e.\ an equality) in that type.
+We will use an \msnote*{Or whatever; I just chose something for now for definiteness}{Agda-like syntax} for describing particular inductive types and higher inductive types.
+For instance, we write the natural numbers as
+\indef{\lN}{
+  \fzero : \lN \OR
+  \fsucc : \lN \to \lN
+}
+In this notation, the higher inductive circle $\circtype$ can be written as
+\indef{\circtype}{
+  \fbase : \circtype \OR
+  \floop : \id[\circtype]{\fbase}{\fbase}
+}
+and the $(-1)$-truncation $\brck{A}$ can be written as
+\indef{\brck{A}}{
+  \fproj : A \to \brck{A} \OR
+  \fsquash : \prd{x,y:A} \id[\brck{A}]{x}{y}
+}
+We may also allow higher path-constructors; for instance, the 2-sphere $\spheretype{2}$ can be written as
+\indef{\spheretype{2}}{
+  \fbase : \spheretype{2} \OR
+  \fsurf : \id[{\id[\spheretype{2}]{\fbase}{\fbase}}]{\refl}{\refl}
+}
+while the torus $\torustype$ can be written as
+\indef{\torustype}{
+  \fbase : \torustype \OR
+  \fmerid_1 : \id[\torustype]{\fbase}{\fbase} \OR
+  \fmerid_2 : \id[\torustype]{\fbase}{\fbase} \OR
+  \fsurf : \id[{\id[\torustype]{\fbase}{\fbase}}]{\fmerid_1 \ct \fmerid_2}{\fmerid_2 \ct \fmerid_1}
+}
+where $p\ct q$ denotes the concatenation of paths (i.e.\ the transitivity of equality).
+In general, the \emph{domain} of a path-constructor is of the same form as the domain of a point-constructor (though we will discuss below some possible generalizations of this), while its \emph{codomain} is some iterated path-type of the HIT being constructed.
 
+Note that specifying the codomain of a path-constructor requires specifying terms belonging to the HIT being defined and perhaps also to its iterated path-spaces.
+For instance, in $\circtype$ we must specify $\fbase$ and $\fbase$ to be the source and target of the path $\floop$; while in $\torustype$ we must specify $\fbase$ and $\fbase$, and then also ${\fmerid_1 \ct \fmerid_2}$ and ${\fmerid_2 \ct \fmerid_1}$, to give the source and target of $\fsurf$.
+These terms will often refer to other point- and perhaps path-constructors, such as $\fbase$ and $\fmerid_1$ and $\fmerid_2$.
 
-\todo{Pipe dream: general CIC-like presentation}
+This is a departure from ordinary inductive types, in which (at least usually) the type of each constructor must ``stand alone'' without referring to any other constructor.
+It immediately presents us with the question of \emph{which} constructors can be referred to in specifying the type of a given constructor.
+In this paper, we will always suppose that the constructors (both point- and path-) of a HIT are specified \emph{in an order}, and we allow the type of each constructor to refer only to those constructors appearing \emph{before} it; one can imagine relaxing this restriction, but it is not obvious whether our method for constructing semantics could handle such a relaxation.
+Note that since point-constructors have no way to refer to other constructors at all, they might as well all be specified first.
+
+There is an additional technical restriction on the terms ocurring in the codomain of a path-constructor, which we regard as vaguely analogous to the ``strict positivity'' condition on constructor domains: they must be \emph{natural}.
+The meaning of this, and its importance, will be explained later.
+
+So much for how to \emph{specify} a HIT; how does such a type \emph{behave}?
+In general, every type forming operation in type theory comes with \emph{formation}, \emph{introduction}, \emph{elimination}, and \emph{computation} rules.
+The above specifications of HITs give us the \textbf{formation} rules easily; in these simple cases, the formation rule is just ``such-and-such type exists''.
+Formation rules become a bit more complicated if we allow parameters and indices --- for instance, the type $A$ in $\brck{A}$ is best treated as a parameter, so that rather than just one HIT we have a different HIT $\brck{A}$ for each type $A$ --- but no new ideas are introduced here by HITs as compared with ordinary inductive types.
+
+The \textbf{introduction rules} for a HIT are also easy: they are just the specified constructors.
+For instance, the introduction rules for $\circtype$ say that we have $\fbase:\circtype$ and also $\floop : \id[\circtype]\fbase\fbase$.
+It is essential
+\msnote{Do we need to say more about why this makes sense?}%
+that we regard $\floop$ as an introduction rule for $\circtype$ itself, rather than for $\id[\circtype]\fbase\fbase$, even though it is actually an element of the latter type; this will become clear when we discuss the elimination and computation rules.
+Indeed, the type family $\id[\circtype]{x}{y}$ already has its \emph{own} introduction rule, namely $\refl: \prd{x:\circtype} \id[\circtype]{x}{x}$.
+
+It is when we get to the \textbf{elimination rules} that things get interesting.
+Elimination for ordinary inductive types can be specified either with an \emph{induction principle} or with \emph{pattern matching}.
+From the perspective of categorical semantics, it appears necessary to regard the induction principle as basic, with pattern matching justified (insofar as possible) by reduction to the induction principle, as in~\cite{gmm:pattern-matching,cdp:without-k}.
+It is not yet clear what a general formulation of pattern matching for HITs would look like.
+Thus, in this paper we will concentrate on induction principles.
+
+For an ordinary inductive type $W$, the induction principle says that for any type family $P$ over $W$, if we have operations on $P$ that correspond to, and ``live over'', each constructor of $W$, then we can define a function $f:\prd{x:W}P(x)$.
+For instance, the induction principle for \lN says that if we have a type family $P$ over \lN equipped with $f_\fzero : P(\fzero)$ and $f_\fsucc : \prd{n:\lN} P(n) \to P(\fsucc(n))$, then we are entitled to $f:\prd{n:\lN} P(n)$.
+We expect the induction principle for a HIT to be similar; the only question is what sort of operations on $P$ should be required to correspond to the path-constructors.
 
 \todo{Some simple specific examples: circle, suspension, torus, $(-1)$-truncation \ldots}
 

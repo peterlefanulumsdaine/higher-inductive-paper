@@ -20,17 +20,29 @@
 %%%%%
 % Text in typefaces
 
-\autodefs{\fzero\fsucc\ftt\fbase\floop\fone\fseg\fmerid\fsurf\fext}
+\autodefs{\fzero\fsucc\ftt\fbase\floop\fone\fseg\fmerid\fsurf\fext\fdata\fwhere\fId\fproj\fsquash\frefl}
 
 \let\E\cE
+\let\refl\frefl
+
+%%%%%
+% Inductive definitions
+
+\usepackage{xifthen}
+\makeatletter
+\def\indef#1#2{
+  \begin{quote}
+    \noindent \fdata ${#1}$ \fwhere
+    \@indef #2 \OR\OR
+  \end{quote}
+}
+\def\@indef#1\OR{\ifthenelse{\isempty{#1}}{}{\\\hspace*{3mm} $#1$ \@indef}}
 
 %%%%%
 % General macros
 
-% Placeholders
-\newcommand{\blank}{\mathord{\hspace{1pt}\text{--}\hspace{1pt}}}
-
 % Categorical/logical constructions
+\renewcommand{\id}[3][]{\fId_{#1}(#2,#3)}
 \newcommand{\paths}[2][]{\cP_{#1}(#2)}
 \newcommand{\pathsover}[3][]{\cP_{#1}(#3;#2)}
 \newcommand{\circtype}{\ensuremath{S^1}\xspace}
@@ -50,3 +62,75 @@
 
 % Arrows
 \newcommand{\fibto}{\to}
+
+%%%%%
+% Borrowed from the HoTT Book
+
+% Placeholders
+\newcommand{\blank}{\mathord{\hspace{1pt}\text{--}\hspace{1pt}}}
+
+%%% Path concatenation (used infix, in diagrammatic order) %%%
+\newcommand{\ct}{%
+  \mathchoice{\mathbin{\raisebox{0.5ex}{$\displaystyle\centerdot$}}}%
+             {\mathbin{\raisebox{0.5ex}{$\centerdot$}}}%
+             {\mathbin{\raisebox{0.25ex}{$\scriptstyle\,\centerdot\,$}}}%
+             {\mathbin{\raisebox{0.1ex}{$\scriptscriptstyle\,\centerdot\,$}}}
+}
+
+% Dependent products
+\def\prdsym{\textstyle\prod}
+%% Call the macro like \prd{x,y:A}{p:x=y} with any number of
+%% arguments.  Make sure that whatever comes *after* the call doesn't
+%% begin with an open-brace, or it will be parsed as another argument.
+\makeatletter
+% Currently the macro is configured to produce
+%     {\textstyle\prod}(x:A) \; {\textstyle\prod}(y:B),{\ }
+% in display-math mode, and
+%     \prod_{(x:A)} \prod_{y:B}
+% in text-math mode.
+% \def\prd#1{\@ifnextchar\bgroup{\prd@parens{#1}}{%
+%     \@ifnextchar\sm{\prd@parens{#1}\@eatsm}{%
+%         \prd@noparens{#1}}}}
+\def\prd#1{\@ifnextchar\bgroup{\prd@parens{#1}}{%
+    \@ifnextchar\sm{\prd@parens{#1}\@eatsm}{%
+    \@ifnextchar\prd{\prd@parens{#1}\@eatprd}{%
+    \@ifnextchar\;{\prd@parens{#1}\@eatsemicolonspace}{%
+    \@ifnextchar\\{\prd@parens{#1}\@eatlinebreak}{%
+    \@ifnextchar\narrowbreak{\prd@parens{#1}\@eatnarrowbreak}{%
+      \prd@noparens{#1}}}}}}}}
+\def\prd@parens#1{\@ifnextchar\bgroup%
+  {\mathchoice{\@dprd{#1}}{\@tprd{#1}}{\@tprd{#1}}{\@tprd{#1}}\prd@parens}%
+  {\@ifnextchar\sm%
+    {\mathchoice{\@dprd{#1}}{\@tprd{#1}}{\@tprd{#1}}{\@tprd{#1}}\@eatsm}%
+    {\mathchoice{\@dprd{#1}}{\@tprd{#1}}{\@tprd{#1}}{\@tprd{#1}}}}}
+\def\@eatsm\sm{\sm@parens}
+\def\prd@noparens#1{\mathchoice{\@dprd@noparens{#1}}{\@tprd{#1}}{\@tprd{#1}}{\@tprd{#1}}}
+% Helper macros for three styles
+\def\lprd#1{\@ifnextchar\bgroup{\@lprd{#1}\lprd}{\@@lprd{#1}}}
+\def\@lprd#1{\mathchoice{{\textstyle\prod}}{\prod}{\prod}{\prod}({\textstyle #1})\;}
+\def\@@lprd#1{\mathchoice{{\textstyle\prod}}{\prod}{\prod}{\prod}({\textstyle #1}),\ }
+\def\tprd#1{\@tprd{#1}\@ifnextchar\bgroup{\tprd}{}}
+\def\@tprd#1{\mathchoice{{\textstyle\prod_{(#1)}}}{\prod_{(#1)}}{\prod_{(#1)}}{\prod_{(#1)}}}
+\def\dprd#1{\@dprd{#1}\@ifnextchar\bgroup{\dprd}{}}
+\def\@dprd#1{\prod_{(#1)}\,}
+\def\@dprd@noparens#1{\prod_{#1}\,}
+
+% Look through spaces and linebreaks
+\def\@eatnarrowbreak\narrowbreak{%
+  \@ifnextchar\prd{\narrowbreak\@eatprd}{%
+    \@ifnextchar\sm{\narrowbreak\@eatsm}{%
+      \narrowbreak}}}
+\def\@eatlinebreak\\{%
+  \@ifnextchar\prd{\\\@eatprd}{%
+    \@ifnextchar\sm{\\\@eatsm}{%
+      \\}}}
+\def\@eatsemicolonspace\;{%
+  \@ifnextchar\prd{\;\@eatprd}{%
+    \@ifnextchar\sm{\;\@eatsm}{%
+      \;}}}
+
+
+% Local Variables:
+% mode: latex
+% TeX-master: "higher-inductive-semantics"
+% End:
