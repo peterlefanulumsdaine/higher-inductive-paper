@@ -43,6 +43,7 @@
 
 % Categorical/logical constructions
 \renewcommand{\id}[3][]{\fId_{#1}(#2,#3)}
+\newcommand{\idover}[4][]{\fId_{#1}(#2,#3)_{#4}}
 \newcommand{\paths}[2][]{\cP_{#1}(#2)}
 \newcommand{\pathsover}[3][]{\cP_{#1}(#3;#2)}
 \newcommand{\circtype}{\ensuremath{S^1}\xspace}
@@ -68,6 +69,12 @@
 
 % Placeholders
 \newcommand{\blank}{\mathord{\hspace{1pt}\text{--}\hspace{1pt}}}
+
+% Path reversal
+\newcommand{\opp}[1]{\mathord{{#1}^{-1}}}
+
+% Transport
+\newcommand{\transf}[1]{\ensuremath{{#1}_{*}}\xspace} % Without argument
 
 %%% Path concatenation (used infix, in diagrammatic order) %%%
 \newcommand{\ct}{%

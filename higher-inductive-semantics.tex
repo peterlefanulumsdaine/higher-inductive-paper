@@ -41,7 +41,7 @@ The first is Voevodsky's \emph{univalence axiom}; this has been discussed in det
 Our concern here is with the second, known as \emph{higher inductive types (HITs)}.
 
 The basic idea of HITs was initially conceived at the Oberwolfach meeting in February 2011 by the present authors along with Bauer and Warren.
-Their first real application was the second author's formalized proof that $\pi_1(\circtype)=\lZ$, using a HIT definition of the circle $\circtype$~\cite{ls:pi1s1}.
+The first real application of HITs was the second author's formalized proof that $\pi_1(\circtype)=\lZ$, using a HIT definition of the circle $\circtype$~\cite{ls:pi1s1}.
 Since then, many people have contributed to the further development of HITs; we will summarize some of their contributions in \S\ref{sec:hit-apps} below.
 The syntax and use of HITs is explained in detail in Chapter 6 of the Homotopy Type Theory book~\cite{hottbook}, while many of their recent applications can be found in its Chapter 8.
 
@@ -52,8 +52,9 @@ The central ideas of the construction were developed by the authors in the summe
 \subsection{What are HITs?}
 \label{sec:what-are-hits}
 
-There are many different ways to motivate higher inductive types.
-From a homotopy-theoretic point of view, HITs provide a way to construct interesting homotopy types in type theory.
+There are many different ways to motivate HITs.
+
+From a homotopy-theoretic point of view, they provide a way to construct interesting homotopy types in type theory.
 Homotopy type theory (with univalence, but without HITs) excels at proving formal theorems about \emph{general} homotopy types, such as the ``5-lemma'' for fibration sequences or an ``unstable octahedral axiom'' for composites of fibrations.
 But it suffers from a paucity of ways to obtain \emph{particular} homotopy types, such as spheres, tori, manifolds, Eilenberg--MacLane spaces, etc.
 Higher inductive types remedy this situation, and can be thought of a type-theoretic analogue of the basic homotopical notion of \emph{cell complexes}.
@@ -62,7 +63,7 @@ Moreover, they provide a concise language for speaking about the latter that avo
 (From this perspective, ordinary inductive types are \emph{0-dimensional} cell complexes.)
 
 From a type-theoretic point of view, HITs provide a way to postulate equalities and construct quotients, obviating the need for ``setoids'' and all their corresponding hassles.
-Bishop~\cite{...} famously claimed that to specify a \emph{set}, one must specify how to construct its elements, and also specify when two such elements are equal.
+Bishop~\cite{bishop:fca} famously claimed that to specify a \emph{set}, one must specify how to construct its elements, and also specify when two such elements are equal.
 Ordinary inductive types in type theory excel at specifying how to construct the elements of a set, but leave no flexibility in how to specify their equalities.
 The standard solution is to equip each type with a secondary ``type of equalities'', forming a structure called a \emph{setoid}; this mostly works but results in a terrific amount of bookkeeping to carry around the setoid equalities everywhere.
 Instead, higher inductive types augment ordinary inductive types with a basic way to ``specify the equalities between elements''.
@@ -236,6 +237,8 @@ Note that since point-constructors have no way to refer to other constructors at
 
 There is an additional technical restriction on the terms ocurring in the codomain of a path-constructor, which we regard as vaguely analogous to the ``strict positivity'' condition on constructor domains: they must be \emph{natural}.
 The meaning of this, and its importance, will be explained later.
+\msnote{Say something more here once we decide how to deal with fibrancy?}%
+(In fact, as we will see, this is one area where our current methods are not completely satisfactory.)
 
 So much for how to \emph{specify} a HIT; how does such a type \emph{behave}?
 In general, every type forming operation in type theory comes with \emph{formation}, \emph{introduction}, \emph{elimination}, and \emph{computation} rules.
@@ -258,6 +261,22 @@ Thus, in this paper we will concentrate on induction principles.
 For an ordinary inductive type $W$, the induction principle says that for any type family $P$ over $W$, if we have operations on $P$ that correspond to, and ``live over'', each constructor of $W$, then we can define a function $f:\prd{x:W}P(x)$.
 For instance, the induction principle for \lN says that if we have a type family $P$ over \lN equipped with $f_\fzero : P(\fzero)$ and $f_\fsucc : \prd{n:\lN} P(n) \to P(\fsucc(n))$, then we are entitled to $f:\prd{n:\lN} P(n)$.
 We expect the induction principle for a HIT to be similar; the only question is what sort of operations on $P$ should be required to correspond to the path-constructors.
+
+The basic notion that is needed here is known as a \emph{path over a path} or \emph{dependent path}.
+Given a type $A$ and a type family $P$ over $A$, for points $a,b:A$ and a path $e:\id[A]{a}{b}$ and points $x:P(a)$ and $y:P(b)$, we need to know what it means to say that ``$x$ and $y$ are related by a path (or ar equality) over $e$''.
+Note that the ordinary identity type cannot be applied to $x$ and $y$, since their types $P(a)$ and $P(b)$ are different.
+The terminology comes from homotopical models, where the type family $P$ corresponds to a \emph{fibration} over $A$ and we really are talking about a path in the total space of that fibration which projects down to the path $e$ in $A$.
+
+We will write $\idover[P]{x}{y}{e}$ for the type of paths from $x$ to $y$ lying over $e$.
+There are various ways to define this type, such as:
+\begin{enumerate}
+\item If we first define the \emph{transport} operation $\transf{e}:P(a) \to P(b)$ (using the eliminator for identity types), then we can define $\idover[P]{x}{y}{e}$ to be $\id[P(b)]{\transf{e}(x)}{y}$.\label{item:idover1}
+\item We could instead use $\id[P(a)]{x}{\transf{(\opp{e})}(y)}$, where $\opp{e}:\id[A]{b}{a}$ is the inverse path of $e$ (i.e.\ $\opp{(\blank)}$ witnesses the symmetry of equality).\label{item:idover2}
+\item We could define $\idover[P]{x}{y}{e}$ as an (ordinary) inductive family, with a single constructor saying that for any $a:A$ and $x:P(a)$ we have $\refl_x : \idover[P]{x}{x}{\refl_a}$.\label{item:idover3}
+\item We could define $\idover[P]{x}{y}{e}$ by using the eliminator for identity types on $e$, with $\idover[P]{x}{y}{\refl_a}$ defined to be $\id[P(a)]{x}{y}$.\label{item:idover4}
+\end{enumerate}
+These definitions all produce \emph{equivalent} types, but are not judgmentally identical.
+In particular, they have different judgmental behavior: for instance, with most of them we have $\idover[P]{x}{y}{\refl_a}$ judgmentally equal to $\id[P(a)]{x}{y}$, but not with~\ref{item:idover3}.
 
 \todo{Some simple specific examples: circle, suspension, torus, $(-1)$-truncation \ldots}
 
