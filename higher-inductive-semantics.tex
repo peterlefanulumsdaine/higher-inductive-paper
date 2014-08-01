@@ -297,7 +297,7 @@ For instance, the higher inductive circle $\circtype$ can be written as
 and the $(-1)$-truncation $\brck{A}$ can be written as
 \indef{\brck{A}}{
   \fproj : A \to \brck{A} \OR
-  \fsquash : \prd{x,y:A} \id[\brck{A}]{x}{y}
+  \fsquash : \prd{x,y:\brck{A}} \id[\brck{A}]{x}{y}
 }
 We may also allow higher path-constructors; for instance, the 2-sphere $\spheretype{2}$ can be written as
 \indef{\spheretype{2}}{
@@ -349,6 +349,44 @@ Thus, in this paper we will concentrate on induction principles.
 For an ordinary inductive type $W$, the induction principle says that for any type family $B$ over $W$, if we have operations on $B$ that correspond to, and ``live over'', each constructor of $W$, then we can define a function $f:\prd{x:W}B(x)$.
 For instance, the induction principle for \lN says that if we have a type family $B$ over \lN equipped with $f_\fzero : B(\fzero)$ and $f_\fsucc : \prd{n:\lN} B(n) \to B(\fsucc(n))$, then we are entitled to $f:\prd{n:\lN} B(n)$.
 We expect the induction principle for a HIT to be similar; the only question is what sort of operations on $B$ should be required to correspond to the path-constructors.
+This is the role of the \emph{dependent path} type introduced in \cref{sec:type-theory}.
+
+Consider, for example, the interval:
+\indef{I}{
+  \fzero : I \OR
+  \fone : I \OR
+  \fseg : \id[I]{\fzero}{\fone}
+}
+We expect the premises of its induction principle to include $f_\fzero : B(\fzero)$ and $f_\fone : B(\fone)$; but then corresponding to \fseg, we would expect some sort of path relating $f_\fzero$ to $f_\fone$.
+We cannot even form a type ``$\id{f_\fzero}{f_\fone}$'' since $f_\fzero$ to $f_\fone$ have different types, but we \emph{can} ask for a dependent path $f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}$.
+Thus, the entire elimination rule for $I$ is
+\[\inferrule{\jd{x:I |- B(x) \type} \\ f_\fzero : B(\fzero) \\ f_\fone : B(\fone) \\ f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}}{\jd{x:I |- f(x) : B(x)}} \]
+
+The general principle is thus that path-constructors in a HIT correspond to dependent path premises in its induction principle.
+For instance, the circle $\circtype$ has the following elimination rule:
+\[\inferrule{\jd{x:\circtype |- B(x) \type} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\jd{x:\circtype |- f(x) : B(x)}} \]
+Note that in this case it would be possible to \emph{write} the non-dependent path type ``$\id[B(\fbase)]{f_\fbase}{f_\fbase}$'', but that this is \emph{not} the correct type for $f_\floop$.
+
+Path-constructors with nontrivial domain are handled in the expected way, by dependent functions outputting dependent paths.
+For instance, the \textbf{suspension} of a type $A$ is defined by
+\indef{\susp A}{
+  \fnorth : \susp A \OR
+  \fsouth : \susp A \OR
+  \fmerid : \prd{x:A} \id[\susp A]{\fnorth}{\fsouth}
+}
+Its induction principle is
+\[\inferrule{\jd{x:\susp A |- B(x) \type} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
+{\jd{x:\susp A |- f(x):B(x)}} \]
+Similarly, path-constructors with recursive inputs correspond to inductive premises that take inputs from the induction motive.
+For instance, the induction principle for the $(-1)$-truncation $\brck{A}$ is
+\[\inferrule{\jd{x:\brck A |- B(x) \type} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
+{\jd{x:\brck A |- f(x) : B(x)}}
+\]
+This should be compared with the familiar induction principle for the natural numbers:
+\[ \inferrule{\jd{x:\lN |- B(x) \type} \\ f_\fzero : B(\fzero) \\ f_\fsucc : \tprd{x:\lN}{u:B(x)} B(\fsucc(x))}
+{\jd{x:\lN |- f(x) : B(x)}}
+\]
+In both cases, each recursive argument to a constructor ($\fsucc$ or $\fsquash$) bifurcates into two arguments to the corresponding induction premise, one from the inductive type being defined and one from the induction motive.
 
 
 \todo{Some simple specific examples: circle, suspension, torus, $(-1)$-truncation \ldots}
