@@ -42,7 +42,7 @@ Our concern here is with the second, known as \emph{higher inductive types (HITs
 
 The basic idea of HITs was initially conceived at the Oberwolfach meeting in February 2011 by the present authors along with Bauer and Warren.
 The first real application of HITs was the second author's formalized proof that $\pi_1(\circtype)=\lZ$, using a HIT definition of the circle $\circtype$~\cite{ls:pi1s1}.
-Since then, many people have contributed to the further development of HITs; we will summarize some of their contributions in \S\ref{sec:hit-apps} below.
+Since then, many people have contributed to the further development of HITs; we will summarize some of their contributions in \cref{sec:hit-apps} below.
 The syntax and use of HITs is explained in detail in Chapter 6 of the Homotopy Type Theory book~\cite{hottbook}, while many of their recent applications can be found in its Chapter 8.
 
 However, what is still missing from the literature is a proof that HITs really do exist in homotopy-theoretic models of type theory, analogous to the proofs in~\cite{klv:ssetmodel,shulman:invdia,shulman:elreedy} that the univalence axiom holds in (some) such models.
@@ -187,6 +187,99 @@ For this reason, and also for expositional clarity, the structure of this paper 
 
 \todo{We can wait to write the rest until the rest of the paper settles down.}
 
+\section{Type theory}
+\label{sec:type-theory}
+
+In this section we briefly review the basic type theory we will be using.
+It has a couple unusual features which enable it to match our models more precisely, but as we will see, they can all be eliminated at the cost of turning some judgmental equalities into propositional ones.
+
+Our base theory is a form of Martin-L\"of dependent type theory \emph{without} universes.
+Some of our models (particularly the simplicial set model~\cite{klv:ssetmodel}) have universes, but not all of them are known to, and so since we have little need for universes in this paper, we omit them.
+(It should be noted, however, that all the \emph{homotopy-theoretic} results about HITs mentioned in \cref{sec:hit-apps} require the presence of a universe satisfying the univalence axiom.)
+
+The absence of universes means that we need a separate judgment ``$A \type$'' indicating that $A$ is a type.
+A type family (or dependent type) indexed by $A$ is then described by a hypothetical judgment $\jd{x:A |- B(x) \type}$.
+Any such family has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
+As usual, if $B(x)$ is independent of $x$, we write $A\to B$ for $\prd{x:A} B(x)$.
+
+Besides dependent products\footnote{And coinductive types, which we will not consider here.}, all standard type formers can be regarded as special cases of the general notion of \emph{inductive type} such as in~\cite{gimenez:recursion}.
+We will use an \msnote*{Or whatever; I just chose something for now for definiteness}{Agda-like syntax} for describing inductive types.
+For instance, we write the natural number type as
+\indef{\lN}{
+  \fzero : \lN \OR
+  \fsucc : \lN \to \lN
+}
+\msnote{This syntax looks wonky without universes.}
+and the dependent pair type $\sm{x:A} B(x)$ as
+\indef{\sm{x:A} B(x)}{
+  \fpair : \prd{x:A} B(x) \to \sm{x:A} B(x)
+}
+Note that as usual, the scope of $\prd{x:A}$ extends as far to the right as possible, so that $\prd{x:A} B(x) \to \sm{x:A} B(x)$ means $\prd{x:A} \big(B(x) \to \sm{x:A} B(x)\big)$.
+
+We allow inductive types to contain both \emph{parameters} and \emph{indices}.
+Having a \emph{parameter} means essentially that we define a whole family of inductive types all at once, and each member of the family is inductively defined on its own.
+For instance, we can define the dependent-pair-type operation with $A$ and $B$ as parameters:
+\msnote{What should the syntax be for type parameters in the absence of a universe?}
+\indef{\sum \; (A \type) \; (\jd{x:A |- B(x)\type})}{
+  \fpair : \prd{x:A} B(x) \to \sm{x:A} B(x)
+}
+This means that each type $\sm{x:A} B(x)$ has its own induction principle, even though we have defined all of them together at once.
+Note that although we have no universes, we allow types and type families to appear as parameters in an inductive definition; this is justified by the coherence theorem of~\cite{lw:localuniv}.
+\msnote{Is there a way to specify syntactically what sorts of ``type family parameters'' are allowed?}
+
+Having an \emph{index} means that we define a family of types by induction together, so that rather than each member of the family having an induction principle, the family as a whole has one induction principle.
+Syntactically, the difference is that the constructors can take input from one element of the type family and give output in another, such as the standard inductive definition of length-indexed lists (vectors):%
+\msnote{Once again, the syntax looks wonky.}
+\indeff{\fVec \; (A\type)}{\lN\to\fType}{
+  \fnil : \fVec_A(0) \OR
+  \fcons : \prd{n:\lN} A \to \fVec_A(n) \to \fVec_A(n+1)
+}
+Here $A$ is a parameter and $n:\lN$ is an index.
+
+The most important inductively defined family is the \emph{identity type}.\msnote{Mention ML vs PM?}
+\indeff{\fId \; (A\type)}{A\to A\to \fType}{
+  \refl : \prd{x:A} \id[A]xx
+}
+The distinguishing feature of \emph{homotopy} type theory is that the identity type $\id[A]xx$ can contain paths other than $\refl$, corresponding to loops in $A$ viewed as a ``space''.
+For this reason we will sometimes refer to elements of an identity type as \emph{paths}.
+
+As we will see in \cref{sec:hott-semantics}, it follows directly from the work in~\cite{lw:localuniv} that all of our models contain $\sum$-types and $\fId$-types.
+However, in general this is not immediately obvious even for very simple ordinary inductive types such as $\lN$; it will follow as a degenerate case of our semantics for HITs.
+
+As we will see in \cref{sec:syntax}, in order to state the induction principles for HITs we require the notion of \emph{path over a path} or \emph{dependent path}.
+This means that given a type $A$ and a type family $B$ over $A$, for points $x,y:A$ and a path $e:\id[A]xy$ and points $u:B(x)$ and $v:B(y)$, we need to know what it means to say that ``$u$ and $v$ are related by a path (or an equality) over $e$''.
+Note that the ordinary identity type cannot be applied to $u$ and $v$, since their types $B(x)$ and $B(y)$ are different; instead we need a new ``type of paths from $u$ to $v$ lying over $e$'' which we will write as $\idover[B]{u}{v}{e}$.
+There are various ways to define this type, such as:
+\begin{enumerate}
+\item If we first define the \emph{transport} operation $\transf{e}:B(x) \to B(y)$ (using the eliminator for identity types), then we can define $\idover[B]{u}{v}{e}$ to be $\id[B(y)]{\transf{e}(u)}{v}$.
+  This is the definition used by~\cite{hottbook} and the homotopy type theory Coq library.\label{item:idover1}
+\item We could instead use $\id[B(x)]{u}{\transf{(\opp{e})}(v)}$, where $\opp{e}:\id[A]{y}{x}$ is the inverse path of $e$ (i.e.\ $\opp{(\blank)}$ witnesses the symmetry of equality).\label{item:idover2}
+\item We could define $\idover[B]{u}{v}{e}$ by using the eliminator for identity types on $e$, with $\idover[B]{u}{v}{\refl_x}$ defined to be $\id[B(x)]{u}{v}$.
+  This is the definition used by the homotopy type theory Agda library.\label{item:idover3}
+\item We could define $\idover[B]{u}{v}{e}$ as an (ordinary) inductive family, with a single constructor saying that for any $x:A$ and $u:B(x)$ we have $\refl_u : \idover[B]{u}{u}{\refl_x}$.\label{item:idover4}
+\end{enumerate}
+These definitions all produce \emph{equivalent} types, but are not judgmentally identical.
+In particular, they have different judgmental behavior: for instance, with~\ref{item:idover1}--\ref{item:idover3} we have $\idover[B]{u}{v}{\refl_x}$ judgmentally equal to $\id[B(x)]{u}{v}$, but with~\ref{item:idover4} this is not necessarily the case.
+We will use definition~\ref{item:idover4} because it is more convenient in our models (see below); that is, we define:
+\indeff{\fId \; (A\type)\; (\jd{x:A |- B(x)\type})}{\prd{x,y:A} \id[A]xy \to B(x) \to B(y) \to \fType}{
+  \refl : \prd{x:A}{u:B(x)} \id[B]{u}{u}_{\refl_x}
+}
+We will also eventually need to use higher ``path-over-a-path-over-a-path'' types and so on, which we define analogously.
+
+Finally, we include in our type theory a new primitive called \ap (for ``Action on Paths'' or ``APplication to a path''), with the following rules:
+\[\inferrule{f:\tprd{x:A} B(x) \\ x:A \\ y:A}{\ap_f : \tprd{e:\id[A]xy} \idover[B]{f(x)}{f(y)}{e}}
+\qquad
+\inferrule{f:\tprd{x:A} B(x) \\ x:A}{\ap_f(\refl_x) \jdeq \refl_{f(x)}}
+\]
+It is, of course, possible to \emph{define} such an operation by identity elimination.
+This defined operation, which we denote $\ap'$, plays an essential role in homotopy type theory, as developed in~\cite{hottbook} and elsewhere.
+However, all of its occurrences could be replaced by a primitive $\ap$ without any real change, as long as the above two rules are satisfied.
+Moreover, the shared computation rules $\ap_f(\refl_x) \jdeq \refl_{f(x)}$ and $\ap'_f(\refl_x) \jdeq \refl_{f(x)}$ imply that we always have an inhabitant of $\prd{e:\id[A]xy} \id{\ap_f(e)}{\ap'_f(e)}$, i.e.\ $\ap$ and $\ap'$ are propositionally equal.
+
+The reasons for introducing the primitive $\ap$ are that (1) in our models, there is a ``naturally occurring'' operation satisfying the above rules which is not necessarily (judgmentally) identical to the defined $\ap'$, and (2) the rules for HITs take on a simpler form when expressed in terms of the naturally occurring $\ap$ --- specifically, their computation rules are judgmental.
+In principle, however, it is always possible to re-express these rules in terms of $\ap'$ by inserting propositional equalities, obtaining a somewhat less convenient set of rules for HITs that we can model without the need for $\ap$.
+We will explain this in the simpler cases, although it gets unbearably tedious for higher paths.
+
 
 \section{Syntax of HITs}
 \label{sec:syntax}
@@ -194,14 +287,9 @@ For this reason, and also for expositional clarity, the structure of this paper 
 In this section we will describe the type-theoretic rules for higher inductive types, so that we know what we want to model in the semantics.
 We will begin with simple specific examples and work up to fairly general ones (although, as we have said, a fully general specification of what should count as ``a higher inductive type'' is not yet known).
 
-As mentioned in \S\ref{sec:hit-egs}, a higher inductive type is specified like an ordinary inductive type, except that in addition to \emph{point-constructors} whose ouput is an \emph{element} of the type being defined, we allow \emph{path-constructors} whose output is a \emph{path} (i.e.\ an equality) in that type.
-We will use an \msnote*{Or whatever; I just chose something for now for definiteness}{Agda-like syntax} for describing particular inductive types and higher inductive types.
-For instance, we write the natural numbers as
-\indef{\lN}{
-  \fzero : \lN \OR
-  \fsucc : \lN \to \lN
-}
-In this notation, the higher inductive circle $\circtype$ can be written as
+As mentioned in \cref{sec:hit-egs}, a higher inductive type is specified like an ordinary inductive type, except that in addition to \emph{point-constructors} whose ouput is an \emph{element} of the type being defined, we allow \emph{path-constructors} whose output is a \emph{path} (i.e.\ an equality) in that type.
+We extend the syntax for describing inductive types from \cref{sec:type-theory} to include such path-constructors.
+For instance, the higher inductive circle $\circtype$ can be written as
 \indef{\circtype}{
   \fbase : \circtype \OR
   \floop : \id[\circtype]{\fbase}{\fbase}
@@ -258,25 +346,10 @@ From the perspective of categorical semantics, it appears necessary to regard th
 It is not yet clear what a general formulation of pattern matching for HITs would look like.
 Thus, in this paper we will concentrate on induction principles.
 
-For an ordinary inductive type $W$, the induction principle says that for any type family $P$ over $W$, if we have operations on $P$ that correspond to, and ``live over'', each constructor of $W$, then we can define a function $f:\prd{x:W}P(x)$.
-For instance, the induction principle for \lN says that if we have a type family $P$ over \lN equipped with $f_\fzero : P(\fzero)$ and $f_\fsucc : \prd{n:\lN} P(n) \to P(\fsucc(n))$, then we are entitled to $f:\prd{n:\lN} P(n)$.
-We expect the induction principle for a HIT to be similar; the only question is what sort of operations on $P$ should be required to correspond to the path-constructors.
+For an ordinary inductive type $W$, the induction principle says that for any type family $B$ over $W$, if we have operations on $B$ that correspond to, and ``live over'', each constructor of $W$, then we can define a function $f:\prd{x:W}B(x)$.
+For instance, the induction principle for \lN says that if we have a type family $B$ over \lN equipped with $f_\fzero : B(\fzero)$ and $f_\fsucc : \prd{n:\lN} B(n) \to B(\fsucc(n))$, then we are entitled to $f:\prd{n:\lN} B(n)$.
+We expect the induction principle for a HIT to be similar; the only question is what sort of operations on $B$ should be required to correspond to the path-constructors.
 
-The basic notion that is needed here is known as a \emph{path over a path} or \emph{dependent path}.
-Given a type $A$ and a type family $P$ over $A$, for points $a,b:A$ and a path $e:\id[A]{a}{b}$ and points $x:P(a)$ and $y:P(b)$, we need to know what it means to say that ``$x$ and $y$ are related by a path (or ar equality) over $e$''.
-Note that the ordinary identity type cannot be applied to $x$ and $y$, since their types $P(a)$ and $P(b)$ are different.
-The terminology comes from homotopical models, where the type family $P$ corresponds to a \emph{fibration} over $A$ and we really are talking about a path in the total space of that fibration which projects down to the path $e$ in $A$.
-
-We will write $\idover[P]{x}{y}{e}$ for the type of paths from $x$ to $y$ lying over $e$.
-There are various ways to define this type, such as:
-\begin{enumerate}
-\item If we first define the \emph{transport} operation $\transf{e}:P(a) \to P(b)$ (using the eliminator for identity types), then we can define $\idover[P]{x}{y}{e}$ to be $\id[P(b)]{\transf{e}(x)}{y}$.\label{item:idover1}
-\item We could instead use $\id[P(a)]{x}{\transf{(\opp{e})}(y)}$, where $\opp{e}:\id[A]{b}{a}$ is the inverse path of $e$ (i.e.\ $\opp{(\blank)}$ witnesses the symmetry of equality).\label{item:idover2}
-\item We could define $\idover[P]{x}{y}{e}$ as an (ordinary) inductive family, with a single constructor saying that for any $a:A$ and $x:P(a)$ we have $\refl_x : \idover[P]{x}{x}{\refl_a}$.\label{item:idover3}
-\item We could define $\idover[P]{x}{y}{e}$ by using the eliminator for identity types on $e$, with $\idover[P]{x}{y}{\refl_a}$ defined to be $\id[P(a)]{x}{y}$.\label{item:idover4}
-\end{enumerate}
-These definitions all produce \emph{equivalent} types, but are not judgmentally identical.
-In particular, they have different judgmental behavior: for instance, with most of them we have $\idover[P]{x}{y}{\refl_a}$ judgmentally equal to $\id[P(a)]{x}{y}$, but not with~\ref{item:idover3}.
 
 \todo{Some simple specific examples: circle, suspension, torus, $(-1)$-truncation \ldots}
 

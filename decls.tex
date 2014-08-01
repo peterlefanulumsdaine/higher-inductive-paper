@@ -42,6 +42,7 @@
 \usepackage{url}                % for citations to web sites
 \usepackage{xspace}             % put spaces after a \command in text
 %\usepackage{cite}               % compress and sort grouped citations (only use with numbered citations)
+\usepackage{aliascnt,cleveref}
 
 %% If you want to use biblatex, e.g. if a journal requires (Author name YEAR) citations.
 % \usepackage[style=authoryear,
@@ -390,131 +391,6 @@
 \newcommand{\skipit}[1]{\if@skip\else#1\fi}
 \newcommand{\drawfill}[1][]{\my@drawfill{#1}}
 
-%% TODO: This \autoref in TAC doesn't work with figures (and anything
-%% else other than theorems).
-
-%%%% THEOREM-TYPE ENVIRONMENTS, hacked to
-%%% (a) number all with the same numbers, and
-%%% (b) have the right names.
-%% The following code should work in TAC or out of it, and with
-%% hyperref or without it.  In all cases, we use \label to label
-%% things and \autoref to refer to them (ordinary \ref declines to
-%% include names).  The non-hyperref label and reference hack is from
-%% Mike Mandell, I believe.
-\newif\ifhyperref
-\@ifpackageloaded{hyperref}{\hyperreftrue}{\hyperreffalse}
-\iftac
-  %% In the TAC style, all theorems are actually subsections.  So
-  %% the hyperref \autoref doesn't work and we have to use our own code
-  %% in any case.  We also have to hook into the \state macros instead
-  %% of \@thm since those are what know about the current theorem type.
-  \let\your@state\state
-  \def\state#1{\my@state#1}
-  \def\my@state#1.{\gdef\currthmtype{#1}\your@state{#1.}}
-  \let\your@staterm\staterm
-  \def\staterm#1{\my@staterm#1}
-  \def\my@staterm#1.{\gdef\currthmtype{#1}\your@staterm{#1.}}
-  \let\defthm\newtheorem
-  \def\switchtotheoremrm{\let\defthm\newtheoremrm}
-  % Start out \currthmtype as empty
-  \def\currthmtype{}
-  % In a bit, we're going to redefine \label so that \label{athm} will
-  % also make a label "label@name@athm" which is the current value of
-  % \currthmtype.  Now \autoref{athm} just adds a reference to this in
-  % front of the reference.
-  \ifhyperref
-    \def\autoref#1{\ref*{label@name@#1}~\ref{#1}}
-  \else
-    \def\autoref#1{\ref{label@name@#1}~\ref{#1}}
-  \fi
-  % This has to go AFTER the \begin{document} because apparently
-  % hyperref resets the definition of \label at that point.
-  \AtBeginDocument{%
-    % Save the old definition of \label
-    \let\old@label\label%
-    % Redefine \label so that \label{athm} will also make a label
-    % "label@name@athm" which is the current value of \currthmtype.
-    \def\label#1{%
-      {\let\your@currentlabel\@currentlabel%
-        \edef\@currentlabel{\currthmtype}%
-        \old@label{label@name@#1}}%
-      \old@label{#1}}
-  }
-\else
-  % In non-TAC styles, theorems have their own counters and so the
-  % hyperref \autoref works, if hyperref is loaded.
-  \ifhyperref
-    %% If we have hyperref, then we have to make sure all the theorem
-    %% types appear to use different counters so that hyperref can tell
-    %% them apart.  However, we want them actually to use the same
-    %% counter, so we don't have both Theorem 9.1 and Definition 9.1.
-    \def\defthm#1#2{%
-      %% All types of theorems are number inside sections
-      \newtheorem{#1}{#2}[section]%
-      %% This command tells hyperref's \autoref what to call things
-      \expandafter\def\csname #1autorefname\endcsname{#2}%
-      %% This makes all the theorem counters actually the same counter
-      \expandafter\let\csname c@#1\endcsname\c@thm}
-  \else
-    %% Without hyperref, we have to roll our own.  This code is due to
-    %% Mike Mandell.  First, all theorems can now "officially" use the
-    %% same counter.
-    \def\defthm#1#2{\newtheorem{#1}[thm]{#2}}
-    %% Save the label- and theorem-making commands
-    \ifx\SK@label\undefined\let\SK@label\label\fi
-    \let\old@label\label
-    \let\your@thm\@thm
-    %% Save the current type of theorem whenever we start one
-    \def\@thm#1#2#3{\gdef\currthmtype{#3}\your@thm{#1}{#2}{#3}}
-    %% Start that out as empty
-    \def\currthmtype{}
-    %% Redefine \label so that \label{athm} defines, in addition to a
-    %% label "athm" pointing to "9.1," a label "athm@" pointing to
-    %% "Theorem 9.1."
-    \def\label#1{{\let\your@currentlabel\@currentlabel\def\@currentlabel%
-        {\currthmtype~\your@currentlabel}%
-        \SK@label{#1@}}\old@label{#1}}
-    %% Now \autoref just looks at "athm@" instead of "athm."
-    \def\autoref#1{\ref{#1@}}
-  \fi
-\fi
-
-%% Now the code that works in all cases.  Note that TAC allows the
-%% optional arguments, but ignores them.  It also defines environments
-%% called "theorem," etc.
-\newtheorem{thm}{Theorem}[section]
-\newcommand{\thmautorefname}{Theorem}
-\defthm{cor}{Corollary}
-\defthm{prop}{Proposition}
-\defthm{lem}{Lemma}
-\defthm{sch}{Scholium}
-\defthm{assume}{Assumption}
-\defthm{claim}{Claim}
-\defthm{conj}{Conjecture}
-\defthm{hyp}{Hypothesis}
-\iftac\switchtotheoremrm\else\theoremstyle{definition}\fi
-\defthm{defn}{Definition}
-\defthm{notn}{Notation}
-\iftac\switchtotheoremrm\else\theoremstyle{remark}\fi
-\defthm{rmk}{Remark}
-\defthm{eg}{Example}
-\defthm{egs}{Examples}
-\defthm{ex}{Exercise}
-\defthm{ceg}{Counterexample}
-
-% \qedhere for TAC
-\iftac
-  \let\your@endproof\endproof
-  \def\my@endproof{\your@endproof}
-  \def\endproof{\my@endproof\gdef\my@endproof{\your@endproof}}
-  \def\qedhere{\tag*{\endproofbox}\gdef\my@endproof{\relax}}
-\fi
-
-% Make the optional arguments to TAC's \proof behave like everyone else's
-\iftac
-  \def\pr@@f[#1]{\subsubsection*{\sc #1.}}
-\fi
-
 % How to get QED symbols inside equations at the end of the statements
 % of theorems.  AMS LaTeX knows how to do this inside equations at the
 % end of *proofs* with \qedhere, and at the end of the statement of a
@@ -533,14 +409,6 @@
   \setitemize[1]{leftmargin=2em}
   \setenumerate[1]{leftmargin=*}
 \fi
-
-% Also number formulas with the theorem counter
-\iftac
-  \let\c@equation\c@subsection
-\else
-  \let\c@equation\c@thm
-\fi
-\numberwithin{equation}{section}
 
 % Only show numbers for equations that are actually referenced (or
 % whose tags are specified manually) - uses mathtools.  All equations
