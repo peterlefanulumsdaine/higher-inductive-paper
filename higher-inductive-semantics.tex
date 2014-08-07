@@ -119,7 +119,7 @@ With ordinary inductive types we can construct coproducts (sum types) and an ini
 With HITs, however, these are easy to do.
 
 The real power of HITs starts to show itself when we introduce path-constructors with recursive inputs, analogous to recursive point-constructors like \fsucc for the natural numbers.
-The first such example is the \textbf{squash} or \textbf{bracket type}~\cite{ab:bracket-types} of a type $A$, which is intended to be a type $\brck{A}$ that contains at most one element, and does so exactly if $A$ has an element.
+The first such example is the \textbf{squash}~\cite{nuprlbook} or \textbf{bracket type}~\cite{ab:bracket-types} of a type $A$, which is intended to be a type $\brck{A}$ that contains at most one element, and does so exactly if $A$ has an element.
 We can define this as a HIT with one point-constructor that takes as input an element of $A$, and one path-constructor which gives for any two elements $x$ and $y$ \emph{of $\brck{A}$ itself}, a path from $x$ to $y$.
 The point-constructor ensures that if $A$ is inhabited then so is $\brck{A}$, while the path-constructor ensures that $\brck{A}$ has no more than one element.%
 \footnote{In homotopy type theory, the question is a little more subtle: in addition to ensuring that any two elements of $\brck{A}$ are related by a path, we would want to ensure that any two \emph{paths} are related by a 2-dimensional path, and so on.
