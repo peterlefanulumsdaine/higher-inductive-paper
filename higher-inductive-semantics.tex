@@ -252,10 +252,10 @@ Note that the ordinary identity type cannot be applied to $u$ and $v$, since the
 There are various ways to define this type, such as:
 \begin{enumerate}
 \item If we first define the \emph{transport} operation $\transf{e}:B(x) \to B(y)$ (using the eliminator for identity types), then we can define $\idover[B]{u}{v}{e}$ to be $\id[B(y)]{\transf{e}(u)}{v}$.
-  This is the definition used by~\cite{hottbook} and the homotopy type theory Coq library.\label{item:idover1}
+  This is the definition used by~\cite{hottbook} and~\cite{hottcoq}.\label{item:idover1}
 \item We could instead use $\id[B(x)]{u}{\transf{(\opp{e})}(v)}$, where $\opp{e}:\id[A]{y}{x}$ is the inverse path of $e$ (i.e.\ $\opp{(\blank)}$ witnesses the symmetry of equality).\label{item:idover2}
 \item We could define $\idover[B]{u}{v}{e}$ by using the eliminator for identity types on $e$, with $\idover[B]{u}{v}{\refl_x}$ defined to be $\id[B(x)]{u}{v}$.
-  This is the definition used by the homotopy type theory Agda library.\label{item:idover3}
+  This is the definition used by~\cite{hottagda}.\label{item:idover3}
 \item We could define $\idover[B]{u}{v}{e}$ as an (ordinary) inductive family, with a single constructor saying that for any $x:A$ and $u:B(x)$ we have $\refl_u : \idover[B]{u}{u}{\refl_x}$.\label{item:idover4}
 \end{enumerate}
 These definitions all produce \emph{equivalent} types, but are not judgmentally identical.
@@ -266,18 +266,18 @@ We will use definition~\ref{item:idover4} because it is more convenient in our m
 }
 We will also eventually need to use higher ``path-over-a-path-over-a-path'' types and so on, which we define analogously.
 
-Finally, we include in our type theory a new primitive called \ap (for ``Action on Paths'' or ``APplication to a path''), with the following rules:
-\[\inferrule{f:\tprd{x:A} B(x) \\ x:A \\ y:A}{\ap_f : \tprd{e:\id[A]xy} \idover[B]{f(x)}{f(y)}{e}}
+Finally, we include in our type theory a new primitive called \fap (for ``Action on Paths'' or ``APplication to a path''), with the following rules:
+\[\inferrule{f:\tprd{x:A} B(x) \\ x:A \\ y:A}{\ap f : \tprd{e:\id[A]xy} \idover[B]{f(x)}{f(y)}{e}}
 \qquad
-\inferrule{f:\tprd{x:A} B(x) \\ x:A}{\ap_f(\refl_x) \jdeq \refl_{f(x)}}
+\inferrule{f:\tprd{x:A} B(x) \\ x:A}{\ap f(\refl_x) \jdeq \refl_{f(x)}}
 \]
 It is, of course, possible to \emph{define} such an operation by identity elimination.
-This defined operation, which we denote $\ap'$, plays an essential role in homotopy type theory, as developed in~\cite{hottbook} and elsewhere.
-However, all of its occurrences could be replaced by a primitive $\ap$ without any real change, as long as the above two rules are satisfied.
-Moreover, the shared computation rules $\ap_f(\refl_x) \jdeq \refl_{f(x)}$ and $\ap'_f(\refl_x) \jdeq \refl_{f(x)}$ imply that we always have an inhabitant of $\prd{e:\id[A]xy} \id{\ap_f(e)}{\ap'_f(e)}$, i.e.\ $\ap$ and $\ap'$ are propositionally equal.
+This defined operation, which we denote $\fap'$, plays an essential role in homotopy type theory, as developed in~\cite{hottbook} and elsewhere.
+However, all of its occurrences could be replaced by a primitive $\fap$ without any real change, as long as the above two rules are satisfied.
+Moreover, the shared computation rules $\ap f(\refl_x) \jdeq \refl_{f(x)}$ and $\app f(\refl_x) \jdeq \refl_{f(x)}$ imply that we always have an inhabitant of $\prd{e:\id[A]xy} \id{\ap f(e)}{\app f(e)}$, i.e.\ $\fap$ and $\fapp$ are propositionally equal.
 
-The reasons for introducing the primitive $\ap$ are that (1) in our models, there is a ``naturally occurring'' operation satisfying the above rules which is not necessarily (judgmentally) identical to the defined $\ap'$, and (2) the rules for HITs take on a simpler form when expressed in terms of the naturally occurring $\ap$ --- specifically, their computation rules are judgmental.
-In principle, however, it is always possible to re-express these rules in terms of $\ap'$ by inserting propositional equalities, obtaining a somewhat less convenient set of rules for HITs that we can model without the need for $\ap$.
+The reasons for introducing the primitive $\fap$ are that (1) in our models, there is a ``naturally occurring'' operation satisfying the above rules which is not necessarily (judgmentally) identical to the defined $\fapp$, and (2) the rules for HITs take on a simpler form when expressed in terms of the naturally occurring $\fap$ --- specifically, their computation rules are judgmental.
+In principle, however, it is always possible to re-express these rules in terms of $\fapp$ by inserting propositional equalities, obtaining a somewhat less convenient set of rules for HITs that we can model without the need for $\fap$.
 We will explain this in the simpler cases, although it gets unbearably tedious for higher paths.
 
 
@@ -330,15 +330,24 @@ The meaning of this, and its importance, will be explained later.
 
 So much for how to \emph{specify} a HIT; how does such a type \emph{behave}?
 In general, every type forming operation in type theory comes with \emph{formation}, \emph{introduction}, \emph{elimination}, and \emph{computation} rules.
-The above specifications of HITs give us the \textbf{formation} rules easily; in these simple cases, the formation rule is just ``such-and-such type exists''.
-Formation rules become a bit more complicated if we allow parameters and indices --- for instance, the type $A$ in $\brck{A}$ is best treated as a parameter, so that rather than just one HIT we have a different HIT $\brck{A}$ for each type $A$ --- but no new ideas are introduced here by HITs as compared with ordinary inductive types.
+The above specifications of HITs give us the \textbf{formation} rules easily; in these simple cases, the formation rule is just ``such-and-such type exists'', e.g.
+\[ \inferrule{ }{\circtype\type} \]
+Formation rules become slighty more complicated when we allow parameters and indices.
+For instance, the type $A$ in $\brck{A}$ is best treated as a parameter:
+\indef{\brck{\blank} \; (A \type)}{
+  \fproj : A \to \brck{A} \OR
+  \fsquash : \prd{x,y:\brck{A}} \id[\brck{A}]{x}{y}
+}
+so that the formation rule becomes
+\[ \inferrule{A\type}{\brck{A}\type} \]
+However, no new ideas are introduced here by HITs as compared with ordinary inductive types.
 
 The \textbf{introduction rules} for a HIT are also easy: they are just the specified constructors.
 For instance, the introduction rules for $\circtype$ say that we have $\fbase:\circtype$ and also $\floop : \id[\circtype]\fbase\fbase$.
 It is essential
 \msnote{Do we need to say more about why this makes sense?}%
 that we regard $\floop$ as an introduction rule for $\circtype$ itself, rather than for $\id[\circtype]\fbase\fbase$, even though it is actually an element of the latter type; this will become clear when we discuss the elimination and computation rules.
-Indeed, the type family $\id[\circtype]{x}{y}$ already has its \emph{own} introduction rule, namely $\refl: \prd{x:\circtype} \id[\circtype]{x}{x}$.
+Indeed, the type family $\id[\circtype]{\blank}{\blank}$ already has its \emph{own} introduction rule, namely $\refl: \prd{x:\circtype} \id[\circtype]{x}{x}$.
 
 It is when we get to the \textbf{elimination rules} that things get interesting.
 Elimination for ordinary inductive types can be specified either with an \emph{induction principle} or with \emph{pattern matching}.
@@ -347,7 +356,7 @@ It is not yet clear what a general formulation of pattern matching for HITs woul
 Thus, in this paper we will concentrate on induction principles.
 
 For an ordinary inductive type $W$, the induction principle says that for any type family $B$ over $W$, if we have operations on $B$ that correspond to, and ``live over'', each constructor of $W$, then we can define a function $f:\prd{x:W}B(x)$.
-For instance, the induction principle for \lN says that if we have a type family $B$ over \lN equipped with $f_\fzero : B(\fzero)$ and $f_\fsucc : \prd{n:\lN} B(n) \to B(\fsucc(n))$, then we are entitled to $f:\prd{n:\lN} B(n)$.
+For instance, the induction principle for \lN says that if we have a type family $B$ over \lN equipped with $f_\fzero : B(\fzero)$ and $f_\fsucc : \prd{n:\lN} B(n) \to B(\fsucc(n))$, then we are entitled to a function $\ind{\lN}(f_\fzero,f_\fsucc):\prd{n:\lN} B(n)$.
 We expect the induction principle for a HIT to be similar; the only question is what sort of operations on $B$ should be required to correspond to the path-constructors.
 This is the role of the \emph{dependent path} type introduced in \cref{sec:type-theory}.
 
@@ -360,11 +369,11 @@ Consider, for example, the interval:
 We expect the premises of its induction principle to include $f_\fzero : B(\fzero)$ and $f_\fone : B(\fone)$; but then corresponding to \fseg, we would expect some sort of path relating $f_\fzero$ to $f_\fone$.
 We cannot even form a type ``$\id{f_\fzero}{f_\fone}$'' since $f_\fzero$ to $f_\fone$ have different types, but we \emph{can} ask for a dependent path $f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}$.
 Thus, the entire elimination rule for $I$ is
-\[\inferrule{\jd{x:I |- B(x) \type} \\ f_\fzero : B(\fzero) \\ f_\fone : B(\fone) \\ f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}}{\jd{x:I |- f(x) : B(x)}} \]
+\[\inferrule{\jd{x:I |- B(x) \type} \\ f_\fzero : B(\fzero) \\ f_\fone : B(\fone) \\ f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}}{\jd{x:I |- \ind{I}(f_\fzero,f_\fone,f_\fseg,x) : B(x)}} \]
 
 The general principle is thus that path-constructors in a HIT correspond to dependent path premises in its induction principle.
 For instance, the circle $\circtype$ has the following elimination rule:
-\[\inferrule{\jd{x:\circtype |- B(x) \type} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\jd{x:\circtype |- f(x) : B(x)}} \]
+\[\inferrule{\jd{x:\circtype |- B(x) \type} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\jd{x:\circtype |- \ind{\circtype}(f_\fbase,f_\floop,x) : B(x)}} \]
 Note that in this case it would be possible to \emph{write} the non-dependent path type ``$\id[B(\fbase)]{f_\fbase}{f_\fbase}$'', but that this is \emph{not} the correct type for $f_\floop$.
 
 Path-constructors with nontrivial domain are handled in the expected way, by dependent functions outputting dependent paths.
@@ -376,24 +385,121 @@ For instance, the \textbf{suspension} of a type $A$ is defined by
 }
 Its induction principle is
 \[\inferrule{\jd{x:\susp A |- B(x) \type} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
-{\jd{x:\susp A |- f(x):B(x)}} \]
+{\jd{x:\susp A |- \ind{\susp A}(f_\fnorth,f_\fsouth,f_\fmerid,x):B(x)}} \]
 Similarly, path-constructors with recursive inputs correspond to inductive premises that take inputs from the induction motive.
 For instance, the induction principle for the $(-1)$-truncation $\brck{A}$ is
 \[\inferrule{\jd{x:\brck A |- B(x) \type} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
-{\jd{x:\brck A |- f(x) : B(x)}}
+{\jd{x:\brck A |- \ind{\brck A}(f_\fproj,f_\fsquash,x) : B(x)}}
 \]
 This should be compared with the familiar induction principle for the natural numbers:
 \[ \inferrule{\jd{x:\lN |- B(x) \type} \\ f_\fzero : B(\fzero) \\ f_\fsucc : \tprd{x:\lN}{u:B(x)} B(\fsucc(x))}
-{\jd{x:\lN |- f(x) : B(x)}}
+{\jd{x:\lN |- \ind{\lN}(f_\fzero,f_\fsucc,x) : B(x)}}
 \]
 In both cases, each recursive argument to a constructor ($\fsucc$ or $\fsquash$) bifurcates into two arguments to the corresponding induction premise, one from the inductive type being defined and one from the induction motive.
 
+Finally, the \textbf{computation rules} say that when we construct a function by induction, and apply it to a constructor, we compute to the arguments of the induction.
+For instance, for the natural numbers, we have
+\begin{align}
+  \ind{\lN}(f_\fzero,f_\fsucc,\fzero) &\jdeq f_\fzero\\
+  \ind{\lN}(f_\fzero,f_\fsucc,\fsucc(n)) &\jdeq f_\fsucc(n,\ind{\lN}(f_\fzero,f_\fsucc,n)) 
+\end{align}
+The only difference with HITs is that in order to ``apply'' a function to a path-constructor, we need to use the operation \fap.
+For instance, the computation rules for the interval $I$ are
+\begin{align}
+  \ind{I}(f_\fzero,f_\fone,f_\fseg,\fzero) &\jdeq f_\fzero\\
+  \ind{I}(f_\fzero,f_\fone,f_\fseg,\fone) &\jdeq f_\fone\\
+  \ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) &\jdeq f_\fseg
+\end{align}
+and the computation rules for the circle $\circtype$ are
+\begin{align}
+  \ind{\circtype}(f_\fbase,f_\floop,\fbase) &\jdeq f_\fbase\\
+  \ap{\ind{\circtype}(f_\fbase,f_\floop)}(\floop) &\jdeq f_\floop.
+\end{align}
+As for ordinary inductive types, in the computation rules for path-constructors with recursive inputs, the right-hand side involves a recursive call to the function defined by induction.
+For instance, the computation rules for $\brck{A}$ are
+\begin{align}
+  \ind{\brck A}(f_\fproj,f_\fsquash,\fproj(a)) &\jdeq f_\fproj(a)\\
+  \ap{\ind{\brck A}(f_\fproj,f_\fsquash)}(\fsquash(x,y)) &\jdeq f_\fsquash(x,y,\ind{\brck A}(f_\fproj,f_\fsquash,x),\ind{\brck A}(f_\fproj,f_\fsquash,y)).
+\end{align}
 
-\todo{Some simple specific examples: circle, suspension, torus, $(-1)$-truncation \ldots}
+Some additional comments are in order.
+Firstly, it is important that the $\fap$ appearing in the computation rules is the primitive operation introduced in \cref{sec:type-theory}.
+Since we have a propositional equality $\prd{e:\id[A]xy} \id{\ap f(e)}{\app f(e)}$, the judgmental computation rules for $\fap$ can be transferred into \emph{propositional} computation rules for $\fapp$, e.g.\ for the circle we have an inhabitant of
+\[ \fcomp_\floop: \id{\app{\ind{\circtype}(f_\fbase,f_\floop)}(\floop)}{f_\floop}. \]
 
-\todo{Possible variations, esp.\ judgementality of computation rules}
+Most work with HITs so far has used propositional computation rules of this form for path-constructors (with the defined $\fapp$).
+One reason for this is that if we want to use the defined $\fapp$ (since a primitive $\fap$ is not available in existing proof assistants), then such propositional rules are all we can get out of our semantics in general.
+Another, perhaps more compelling, reason is while that existing proof assistants do not implement HITs natively, there is a hack using ``private types'' due to Licata which enables them to be mimicked, but only with propositional computation rules for path-constructors.
+
+Judgmental computation rules for \emph{point}-constructors are unproblematic from any perspective: they don't require choosing between $\fap$ and $\fapp$, they do hold in the semantics, and they can be implemented in proof assistants using the private-types hack.
+
+Secondly, note that the (judgmental!) computation rules for point-constructors are necessary in order for the computation rules for path-constructors to be well-typed.
+For example, by definition we have
+\begin{align}
+  \ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) &:
+  \idover{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fzero)}{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fone)}{\fseg}\\
+  f_\fseg &: \idover{f_\fzero}{f_\fone}{\fseg}.
+\end{align}
+Only the computation rules for $\fzero$ and $\fone$ ensure that these two types coincide, so that it makes sense to ask whether $\ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg)$ and $f_\fseg$ are equal.
+If we had only propositional computation rules such as
+\begin{align}
+  \fcomp_\fzero &: \id{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fzero)}{f_\fzero}\\
+  \fcomp_\fone &: \id{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fone)}{f_\fone}
+\end{align}
+then in order for the computation rule of \fseg to make sense, we would need to transport along (or, equivalently, compose with) these paths; thus we could at best ask for
+\[ \fcomp_\fseg :
+\id{\opp{\fcomp_\fzero}\ct \ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) \ct \fcomp_\fone}{f_\fseg}
+\]
+Such modifications quickly become quite tedious, so it is fortunate that judgmental computation rules for point-constructors are unproblematic.
+However, when considering \emph{higher} path-constructors---or more generally, path-constructors whose source and target refer to previous path-constructors---if we are restricted to propositional computation rules for lower path-constructors, then there is no escape.
+
+Thirdly, the elimination and computation rules are where the requirement of \emph{naturality} that we briefly mentioned before comes in.
+Consider the torus type $\torustype$, whose induction principle looks like this:
+\[ \inferrule{\jd{x:\torustype |- B(x)\type}\\f_\fbase : B(\fbase) \\
+  f_{\fmerid_1} : \idover[B]{f_\fbase}{f_\fbase}{\fmerid_1} \\
+  f_{\fmerid_2} : \idover[B]{f_\fbase}{f_\fbase}{\fmerid_2} \\
+  f_\fsurf : \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{f_{\fmerid_1} \ct f_{\fmerid_2}}{f_{\fmerid_2} \ct f_{\fmerid_1}}{\fsurf}}
+{\jd{x:\torustype |- \ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf,x):B(x)}}
+\]
+Note the type of $f_\fsurf$.
+It is a dependent path relative to the type family
+\[\jd{p:\id[\torustype]{\fbase}{\fbase} |- {\idover[B]{f_\fbase}{f_\fbase}{p}}\type}\]
+between
+\begin{align}
+  {f_{\fmerid_1} \ct f_{\fmerid_2}} &: \idover[B]{f_\fbase}{f_\fbase}{\fmerid_1\ct\fmerid_2} \qquad\text{and}\\
+  {f_{\fmerid_2} \ct f_{\fmerid_1}} &: \idover[B]{f_\fbase}{f_\fbase}{\fmerid_2\ct\fmerid_1}
+\end{align}
+that lies over
+\[\fsurf : \id[\torustype]{\fmerid_1\ct\fmerid_2}{\fmerid_2\ct\fmerid_1}.\]
+But what does ``${f_{\fmerid_1} \ct f_{\fmerid_2}}$'' mean?
+We need a way to ``compose'' dependent paths $q_1: \idover[B]x y {p_1}$ and $q_2:\idover[B]yz{p_2}$ to get a path $q_1\ct q_2 : \idover[B]{x}{z}{p_1\ct p_2}$.
+Such an operation is easy to define (with any definition of dependent paths), but this ``liftability to families'' is a special property of path-concatenation.
+For this reason, we cannot allow just any term to appear as the source or target of a path-constructor; a specific example is given in~\cite[Example 6.13.1]{hottbook} of an attempted ``higher inductive type'' for which it seems impossible to write down an induction principle.
+
+The computation rules for $\torustype$ also involve special properties of path-concatenation, and also some apparently unavoidable propositional equalities.
+As in the previous cases, we have
+\begin{align}
+  \ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf,\fbase) &\jdeq f_\fbase\\
+  \ap{\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)}(\fmerid_1) &\jdeq f_{\fmerid_1}\\
+  \ap{\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)}(\fmerid_2) &\jdeq f_{\fmerid_2}
+\end{align}
+but what about \fsurf?
+Writing $f$ for $\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)$, we have
+\begin{align}
+  \ap{\ap{f}}(\fsurf)
+  &: \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{\ap{f}(\fmerid_1 \ct \fmerid_2)}{\ap{f}(\fmerid_2 \ct \fmerid_1)}{\fsurf}\\
+  f_\fsurf &: \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{f_{\fmerid_1} \ct f_{\fmerid_2}}{f_{\fmerid_2} \ct f_{\fmerid_1}}{\fsurf}
+\end{align}
+However, while we have $\ap{f} (\fmerid_1) \jdeq f_{\fmerid_1}$ and $\ap{f} (\fmerid_2) \jdeq f_{\fmerid_2}$ by the previous computation rules, we do not have ${\ap{f}(\fmerid_1 \ct \fmerid_2)}$ judgmentally equal to $\ap{f} (\fmerid_1) \ct \ap{f} (\fmerid_2)$.
+The most we can say is that there is a \emph{propositional} equality
+\[ \fap_{\ct} : \id[{\idover[B]{f_\fbase}{f_\fbase}{\fmerid_1 \ct \fmerid_2}}]{\ap{f}(\fmerid_1 \ct \fmerid_2)}{\ap{f} (\fmerid_1) \ct \ap{f} (\fmerid_2)}. \]
+Thus, the best we can do is an equality such as
+\[ \opp{\fap_{\ct}} \ct \ap{\ap{f}}(\fsurf) \ct \fap_{\ct} \jdeq f_\fsurf. \]
+It's hard to make sense of this as a judgmental equality, though\dots
+\msnote{Oops, have to go.  To do: pseudo naturality, fibrancy.}
 
 \todo{Define higher $W$-types, and conjecture their general expressivity}
+\msnote{Where does hub and spoke go?}
 
 \section{Semantics of HoTT}
 \label{sec:hott-semantics}
