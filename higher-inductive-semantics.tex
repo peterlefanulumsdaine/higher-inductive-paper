@@ -287,6 +287,9 @@ We will explain this in the simpler cases, although it gets unbearably tedious f
 In this section we will describe the type-theoretic rules for higher inductive types, so that we know what we want to model in the semantics.
 We will begin with simple specific examples and work up to fairly general ones (although, as we have said, a fully general specification of what should count as ``a higher inductive type'' is not yet known).
 
+\subsection{Specification of HITs}
+\label{sec:specification}
+
 As mentioned in \cref{sec:hit-egs}, a higher inductive type is specified like an ordinary inductive type, except that in addition to \emph{point-constructors} whose ouput is an \emph{element} of the type being defined, we allow \emph{path-constructors} whose output is a \emph{path} (i.e.\ an equality) in that type.
 We extend the syntax for describing inductive types from \cref{sec:type-theory} to include such path-constructors.
 For instance, the higher inductive circle $\circtype$ can be written as
@@ -327,6 +330,9 @@ There is an additional technical restriction on the terms ocurring in the codoma
 The meaning of this, and its importance, will be explained later.
 \msnote{Say something more here once we decide how to deal with fibrancy?}%
 (In fact, as we will see, this is one area where our current methods are not completely satisfactory.)
+
+\subsection{Rules for HITs}
+\label{sec:rules}
 
 So much for how to \emph{specify} a HIT; how does such a type \emph{behave}?
 In general, every type forming operation in type theory comes with \emph{formation}, \emph{introduction}, \emph{elimination}, and \emph{computation} rules.
@@ -423,7 +429,11 @@ For instance, the computation rules for $\brck{A}$ are
 \end{align}
 
 Some additional comments are in order.
-Firstly, it is important that the $\fap$ appearing in the computation rules is the primitive operation introduced in \cref{sec:type-theory}.
+
+\subsection{Judgmental vs propositional computation rules}
+\label{sec:comprules}
+
+It is important that the $\fap$ appearing in the computation rules is the primitive operation introduced in \cref{sec:type-theory}.
 Since we have a propositional equality $\prd{e:\id[A]xy} \id{\ap f(e)}{\app f(e)}$, the judgmental computation rules for $\fap$ can be transferred into \emph{propositional} computation rules for $\fapp$, e.g.\ for the circle we have an inhabitant of
 \[ \fcomp_\floop: \id{\app{\ind{\circtype}(f_\fbase,f_\floop)}(\floop)}{f_\floop}. \]
 
@@ -433,7 +443,7 @@ Another, perhaps more compelling, reason is while that existing proof assistants
 
 Judgmental computation rules for \emph{point}-constructors are unproblematic from any perspective: they don't require choosing between $\fap$ and $\fapp$, they do hold in the semantics, and they can be implemented in proof assistants using the private-types hack.
 
-Secondly, note that the (judgmental!) computation rules for point-constructors are necessary in order for the computation rules for path-constructors to be well-typed.
+Note also that the (judgmental!) computation rules for point-constructors are necessary in order for the computation rules for path-constructors to be well-typed.
 For example, by definition we have
 \begin{align}
   \ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) &:
@@ -451,9 +461,14 @@ then in order for the computation rule of \fseg to make sense, we would need to 
 \id{\opp{\fcomp_\fzero}\ct \ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) \ct \fcomp_\fone}{f_\fseg}
 \]
 Such modifications quickly become quite tedious, so it is fortunate that judgmental computation rules for point-constructors are unproblematic.
-However, when considering \emph{higher} path-constructors---or more generally, path-constructors whose source and target refer to previous path-constructors---if we are restricted to propositional computation rules for lower path-constructors, then there is no escape.
+However, when considering \emph{higher} path-constructors---or more generally, path-constructors whose source and target refer to previous path-constructors---if we are restricted to propositional computation rules for the previous path-constructors, then there is no escape.
+We will mostly avoid this issue in this paper by using the primitive \fap and judgmental computation rules.
+\msnote{How much do we want to say about translating along $\fap\sim\fapp$ to get propositional computation rules?}
 
-Thirdly, the elimination and computation rules are where the requirement of \emph{naturality} that we briefly mentioned before comes in.
+\subsection{Naturality}
+\label{sec:naturality}
+
+When we move on to higher-dimensional HITs, the elimination and computation rules start to involve the requirement of \emph{naturality} that we briefly mentioned before.
 Consider the torus type $\torustype$, whose induction principle looks like this:
 \[ \inferrule{\jd{x:\torustype |- B(x)\type}\\f_\fbase : B(\fbase) \\
   f_{\fmerid_1} : \idover[B]{f_\fbase}{f_\fbase}{\fmerid_1} \\
@@ -474,7 +489,10 @@ that lies over
 But what does ``${f_{\fmerid_1} \ct f_{\fmerid_2}}$'' mean?
 We need a way to ``compose'' dependent paths $q_1: \idover[B]x y {p_1}$ and $q_2:\idover[B]yz{p_2}$ to get a path $q_1\ct q_2 : \idover[B]{x}{z}{p_1\ct p_2}$.
 Such an operation is easy to define (with any definition of dependent paths), but this ``liftability to families'' is a special property of path-concatenation.
+As we will see when we construct semantics, it is a sort of \emph{naturality}.
+
 For this reason, we cannot allow just any term to appear as the source or target of a path-constructor; a specific example is given in~\cite[Example 6.13.1]{hottbook} of an attempted ``higher inductive type'' for which it seems impossible to write down an induction principle.
+Unfortunately, we do not yet know a \emph{syntactic} criterion on such terms which ensures the requisite naturality and includes all desired examples.
 
 The computation rules for $\torustype$ also involve special properties of path-concatenation, and also some apparently unavoidable propositional equalities.
 As in the previous cases, we have
@@ -493,12 +511,35 @@ Writing $f$ for $\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)
 However, while we have $\ap{f} (\fmerid_1) \jdeq f_{\fmerid_1}$ and $\ap{f} (\fmerid_2) \jdeq f_{\fmerid_2}$ by the previous computation rules, we do not have ${\ap{f}(\fmerid_1 \ct \fmerid_2)}$ judgmentally equal to $\ap{f} (\fmerid_1) \ct \ap{f} (\fmerid_2)$.
 The most we can say is that there is a \emph{propositional} equality
 \[ \fap_{\ct} : \id[{\idover[B]{f_\fbase}{f_\fbase}{\fmerid_1 \ct \fmerid_2}}]{\ap{f}(\fmerid_1 \ct \fmerid_2)}{\ap{f} (\fmerid_1) \ct \ap{f} (\fmerid_2)}. \]
-Thus, the best we can do is an equality such as
-\[ \opp{\fap_{\ct}} \ct \ap{\ap{f}}(\fsurf) \ct \fap_{\ct} \jdeq f_\fsurf. \]
-It's hard to make sense of this as a judgmental equality, though\dots
-\msnote{Oops, have to go.  To do: pseudo naturality, fibrancy.}
+(This equality is another expression of the \emph{naturality} of path-concatenation, but this time it is only a \emph{propositional} or \emph{pseudo} naturality.)
+Thus, the best we can do for a computation rule for $\fsurf$ is an equality
+\begin{equation}
+  \fcomp_{\fsurf}: \id{\opp{\fap_{\ct}} \ct \ap{\ap{f}}(\fsurf) \ct \fap_{\ct}}
+  {f_\fsurf}.\label{eq:fsurf-comp}
+\end{equation}
+It doesn't make sense to ask for this as a \emph{judgmental} equality, even though the computation rules for $\fmerid_1$ and $\fmerid_2$ are judgmental, because the equality $\fap_{\ct}$ is defined using the elimination principle for identity types and we have little control over its judgmental behavior.
+In particular, the equality~\eqref{eq:fsurf-comp} will not generally hold judgmentally in our semantics.
 
-\todo{Define higher $W$-types, and conjecture their general expressivity}
+By analogy with our introduction of the primitive \fap, one way to avoid this issue would be to assert that the primitive \fap preserves concatenation judgmentally, i.e.\ that we have $\ap{f}(p\ct q) \jdeq \ap{f}(p) \ct \ap{f}(q)$.
+Unfortunately, this is not true in most known semantics (with the \mswarning*{Make sure that's true}{notable exception} of the 1-groupoid model~\cite{hs:gpd-typethy}).
+
+In our construction of semantics, we will see that there turns out to be a sort of partially defined ``primitive path-concatenation'' that is propositionally equal to the usual one, and which is preserved judgmentally by the primitive $\ap{f}$ \emph{when $f$ is defined by induction} (but not for all $f$).
+This will be what enables us to construct the \emph{propositional} equality~\eqref{eq:fsurf-comp}, just as the judgmental rules for primitive \fap enable the deduction of propositional rules for the defined \fapp.
+However, this more complicated structure is tricky and probably unhelpful to represent syntactically.
+
+In short, although our method of constructing semantics works in simple cases, and ought to work in all cases in principle, the resulting rules for more complicated and higher-dimensional HITs contain proliferating propositional equalities that are tedious and difficult to write down and work with.
+We do not yet have a satisfactory solution to this problem; which is not hugely surprising as it is closely related to the coherence problem for weak $\infty$-categories.
+
+\subsection{Higher $W$-types}
+\label{sec:higher-w}
+
+We end this section by presenting a general class of HITs which we call \textbf{higher $W$-types}.
+Ordinary $W$-types are a sort of parametrized inductive type that are ``universal'', in that all inductive types can be constructed out of $W$-types (and a few other basic type formers such as coproducts and $\Sigma$-types).
+We conjecture that higher $W$-types, or something like them, have an analogous property for HITs, but this is unproven; they do certainly include very many examples.
+
+\todo{Define higher $W$-types.}
+\msnote{Can you do this?  You've thought about them more than I have.}
+
 \msnote{Where does hub and spoke go?}
 
 \section{Semantics of HoTT}
