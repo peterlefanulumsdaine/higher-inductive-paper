@@ -224,7 +224,9 @@ For instance, we can define the dependent-pair-type operation with $A$ and $B$ a
   \fpair : \prd{x:A} B(x) \to \sm{x:A} B(x)
 }
 This means that each type $\sm{x:A} B(x)$ has its own induction principle, even though we have defined all of them together at once.
-Note that although we have no universes, we allow types and type families to appear as parameters in an inductive definition; this is justified by the coherence theorem of~\cite{lw:localuniv}.
+Note that although we have no universes, we allow types and type families to appear as parameters
+\msnote{There may be an issue here with universe sizes if there are universes.}
+ in an inductive definition; this is justified by the coherence theorem of~\cite{lw:localuniv}.
 \msnote{Is there a way to specify syntactically what sorts of ``type family parameters'' are allowed?}
 
 Having an \emph{index} means that we define a family of types by induction together, so that rather than each member of the family having an induction principle, the family as a whole has one induction principle.
@@ -256,7 +258,8 @@ There are various ways to define this type, such as:
 \item We could instead use $\id[B(x)]{u}{\transf{(\opp{e})}(v)}$, where $\opp{e}:\id[A]{y}{x}$ is the inverse path of $e$ (i.e.\ $\opp{(\blank)}$ witnesses the symmetry of equality).\label{item:idover2}
 \item We could define $\idover[B]{u}{v}{e}$ by using the eliminator for identity types on $e$, with $\idover[B]{u}{v}{\refl_x}$ defined to be $\id[B(x)]{u}{v}$.
   This is the definition used by the homotopy type theory Agda library.\label{item:idover3}
-\item We could define $\idover[B]{u}{v}{e}$ as an (ordinary) inductive family, with a single constructor saying that for any $x:A$ and $u:B(x)$ we have $\refl_u : \idover[B]{u}{u}{\refl_x}$.\label{item:idover4}
+\item \msnote{Is this what Dan and Guillaume used in the cubical proof of the torus?}
+  We could define $\idover[B]{u}{v}{e}$ as an (ordinary) inductive family, with a single constructor saying that for any $x:A$ and $u:B(x)$ we have $\refl_u : \idover[B]{u}{u}{\refl_x}$.\label{item:idover4}
 \end{enumerate}
 These definitions all produce \emph{equivalent} types, but are not judgmentally identical.
 In particular, they have different judgmental behavior: for instance, with~\ref{item:idover1}--\ref{item:idover3} we have $\idover[B]{u}{v}{\refl_x}$ judgmentally equal to $\id[B(x)]{u}{v}$, but with~\ref{item:idover4} this is not necessarily the case.
