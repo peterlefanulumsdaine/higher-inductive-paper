@@ -190,12 +190,15 @@ For this reason, and also for expositional clarity, the structure of this paper 
 \section{Type theory}
 \label{sec:type-theory}
 
-In this section we briefly review the basic type theory we will be using.
-It has a couple unusual features which enable it to match our models more precisely, but as we will see, they can all be eliminated at the cost of turning some judgmental equalities into propositional ones.
+In this section we briefly describe the basic type theory we will be using, which for technical reasons is a little unusual.
 
-Our base theory is a form of Martin-L\"of dependent type theory \emph{without} universes.
+\subsection{The basic theory}
+\label{sec:basic-theory}
+
+First of all, we do not include any universes.
 Some of our models (particularly the simplicial set model~\cite{klv:ssetmodel}) have universes, but not all of them are known to, and so since we have little need for universes in this paper, we omit them.
-(It should be noted, however, that all the \emph{homotopy-theoretic} results about HITs mentioned in \cref{sec:hit-apps} require the presence of a universe satisfying the univalence axiom.)
+(It should be noted, however, that all the \emph{homotopy-theoretic} results about HITs mentioned in \cref{sec:hit-apps} require the presence of a universe satisfying the univalence axiom.
+But many models of interest, such as those arising from $(\infty,1)$-toposes, do have a ``weakly Tarski'' universe, and this is conjecturally sufficient for these proofs.)
 
 The absence of universes means that we need a separate judgment ``$A \type$'' indicating that $A$ is a type.
 A type family (or dependent type) indexed by $A$ is then described by a hypothetical judgment $\jd{x:A |- B(x) \type}$.
@@ -238,20 +241,97 @@ Syntactically, the difference is that the constructors can take input from one e
 }
 Here $A$ is a parameter and $n:\lN$ is an index.
 
-The most important inductively defined family is the \emph{identity type}.\msnote{Mention ML vs PM?}
+As we will see in \cref{sec:hott-semantics}, it follows directly from the work in~\cite{lw:localuniv} that all of our models contain nonrecursive inductive types such as $\sum$s, disjoint unions $A+B$, and the empty type $\emptyset$.
+However, in general it is not immediately obvious that they have even very simple ordinary inductive types such as $\lN$, although some results in this direction can be found in~\cite{klv:ssetmodel,vdbm:wtypes-hott}.
+A general theorem about inductive types will follow as a degenerate case of our semantics for \emph{higher} inductive types.
+
+\subsection{Cubical identity types}
+\label{sec:cubic-ident-types}
+
+It is common to define the \emph{identity type} as an inductive family such as
 \indeff{\fId \; (A\type)}{A\to A\to \fType}{
   \refl : \prd{x:A} \id[A]xx
 }
+or
+\indeff{\fId \; (A\type) (a:A)}{A\to \fType}{
+  \refl : \id[A]aa
+}
+(The first gives rise to the ``Martin-L\"{o}f eliminator'', the second to the ``Paulin-Mohring eliminator''.)
 The distinguishing feature of \emph{homotopy} type theory is that the identity type $\id[A]xx$ can contain paths other than $\refl$, corresponding to loops in $A$ viewed as a ``space''.
 For this reason we will sometimes refer to elements of an identity type as \emph{paths}.
 
-As we will see in \cref{sec:hott-semantics}, it follows directly from the work in~\cite{lw:localuniv} that all of our models contain $\sum$-types and $\fId$-types.
-However, in general this is not immediately obvious even for very simple ordinary inductive types such as $\lN$; it will follow as a degenerate case of our semantics for HITs.
+However, the above definition of identity types is not ideal when discussing HITs, because certain equalities, notably those involving the application of functions to paths, are propositional rather than judgmental.
+This makes complicated homotopy-theoretic proofs increasingly difficult, such as $T^2 = S^1\times S^1$~\cite{bl:torus}.
+More seriously, it is a substantial obstacle to the semantic methods we plan to employ in this paper, which rely on \emph{strict} algebraic structures in model categories.
 
-As we will see in \cref{sec:syntax}, in order to state the induction principles for HITs we require the notion of \emph{path over a path} or \emph{dependent path}.
-This means that given a type $A$ and a type family $B$ over $A$, for points $x,y:A$ and a path $e:\id[A]xy$ and points $u:B(x)$ and $v:B(y)$, we need to know what it means to say that ``$u$ and $v$ are related by a path (or an equality) over $e$''.
-Note that the ordinary identity type cannot be applied to $u$ and $v$, since their types $B(x)$ and $B(y)$ are different; instead we need a new ``type of paths from $u$ to $v$ lying over $e$'' which we will write as $\idover[B]{u}{v}{e}$.
-There are various ways to define this type, such as:
+For this reason, we will \emph{not} define the identity types as inductive families.
+Instead, we follow the route taken by the ``cubical type theory'' of~\cite{bl:cubical}, introducing a basic notion of ``line in a type'' that can be internalized to yield identity types.
+Such lines are encoded by a special context of ``dimension variables'' to the left of the ordinary context; thus a particular judgment might look like this:
+\[ x\dim, y\dim \cb a:A \pr b:B \]
+where $A$ might depend on $x$ and $y$, while $b$ and $B$ might depend on $x$, $y$, and $a$.
+The semicolon separates the ``dimension context'' from the ordinary one.
+It is helpful (and semantically valid) to think of ``$x\dim$'' as ``$x:I$'' where $I$ is a sort of ``interval type'';
+placing such variables in a separate context just simplifies the theory and its semantics.
+The theory is ``cubical'' because from this viewpoint a dimension context $x\dim, y\dim, z\dim$ corresponds to a ``cube'' $I\times I\times I$.
+
+The dimension context admits the usual structural rules of exchange, contraction, and weakening, which is just to say that dimension variables behave like ordinary variables; and in addition there are two special values $0$ and $1$ (the ``endpoints of the interval'') that can be substituted for any dimension variable.
+We write substitution of dimension variables with angle brackets to distinguish it from ordinary substitution; thus if $x\dim \vdash a:A$ then we have $y\dim \vdash a\dsubst{y}{x} : A\dsubst{y}{x}$ and $\vdash a\dsubst{0}{x} : A\dsubst{0}{x}$.
+
+In this setup, the identity type is defined roughly by ``abstracting over a dimension variable'';
+semantically, this corresponds to the intuition that a path space consists of maps out of an interval.
+Relative to an ordinary function abstraction, the main wrinkle is that we indicate in the identity type $\id{a}{b}$ the values $a$ and $b$ of the line at $0$ and $1$; semantically this corresponds to asking that $(0,1):1+1 \to I$ be a ``cofibration''.
+
+Specifically, the rule for forming identity types looks just like the one in MLTT, except for the presence of an extra dimension context $\Psi$:
+\begin{equation}
+\inferrule{\Psi;\Gamma \vdash A \type \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[A]{a_0}{a_1}\type}\label{eq:cubical-idform-nondep}
+\end{equation}
+(Actually, there is a further enhancement to this which we postpone discussing until later.)
+But the rule for introducing terms in an identity type looks like $\lambda$-abstraction:
+\[ \inferrule{\Psi,s\dim\cb\Gamma\pr u:A \\ \Psi;\Gamma \vdash u\dsubst0s \jdeq a_0 \\ \Psi;\Gamma \vdash u\dsubst1s \jdeq a_1}{\Psi;\Gamma \vdash \dlam s u : \id[A]{a_0}{a_1}} \]
+(we use the modified notation $\dlamsym$ to indicate that it is a different kind of abstraction)
+and the rule for elimination looks like application:
+\[ \inferrule{\Psi;\Gamma \vdash u:\id[A]{a_0}{a_1} \\ \Psi \vdash r \dim}{\Psi;\Gamma \vdash u\dapp r : A\dsubst{r}{s}} \]
+We also have corresponding computation rules:
+\[ \inferrule{\Psi,s\dim\cb\Gamma\pr u:A \\ \Psi \vdash r \dim}{\Psi;\Gamma \vdash (\dlam s u)\dapp r \jdeq u\dsubst{r}{s}} \]
+\[ \inferrule{\Psi;\Gamma \vdash u:\id[A]{a_0}{a_1}}{\Psi;\Gamma \vdash u\dapp 0 \jdeq a_0}
+\hspace{1cm}\inferrule{\Psi;\Gamma \vdash u:\id[A]{a_0}{a_1}}{\Psi;\Gamma \vdash u\dapp 1 \jdeq a_1} \]
+
+As an example of how to use these identity types, we can define the operation \ap (for ``Action on Paths'' or ``APplication to an equality'') associated to a function, which takes a path between points in the domain to a path between their images in the codomain.
+Given a function $f:A\to B$ and points $a_0,a_1:A$, we can form\footnote{This entire discussion should really take place in an arbitrary context $\Psi;\Gamma$, but for clarity we omit this from the notation.}
+\[ r\dim \cb p:\id[A]{a_0}{a_1} \pr p\dapp r : A. \]
+Now, because the ordinary rules of type theory, including ordinary function application, are valid \emph{in any context}, including a nontrivial dimension context, we can form
+\[ r\dim \cb p:\id[A]{a_0}{a_1} \pr f(p\dapp r) : B. \]
+Now we can abstract over $r$ to obtain
+\[ \emptycxt \cb p:\id[A]{a_0}{a_1} \pr \dlam{r} f(p\dapp r) : \id[B]{f(a_0)}{f(a_1)} \]
+(where $\emptycxt$ denotes an empty dimension context).
+This is valid, according to the introduction rule, because 
+\[ (f(p\dapp r))\dsubst0r \jdeq f((p\dapp r)\dsubst0r) \jdeq f(p\dapp 0) \jdeq a_0 \]
+and similarly for $1$.
+We can thus define $\ap_f(p)$ to be $\dlam{r} f(p\dapp r)$, and $\ap_f$ itself to be $\lam{p}\dlam{r} f(p\dapp r)$.
+
+As is well-known, we can also define $\ap_f$ using the eliminator for $\fId$ defined as an inductive family.
+However, the one we obtain from dimension abstraction is better-behaved.
+For instance, given also $g:B\to C$, we can compute
+\begin{multline*}
+\ap_g (\ap_f(p))
+\jdeq \ap_g(\dlam{r} f(p\dapp r))
+\jdeq \dlam{s} g((\dlam{r} f(p\dapp r))\dapp s)\\
+\jdeq \dlam{s} g(f(p\dapp s))
+\jdeq \dlam{s} (g \circ f)(p\dapp s)
+\jdeq \ap_{g\circ f}(p).
+\end{multline*}
+This is a \emph{judgmental} equality, whereas for $\ap_f$ defined with the inductive eliminator it would be only propositional (i.e.\ a term in a higher identity type).
+Similarly, if we define $\refl_a$ to be the ``constant path'' $\dlam{r} a$, then we have
+\[ \ap_f(\refl_a)
+\jdeq \dlam{r} f((\dlam{r}a)\dapp r)
+\jdeq \dlam{r} f(a)
+\jdeq \refl_{f(a)}.\]
+This equality does hold judgmentally for the traditional $\ap_f$, so it is good to know that this is still the case for the cubical one.
+
+The real power of cubical identity types, however, comes from their ability to seamlessly represent \emph{dependent} or \emph{heterogeneous} identity types (``dependent paths'' or ``paths over paths''), which are essential when working with HITs.
+The idea of dependent paths is that given a type $A$ and a type family $B$ over $A$, for points $x,y:A$ and a path $e:\id[A]xy$ and points $u:B(x)$ and $v:B(y)$, we need to know what it means to say that ``$u$ and $v$ are related by a path (or an equality) over $e$''.
+The ordinary identity type cannot be applied to $u$ and $v$, since their types $B(x)$ and $B(y)$ are different; instead we need a new ``type of paths from $u$ to $v$ lying over $e$'' which we will write as $\idover[B]{u}{v}{e}$.
+There are various ways to define this type in ordinary type theory, such as:
 \begin{enumerate}
 \item If we first define the \emph{transport} operation $\transf{e}:B(x) \to B(y)$ (using the eliminator for identity types), then we can define $\idover[B]{u}{v}{e}$ to be $\id[B(y)]{\transf{e}(u)}{v}$.
   This is the definition used by~\cite{hottbook} and the homotopy type theory Coq library.\label{item:idover1}
@@ -261,34 +341,67 @@ There are various ways to define this type, such as:
 \item \msnote{Is this what Dan and Guillaume used in the cubical proof of the torus?}
   We could define $\idover[B]{u}{v}{e}$ as an (ordinary) inductive family, with a single constructor saying that for any $x:A$ and $u:B(x)$ we have $\refl_u : \idover[B]{u}{u}{\refl_x}$.\label{item:idover4}
 \end{enumerate}
-These definitions all produce \emph{equivalent} types, but are not judgmentally identical.
-In particular, they have different judgmental behavior: for instance, with~\ref{item:idover1}--\ref{item:idover3} we have $\idover[B]{u}{v}{\refl_x}$ judgmentally equal to $\id[B(x)]{u}{v}$, but with~\ref{item:idover4} this is not necessarily the case.
-We will use definition~\ref{item:idover4} because it is more convenient in our models (see below); that is, we define:
-\indeff{\fId \; (A\type)\; (\jd{x:A |- B(x)\type})}{\prd{x,y:A} \id[A]xy \to B(x) \to B(y) \to \fType}{
-  \refl : \prd{x:A}{u:B(x)} \id[B]{u}{u}_{\refl_x}
-}
-We will also eventually need to use higher ``path-over-a-path-over-a-path'' types and so on, which we define analogously.
+In cubical type theory, we obtain dependent paths by using a simple extension of the formation rule for identity types, in which the type $A$ can depend on the dimension variable:
+\[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \type \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\type}\]
+Compared to~\eqref{eq:cubical-idform-nondep}, the main difference is the presence of $s\dim$ in the hypothesis $\Psi,s\dim \cb \Gamma \pr A \type$.
+If we view identity types as ``function types'' out of the interval, then this corresponds to allowing dependent functions, like the generalization from $A\to B$ to $\prod_{x:A} B(x)$.
+To record this dependency of $A$ on $s$, we modify the notation for the identity type to write $\id[s.A]{a_0}{a_1}$ rather than $\id[A]{a_0}{a_1}$, indicating that the dimension variable $s$ may occur free in $A$ but is bound in $\id[s.A]{a_0}{a_1}$.
 
-Finally, we include in our type theory a new primitive called \ap (for ``Action on Paths'' or ``APplication to a path''), with the following rules:
-\[\inferrule{f:\tprd{x:A} B(x) \\ x:A \\ y:A}{\ap_f : \tprd{e:\id[A]xy} \idover[B]{f(x)}{f(y)}{e}}
-\qquad
-\inferrule{f:\tprd{x:A} B(x) \\ x:A}{\ap_f(\refl_x) \jdeq \refl_{f(x)}}
-\]
-It is, of course, possible to \emph{define} such an operation by identity elimination.
-This defined operation, which we denote $\ap'$, plays an essential role in homotopy type theory, as developed in~\cite{hottbook} and elsewhere.
-However, all of its occurrences could be replaced by a primitive $\ap$ without any real change, as long as the above two rules are satisfied.
-Moreover, the shared computation rules $\ap_f(\refl_x) \jdeq \refl_{f(x)}$ and $\ap'_f(\refl_x) \jdeq \refl_{f(x)}$ imply that we always have an inhabitant of $\prd{e:\id[A]xy} \id{\ap_f(e)}{\ap'_f(e)}$, i.e.\ $\ap$ and $\ap'$ are propositionally equal.
+Now given the setup for dependent paths, i.e. $e:\id[A]xy$ and $u:B(x)$ and $v:B(y)$, we can form
+\[ s\dim \vdash B(e\dapp s) \type \]
+and therefore
+\[ \vdash \id[s.B(e\dapp s)]{u}{v} \]
+This is well-typed because
+\begin{align*}
+B(e\dapp s)\dsubst{0}{s} &\jdeq B(e\dapp 0) \jdeq B(x) \qquad\text{and}\\
+B(e\dapp s)\dsubst{1}{s} &\jdeq B(e\dapp 1) \jdeq B(y).
+\end{align*}
+We thus take $\id[s.B(e\dapp s)]{u}{v}$ as the definition of the dependent path type $\idover[B]{u}{v}{e}$.
+This allows us to use the \emph{same} definition of $\ap_f$ in the case when $f$ is a \emph{dependent} function $f:\prod_{x:A} B(x)$: we deduce successively
+\begin{align*}
+  r\dim \cb p:\id[A]{a_0}{a_1} &\pr p\dapp r : A\\
+  r\dim \cb p:\id[A]{a_0}{a_1} &\pr f(p\dapp r) : B(p\dapp r)\\
+  \emptycxt \cb p:\id[A]{a_0}{a_1} &\pr \dlam{r} f(p\dapp r) : \id[r.B(p\dapp r)]{f(a_0)}{f(a_1)}.
+\end{align*}
+But by definition, $\id[r.B(p\dapp r)]{f(a_0)}{f(a_1)}$ is $\idover[B]{f(a_0)}{f(a_1)}{p}$.
 
-The reasons for introducing the primitive $\ap$ are that (1) in our models, there is a ``naturally occurring'' operation satisfying the above rules which is not necessarily (judgmentally) identical to the defined $\ap'$, and (2) the rules for HITs take on a simpler form when expressed in terms of the naturally occurring $\ap$ --- specifically, their computation rules are judgmental.
-In principle, however, it is always possible to re-express these rules in terms of $\ap'$ by inserting propositional equalities, obtaining a somewhat less convenient set of rules for HITs that we can model without the need for $\ap$.
-We will explain this in the simpler cases, although it gets unbearably tedious for higher paths.
+As an example of the usefulness of this, note that if $B$ is a constant family, $B(x) \jdeq B$ for all $x$, then our definition of $\idover[B]{u}{v}{e}$ reduces judgmentally to $\id[B]{u}{v}$, and moreover the dependent $\ap_f$ specializes to the non-dependent one.
+\emph{None} of the definitions~\ref{item:idover1}--\ref{item:idover4} in plain MLTT have this property, and this tends to cause significant headaches when doing path computations; cubical identity types thus solve this problem as well.
+
+So far, however, we have not explained how the identity types are to inherit all the usual structure: composites of paths and higher paths forming an $\infty$-groupoid structure, transport in type families along paths, etc.
+In MLTT, all of these data are derived from the eliminator for $\fId$ defined as an inductive family.
+In cubical type theory, all of these data are essentially \emph{postulated} in a uniform way (as cubical ``Kan composition'' or ``Kan filling'' operations), and from them we can derive the usual eliminator of $\fId$ (though with only a propositional computation rule).
+We do not want to take the latter route, because the form of the cubical Kan operations appears very specialized to the cubical set model of type theory, whereas we want our type theory to admit semantics in all the standard simplicial models as well (so that we can prove that HITs exist there).
+But we do also want our results to apply to the cubical set model as well.
+Thus, we take the ``common core'' of the two theories and postulate the inductive eliminator for $\fId$ along with a propositional computation rule for it.\msnote{Not quite sure about this.}
+The resulting type theory is not, of course, computationally well-behaved, but that is not our concern here.
+
+It is worth emphasizing that in our \emph{construction} of HITs we do not use this eliminator at all.
+Instead the eliminator serves an auxiliary purpose.
+For one thing, our verification in \cref{sec:hott-semantics} that the identity types in our models support this can be regarded as a consistency check that our ``identity types'' really deserve that name.
+More importantly, the presence of the eliminator allows us to compare our well-behaved $\ap_f$ with the traditional ill-behaved one, which we denote $\ap'_f$.
+Since both $\ap_f(\refl_a)$ and $\ap'_f(\refl_a)$ are equal to $\refl_{f(a)}$ (the former judgmentally, the latter only propositionally since our eliminator has a propositional computation rule), we can use the eliminator again to show that they are propositionally equal; that is, we have a term
+\[ \jd{a_0:A , a_1:A, p:\id[A]{a_0}{a_1} |- \fapeq(p) : \id[{\id[B]{f(a_0)}{f(a_1)}}]{\ap'_f(p)}{\ap_f(p)}} \]
+This, in turn, enables us to translate the rules for our HITs, which involve $\ap_f$, into rules involving $\ap'_f$ instead.
+(We will discuss this further in \cref{sec:syntax}.)
+These translated rules are more complicated, but they can be stated in plain MLTT.
+In this way, the use of cubical type theory can be entirely eliminated from our results, yielding a statement about HITs that exist in a certain class of models of MLTT.
+
+Returning to the (non-)uses of the eliminator, it is true that some more complicated HITs, such as the torus, incorporate the $\infty$-groupoid operations in their definition.
+However, for this purpose the operations derived as usual from the eliminator are, like $\ap'_f$, insufficiently well-behaved for our model construction to work.
+One solution would be to postulate the cubical Kan operations, as in CTT; but we could also potentially postulate simplicial Kan operations, or $\infty$-groupoid operations in the style of Batanin.
+Whatever choice is made, one would then have to show that these operations exist in the models of interest.
+We will not investigate this question in detail, but in \cref{??} we will consider the simple example of the torus itself, which hopefully gives an idea for how such an argument might proceed in the general case.
 
 
 \section{Syntax of HITs}
 \label{sec:syntax}
 
 In this section we will describe the type-theoretic rules for higher inductive types, so that we know what we want to model in the semantics.
-We will begin with simple specific examples and work up to fairly general ones (although, as we have said, a fully general specification of what should count as ``a higher inductive type'' is not yet known).
+We will begin by describing some simple specific examples, to explain the general idea, and then give a reasonably general and precise specification (although, as we have said, a \emph{fully} general specification of what should count as ``a higher inductive type'' is not yet known).
+
+\subsection{Examples of HITs}
+\label{sec:examples-hits}
 
 As mentioned in \cref{sec:hit-egs}, a higher inductive type is specified like an ordinary inductive type, except that in addition to \emph{point-constructors} whose ouput is an \emph{element} of the type being defined, we allow \emph{path-constructors} whose output is a \emph{path} (i.e.\ an equality) in that type.
 We extend the syntax for describing inductive types from \cref{sec:type-theory} to include such path-constructors.
@@ -330,6 +443,7 @@ There is an additional technical restriction on the terms ocurring in the codoma
 The meaning of this, and its importance, will be explained later.
 \msnote{Say something more here once we decide how to deal with fibrancy?}%
 (In fact, as we will see, this is one area where our current methods are not completely satisfactory.)
+\msnote{Can we come up with a syntactic condition ensuring naturality?}
 
 So much for how to \emph{specify} a HIT; how does such a type \emph{behave}?
 In general, every type forming operation in type theory comes with \emph{formation}, \emph{introduction}, \emph{elimination}, and \emph{computation} rules.
@@ -346,11 +460,11 @@ Indeed, the type family $\id[\circtype]{x}{y}$ already has its \emph{own} introd
 It is when we get to the \textbf{elimination rules} that things get interesting.
 Elimination for ordinary inductive types can be specified either with an \emph{induction principle} or with \emph{pattern matching}.
 From the perspective of categorical semantics, it appears necessary to regard the induction principle as basic, with pattern matching justified (insofar as possible) by reduction to the induction principle, as in~\cite{gmm:pattern-matching,cdp:without-k}.
-It is not yet clear what a general formulation of pattern matching for HITs would look like.
+It is not yet clear what a general formulation of pattern matching for HITs would look like (although cubical type theory makes it seem more likely to be possible).
 Thus, in this paper we will concentrate on induction principles.
 
 For an ordinary inductive type $W$, the induction principle says that for any type family $B$ over $W$, if we have operations on $B$ that correspond to, and ``live over'', each constructor of $W$, then we can define a function $f:\prd{x:W}B(x)$.
-For instance, the induction principle for \lN says that if we have a type family $B$ over \lN equipped with $f_\fzero : B(\fzero)$ and $f_\fsucc : \prd{n:\lN} B(n) \to B(\fsucc(n))$, then we are entitled to $f:\prd{n:\lN} B(n)$.
+For instance, the induction principle for \lN says that if we have a type family $B$ over \lN equipped with $f_\fzero : B(\fzero)$ and $f_\fsucc : \prd{n:\lN} B(n) \to B(\fsucc(n))$, then we are entitled to a function $\ind{\lN}(B,f_\fzero,f_\fsucc):\prd{n:\lN} B(n)$.
 We expect the induction principle for a HIT to be similar; the only question is what sort of operations on $B$ should be required to correspond to the path-constructors.
 This is the role of the \emph{dependent path} type introduced in \cref{sec:type-theory}.
 
@@ -363,11 +477,11 @@ Consider, for example, the interval:
 We expect the premises of its induction principle to include $f_\fzero : B(\fzero)$ and $f_\fone : B(\fone)$; but then corresponding to \fseg, we would expect some sort of path relating $f_\fzero$ to $f_\fone$.
 We cannot even form a type ``$\id{f_\fzero}{f_\fone}$'' since $f_\fzero$ to $f_\fone$ have different types, but we \emph{can} ask for a dependent path $f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}$.
 Thus, the entire elimination rule for $I$ is
-\[\inferrule{\jd{x:I |- B(x) \type} \\ f_\fzero : B(\fzero) \\ f_\fone : B(\fone) \\ f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}}{\jd{x:I |- f(x) : B(x)}} \]
+\[\inferrule{\jd{x:I |- B(x) \type} \\ f_\fzero : B(\fzero) \\ f_\fone : B(\fone) \\ f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}}{\jd{x:I |- \ind{I}(B,f_\fzero,f_\fone,f_\fseg)(x) : B(x)}} \]
 
 The general principle is thus that path-constructors in a HIT correspond to dependent path premises in its induction principle.
 For instance, the circle $\circtype$ has the following elimination rule:
-\[\inferrule{\jd{x:\circtype |- B(x) \type} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\jd{x:\circtype |- f(x) : B(x)}} \]
+\[\inferrule{\jd{x:\circtype |- B(x) \type} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\jd{x:\circtype |- \ind{\circtype}(B,f_\fbase,f_\floop)(x) : B(x)}} \]
 Note that in this case it would be possible to \emph{write} the non-dependent path type ``$\id[B(\fbase)]{f_\fbase}{f_\fbase}$'', but that this is \emph{not} the correct type for $f_\floop$.
 
 Path-constructors with nontrivial domain are handled in the expected way, by dependent functions outputting dependent paths.
@@ -379,22 +493,64 @@ For instance, the \textbf{suspension} of a type $A$ is defined by
 }
 Its induction principle is
 \[\inferrule{\jd{x:\susp A |- B(x) \type} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
-{\jd{x:\susp A |- f(x):B(x)}} \]
+{\jd{x:\susp A |- \ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(x):B(x)}} \]
 Similarly, path-constructors with recursive inputs correspond to inductive premises that take inputs from the induction motive.
 For instance, the induction principle for the $(-1)$-truncation $\brck{A}$ is
 \[\inferrule{\jd{x:\brck A |- B(x) \type} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
-{\jd{x:\brck A |- f(x) : B(x)}}
+{\jd{x:\brck A |- \ind{\brck A}(B,f_\fproj,f_\fsquash)(x) : B(x)}}
 \]
 This should be compared with the familiar induction principle for the natural numbers:
 \[ \inferrule{\jd{x:\lN |- B(x) \type} \\ f_\fzero : B(\fzero) \\ f_\fsucc : \tprd{x:\lN}{u:B(x)} B(\fsucc(x))}
-{\jd{x:\lN |- f(x) : B(x)}}
+{\jd{x:\lN |- \ind{\lN}(B,f_\fzero,f_\fsucc)(x) : B(x)}}
 \]
 In both cases, each recursive argument to a constructor ($\fsucc$ or $\fsquash$) bifurcates into two arguments to the corresponding induction premise, one from the inductive type being defined and one from the induction motive.
 
+For HITs with higher-dimensional path-constructors, such as the 2-sphere and the torus, we require a corresponding notion of higher dependent path.
+\msnote{Should probably define that and be precise here.}
 
-\todo{Some simple specific examples: circle, suspension, torus, $(-1)$-truncation \ldots}
+Finally, \textbf{computation rules} say that when a function defined by elimination is applied to a form obtained by introduction, the result reduces using the inputs of the elimination.
+For example, if $f:\lN \to B$ is defined by recursion from $f_\fzero : B$ and $f_\fsucc : B \to B$, then we have $f(\fzero) \jdeq f_\fzero$ and $f(\fsucc(x)) \jdeq f_\fsucc(f(x))$.
 
-\todo{Possible variations, esp.\ judgementality of computation rules}
+To state similar rules for the path-constructors of HITs, we need the operation $\ap_f$.
+For instance, the if $f:\circtype \to B$ is defined from $f_\fbase:B$ and $f_\floop : \id[B]{f_\fbase}{f_\fbase}$, we should have $f(\fbase) \jdeq f_\fbase$ (of course) and $\ap_{f}(\floop) \jdeq f_\floop$.
+Note that $\ap_{f}(\floop)$ and $f_\floop$ are both elements of $\id[B]{f_\fbase}{f_\fbase}$, the latter by definition and the former because of the first computation rule.
+When $B$ depends on $\circtype$, we need the dependent extension of $\ap_f$ which was discussed in \cref{sec:cubic-ident-types}.
+The precise rules are
+\[ \inferrule{\jd{x:\circtype |- B(x) \type} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\ind{\circtype}(B,f_\fbase,f_\floop)(\fbase)\jdeq f_\fbase \\ \ap_{\ind{\circtype}(B,f_\fbase,f_\floop)}(\floop) \jdeq f_\floop} \]
+Similarly, for the suspension we have
+\[\inferrule{\jd{x:\susp A |- B(x) \type} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
+{\ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(\fnorth) \jdeq f_\fnorth \\
+  \ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(\fsouth) \jdeq f_\fsouth \\
+  \jd{x:A |- \ap_{\ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)}(\fmerid(x)) \jdeq f_\fmerid(x)}} \]
+and for the $(-1)$-truncation we have
+\[\inferrule{\jd{x:\brck A |- B(x) \type} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
+{\jd{a:A |- \ind{\brck A}(B,f_\fproj,f_\fsquash)(\fproj(a)) \jdeq f_\fproj(a)}\\
+\jd{x:\brck A , y:\brck A |- \ap_f(\fsquash(x,y)) \jdeq f_\fsquash(x,y,f(x),f(y))}}
+\]
+(In the last rule we have abbreviated $\ind{\brck A}(B,f_\fproj,f_\fsquash)$ by $f$ for readability.)
+
+Note that all of our computation rules are judgmental, even those involving path-constructors and $\ap$.
+This is very convenient for applications, and it is what we will get from our semantic construction as well.
+It does depend crucially on the fact that we state these rules using the cubical $\ap$ defined by abstraction over lines, rather than the version $\ap'$ defined using the eliminator for identity types: as far as we know the computation rules do \emph{not} hold judgmentally in our models for $\ap'$.
+However, as remarked in \cref{sec:cubic-ident-types}, we do have a propositional equality
+\[ \jd{a_0:A , a_1:A, p:\id[A]{a_0}{a_1} |- \fapeq(p) : \id[{\id[B]{f(a_0)}{f(a_1)}}]{\ap'_f(p)}{\ap_f(p)}}. \]
+Together with our judgmental computation rules for $\ap$, this implies that \emph{propositional} computation rules hold for $\ap'$.
+For instance, given a type $B$ with $f_\fbase$ and $f_\floop : \id[B]{f_\fbase}{f_\fbase}$, if we write $f$ for ${\ind{\circtype}(B,f_\fbase,f_\floop)}$, then we have as above 
+\[ \ap_f(\floop) \jdeq f_\floop \]
+and therefore 
+\[ \fapeq(\floop) : \id[B]{\ap'_f(\floop)}{f_\floop} \]
+Thus, in MLTT regarded as a fragment of our type theory, we have HITs with judgmental computation rules for point-constructors and propositional computation rules for path-constructors.
+(It is amusing, if nothing else, that this is precisely the setup that is obtainable by Licata's ``private types hack''~\cite{licata:private-types} for implementing HITs in existing proof assistants such as Agda and Coq.)
+
+For HITs with higher path-constructors, such a translation from $\ap$ to $\ap'$ is more tedious because the propositional $\fapeq$'s corresponding to the lower-dimensional path-constructors have to be inserted in order to make the equality well-typed.
+It should in principle always be possible, but we will not attempt to describe it in general; we expect it would probably not be worth the effort, since the presence of all these adjusting paths makes HITs with higher path-constructors barely usable in plain MLTT.
+
+It should be noted, though, that one can do quite a lot using only 1-dimensional paths.
+For instance, a type equivalent to $\spheretype{2}$ can be defined as $\susp \circtype$, and more generally an $n$-sphere $\spheretype{n}$ can be obtained by iterated suspension.
+One can even argue that \emph{all} higher-dimensional path-constructors are reducible to 1-dimensional ones, as in~\cite{lumsdaine:hub-and-spoke} --- although this reduction does not preserve judgmentality of the computation rules, and moreover it uses path-constructors whose domains and codomains are more general than those that we currently know how to deal with in our semantics (specifically, they involve the eliminators for other HITs).
+
+\subsection{Higher $W$-types}
+\label{sec:higher-w-types}
 
 \todo{Define higher $W$-types, and conjecture their general expressivity}
 

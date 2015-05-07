@@ -20,7 +20,7 @@
 %%%%%
 % Text in typefaces
 
-\autodefs{\fap\fzero\fsucc\fpair\ftt\fbase\floop\fone\fseg\fnorth\fsouth\fmerid\fsurf\fext\fdata\fwhere\fId\fproj\fsquash\frefl\fType\ftype\fVec\fnil\fcons}
+\autodefs{\fap\fzero\fsucc\fpair\ftt\fbase\floop\fone\fseg\fnorth\fsouth\fmerid\fsurf\fext\fdata\fwhere\fId\fproj\fsquash\frefl\fType\ftype\fVec\fnil\fcons\fdim\fapeq}
 
 \let\E\cE
 \let\refl\frefl
@@ -46,6 +46,20 @@
 % Judgments
 \usepackage{mathpartir}
 \newcommand{\type}{\;\ftype}
+\renewcommand{\dim}{\;\fdim}
+\newcommand{\subst}[2]{[#1/#2]}
+\newcommand{\cb}{\,;\,}         % context break
+\newcommand{\pr}{\,\vdash\,}
+\newcommand{\emptycxt}{\diamond}
+
+% Dimension variables
+\newcommand{\dsubst}[2]{\langle #1/#2\rangle}
+\newcommand{\dlamsym}{\mathring{\lambda}}
+\newcommand{\dlam}[1]{\dlamsym#1.\,}
+\newcommand{\dapp}{@}
+
+% Induction
+\newcommand{\ind}[1]{\mathsf{ind}_{#1}}
 
 % Categorical/logical constructions
 \renewcommand{\id}[3][]{\fId_{#1}(#2,#3)}
@@ -163,6 +177,7 @@
 % This version silently eats any typing annotation.
 \def\lamu#1{{\lambda}\@lamuarg#1:\@endlamuarg\@ifnextchar\bgroup{.\,\lamu}{.\,}}
 \def\@lamuarg#1:#2\@endlamuarg{#1}
+
 
 %%% Dependent sums %%%
 \def\smsym{\textstyle\sum}
