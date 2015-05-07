@@ -119,7 +119,7 @@ With ordinary inductive types we can construct coproducts (sum types) and an ini
 With HITs, however, these are easy to do.
 
 The real power of HITs starts to show itself when we introduce path-constructors with recursive inputs, analogous to recursive point-constructors like \fsucc for the natural numbers.
-The first such example is the \textbf{squash} or \textbf{bracket type}~\cite{ab:bracket-types} of a type $A$, which is intended to be a type $\brck{A}$ that contains at most one element, and does so exactly if $A$ has an element.
+The first such example is the \textbf{squash}~\cite{nuprlbook} or \textbf{bracket type}~\cite{ab:bracket-types} of a type $A$, which is intended to be a type $\brck{A}$ that contains at most one element, and does so exactly if $A$ has an element.
 We can define this as a HIT with one point-constructor that takes as input an element of $A$, and one path-constructor which gives for any two elements $x$ and $y$ \emph{of $\brck{A}$ itself}, a path from $x$ to $y$.
 The point-constructor ensures that if $A$ is inhabited then so is $\brck{A}$, while the path-constructor ensures that $\brck{A}$ has no more than one element.%
 \footnote{In homotopy type theory, the question is a little more subtle: in addition to ensuring that any two elements of $\brck{A}$ are related by a path, we would want to ensure that any two \emph{paths} are related by a 2-dimensional path, and so on.
@@ -334,14 +334,15 @@ The ordinary identity type cannot be applied to $u$ and $v$, since their types $
 There are various ways to define this type in ordinary type theory, such as:
 \begin{enumerate}
 \item If we first define the \emph{transport} operation $\transf{e}:B(x) \to B(y)$ (using the eliminator for identity types), then we can define $\idover[B]{u}{v}{e}$ to be $\id[B(y)]{\transf{e}(u)}{v}$.
-  This is the definition used by~\cite{hottbook} and the homotopy type theory Coq library.\label{item:idover1}
+  This is the definition used by~\cite{hottbook} and~\cite{hottcoq}.\label{item:idover1}
 \item We could instead use $\id[B(x)]{u}{\transf{(\opp{e})}(v)}$, where $\opp{e}:\id[A]{y}{x}$ is the inverse path of $e$ (i.e.\ $\opp{(\blank)}$ witnesses the symmetry of equality).\label{item:idover2}
 \item We could define $\idover[B]{u}{v}{e}$ by using the eliminator for identity types on $e$, with $\idover[B]{u}{v}{\refl_x}$ defined to be $\id[B(x)]{u}{v}$.
-  This is the definition used by the homotopy type theory Agda library.\label{item:idover3}
+  This is the definition used by~\cite{hottagda}.\label{item:idover3}
 \item \msnote{Is this what Dan and Guillaume used in the cubical proof of the torus?}
-  We could define $\idover[B]{u}{v}{e}$ as an (ordinary) inductive family, with a single constructor saying that for any $x:A$ and $u:B(x)$ we have $\refl_u : \idover[B]{u}{u}{\refl_x}$.\label{item:idover4}
+ We could define $\idover[B]{u}{v}{e}$ as an (ordinary) inductive family, with a single constructor saying that for any $x:A$ and $u:B(x)$ we have $\refl_u : \idover[B]{u}{u}{\refl_x}$.\label{item:idover4}
 \end{enumerate}
-In cubical type theory, we obtain dependent paths by using a simple extension of the formation rule for identity types, in which the type $A$ can depend on the dimension variable:
+
+In cubical type theory, we instead obtain dependent paths by using a simple extension of the formation rule for identity types, in which the type $A$ can depend on the dimension variable:
 \[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \type \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\type}\]
 Compared to~\eqref{eq:cubical-idform-nondep}, the main difference is the presence of $s\dim$ in the hypothesis $\Psi,s\dim \cb \Gamma \pr A \type$.
 If we view identity types as ``function types'' out of the interval, then this corresponds to allowing dependent functions, like the generalization from $A\to B$ to $\prod_{x:A} B(x)$.
@@ -398,10 +399,10 @@ We will not investigate this question in detail, but in \cref{??} we will consid
 \label{sec:syntax}
 
 In this section we will describe the type-theoretic rules for higher inductive types, so that we know what we want to model in the semantics.
-We will begin by describing some simple specific examples, to explain the general idea, and then give a reasonably general and precise specification (although, as we have said, a \emph{fully} general specification of what should count as ``a higher inductive type'' is not yet known).
+We will begin with simple specific examples and work up to fairly general ones (although, as we have said, a fully general specification of what should count as ``a higher inductive type'' is not yet known).
 
-\subsection{Examples of HITs}
-\label{sec:examples-hits}
+\subsection{Specification of HITs}
+\label{sec:specification}
 
 As mentioned in \cref{sec:hit-egs}, a higher inductive type is specified like an ordinary inductive type, except that in addition to \emph{point-constructors} whose ouput is an \emph{element} of the type being defined, we allow \emph{path-constructors} whose output is a \emph{path} (i.e.\ an equality) in that type.
 We extend the syntax for describing inductive types from \cref{sec:type-theory} to include such path-constructors.
@@ -445,17 +446,29 @@ The meaning of this, and its importance, will be explained later.
 (In fact, as we will see, this is one area where our current methods are not completely satisfactory.)
 \msnote{Can we come up with a syntactic condition ensuring naturality?}
 
+\subsection{Rules for HITs}
+\label{sec:rules}
+
 So much for how to \emph{specify} a HIT; how does such a type \emph{behave}?
 In general, every type forming operation in type theory comes with \emph{formation}, \emph{introduction}, \emph{elimination}, and \emph{computation} rules.
-The above specifications of HITs give us the \textbf{formation} rules easily; in these simple cases, the formation rule is just ``such-and-such type exists''.
-Formation rules become a bit more complicated if we allow parameters and indices --- for instance, the type $A$ in $\brck{A}$ is best treated as a parameter, so that rather than just one HIT we have a different HIT $\brck{A}$ for each type $A$ --- but no new ideas are introduced here by HITs as compared with ordinary inductive types.
+The above specifications of HITs give us the \textbf{formation} rules easily; in these simple cases, the formation rule is just ``such-and-such type exists'', e.g.
+\[ \inferrule{ }{\circtype\type} \]
+Formation rules become slighty more complicated when we allow parameters and indices.
+For instance, the type $A$ in $\brck{A}$ is best treated as a parameter:
+\indef{\brck{\blank} \; (A \type)}{
+  \fproj : A \to \brck{A} \OR
+  \fsquash : \prd{x,y:\brck{A}} \id[\brck{A}]{x}{y}
+}
+so that the formation rule becomes
+\[ \inferrule{A\type}{\brck{A}\type} \]
+However, no new ideas are introduced here by HITs as compared with ordinary inductive types.
 
 The \textbf{introduction rules} for a HIT are also easy: they are just the specified constructors.
 For instance, the introduction rules for $\circtype$ say that we have $\fbase:\circtype$ and also $\floop : \id[\circtype]\fbase\fbase$.
 It is essential
 \msnote{Do we need to say more about why this makes sense?}%
 that we regard $\floop$ as an introduction rule for $\circtype$ itself, rather than for $\id[\circtype]\fbase\fbase$, even though it is actually an element of the latter type; this will become clear when we discuss the elimination and computation rules.
-Indeed, the type family $\id[\circtype]{x}{y}$ already has its \emph{own} introduction rule, namely $\refl: \prd{x:\circtype} \id[\circtype]{x}{x}$.
+Indeed, the type family $\id[\circtype]{\blank}{\blank}$ already has its \emph{own} introduction rule, namely $\refl: \prd{x:\circtype} \id[\circtype]{x}{x}$.
 
 It is when we get to the \textbf{elimination rules} that things get interesting.
 Elimination for ordinary inductive types can be specified either with an \emph{induction principle} or with \emph{pattern matching}.
@@ -522,12 +535,18 @@ Similarly, for the suspension we have
 {\ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(\fnorth) \jdeq f_\fnorth \\
   \ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(\fsouth) \jdeq f_\fsouth \\
   \jd{x:A |- \ap_{\ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)}(\fmerid(x)) \jdeq f_\fmerid(x)}} \]
-and for the $(-1)$-truncation we have
+As for ordinary inductive types, in the computation rules for path-constructors with recursive inputs, the right-hand side involves a recursive call to the function defined by induction.
+For instance, the computation rules for $\brck{A}$ are
 \[\inferrule{\jd{x:\brck A |- B(x) \type} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
 {\jd{a:A |- \ind{\brck A}(B,f_\fproj,f_\fsquash)(\fproj(a)) \jdeq f_\fproj(a)}\\
 \jd{x:\brck A , y:\brck A |- \ap_f(\fsquash(x,y)) \jdeq f_\fsquash(x,y,f(x),f(y))}}
 \]
 (In the last rule we have abbreviated $\ind{\brck A}(B,f_\fproj,f_\fsquash)$ by $f$ for readability.)
+
+
+
+\subsection{Judgmental vs propositional computation rules}
+\label{sec:comprules}
 
 Note that all of our computation rules are judgmental, even those involving path-constructors and $\ap$.
 This is very convenient for applications, and it is what we will get from our semantic construction as well.
@@ -540,19 +559,114 @@ For instance, given a type $B$ with $f_\fbase$ and $f_\floop : \id[B]{f_\fbase}{
 and therefore 
 \[ \fapeq(\floop) : \id[B]{\ap'_f(\floop)}{f_\floop} \]
 Thus, in MLTT regarded as a fragment of our type theory, we have HITs with judgmental computation rules for point-constructors and propositional computation rules for path-constructors.
-(It is amusing, if nothing else, that this is precisely the setup that is obtainable by Licata's ``private types hack''~\cite{licata:private-types} for implementing HITs in existing proof assistants such as Agda and Coq.)
+Most work with HITs so far has used propositional computation rules of this form for path-constructors (with the defined $\ap'$).
+One reason for this is that if we want to use $\ap'$ (since a primitive $\ap$ is not available in existing proof assistants), then such propositional rules are all we can get out of our semantics in general.
+Another, perhaps more compelling, reason is while that existing proof assistants do not implement HITs natively, there is a hack using ``private types'' due to Licata~\cite{licata:private-types} which enables them to be mimicked, but only with propositional computation rules for path-constructors.
 
-For HITs with higher path-constructors, such a translation from $\ap$ to $\ap'$ is more tedious because the propositional $\fapeq$'s corresponding to the lower-dimensional path-constructors have to be inserted in order to make the equality well-typed.
-It should in principle always be possible, but we will not attempt to describe it in general; we expect it would probably not be worth the effort, since the presence of all these adjusting paths makes HITs with higher path-constructors barely usable in plain MLTT.
+Judgmental computation rules for \emph{point}-constructors are unproblematic from any perspective: they don't require choosing between $\ap$ and $\ap'$, they do hold in the semantics, and they can be implemented in proof assistants using the private-types hack.
+
+Note also that the (judgmental!) computation rules for point-constructors are necessary in order for the computation rules for path-constructors to be well-typed.
+For example, by definition we have
+\begin{align}
+  \ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) &:
+  \idover{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fzero)}{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fone)}{\fseg}\\
+  f_\fseg &: \idover{f_\fzero}{f_\fone}{\fseg}.
+\end{align}
+Only the computation rules for $\fzero$ and $\fone$ ensure that these two types coincide, so that it makes sense to ask whether $\ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg)$ and $f_\fseg$ are equal.
+If we had only propositional computation rules such as
+\begin{align}
+  \fcomp_\fzero &: \id{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fzero)}{f_\fzero}\\
+  \fcomp_\fone &: \id{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fone)}{f_\fone}
+\end{align}
+then in order for the computation rule of \fseg to make sense, we would need to transport along (or, equivalently, compose with) these paths; thus we could at best ask for
+\[ \fcomp_\fseg :
+\id{\opp{\fcomp_\fzero}\ct \ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) \ct \fcomp_\fone}{f_\fseg}
+\]
+Such modifications quickly become quite tedious, so it is fortunate that judgmental computation rules for point-constructors are unproblematic.
+However, when considering \emph{higher} path-constructors---or more generally, path-constructors whose source and target refer to previous path-constructors---if we are restricted to propositional computation rules for the previous path-constructors, then there is no escape.
+Such a translation should in principle always be possible, but we will not attempt to describe it in general; we expect it would probably not be worth the effort, since the presence of all these adjusting paths makes HITs with higher path-constructors barely usable in plain MLTT.
 
 It should be noted, though, that one can do quite a lot using only 1-dimensional paths.
 For instance, a type equivalent to $\spheretype{2}$ can be defined as $\susp \circtype$, and more generally an $n$-sphere $\spheretype{n}$ can be obtained by iterated suspension.
 One can even argue that \emph{all} higher-dimensional path-constructors are reducible to 1-dimensional ones, as in~\cite{lumsdaine:hub-and-spoke} --- although this reduction does not preserve judgmentality of the computation rules, and moreover it uses path-constructors whose domains and codomains are more general than those that we currently know how to deal with in our semantics (specifically, they involve the eliminators for other HITs).
 
+\subsection{Naturality}
+\label{sec:naturality}
+
+\todo{Work on this section}
+
+When we move on to higher-dimensional HITs, the elimination and computation rules start to involve the requirement of \emph{naturality} that we briefly mentioned before.
+Consider the torus type $\torustype$, whose induction principle looks like this:
+\[ \inferrule{\jd{x:\torustype |- B(x)\type}\\f_\fbase : B(\fbase) \\
+  f_{\fmerid_1} : \idover[B]{f_\fbase}{f_\fbase}{\fmerid_1} \\
+  f_{\fmerid_2} : \idover[B]{f_\fbase}{f_\fbase}{\fmerid_2} \\
+  f_\fsurf : \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{f_{\fmerid_1} \ct f_{\fmerid_2}}{f_{\fmerid_2} \ct f_{\fmerid_1}}{\fsurf}}
+{\jd{x:\torustype |- \ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf,x):B(x)}}
+\]
+Note the type of $f_\fsurf$.
+It is a dependent path relative to the type family
+\[\jd{p:\id[\torustype]{\fbase}{\fbase} |- {\idover[B]{f_\fbase}{f_\fbase}{p}}\type}\]
+between
+\begin{align}
+  {f_{\fmerid_1} \ct f_{\fmerid_2}} &: \idover[B]{f_\fbase}{f_\fbase}{\fmerid_1\ct\fmerid_2} \qquad\text{and}\\
+  {f_{\fmerid_2} \ct f_{\fmerid_1}} &: \idover[B]{f_\fbase}{f_\fbase}{\fmerid_2\ct\fmerid_1}
+\end{align}
+that lies over
+\[\fsurf : \id[\torustype]{\fmerid_1\ct\fmerid_2}{\fmerid_2\ct\fmerid_1}.\]
+But what does ``${f_{\fmerid_1} \ct f_{\fmerid_2}}$'' mean?
+We need a way to ``compose'' dependent paths $q_1: \idover[B]x y {p_1}$ and $q_2:\idover[B]yz{p_2}$ to get a path $q_1\ct q_2 : \idover[B]{x}{z}{p_1\ct p_2}$.
+Such an operation is easy to define (with any definition of dependent paths), but this ``liftability to families'' is a special property of path-concatenation.
+As we will see when we construct semantics, it is a sort of \emph{naturality}.
+
+For this reason, we cannot allow just any term to appear as the source or target of a path-constructor; a specific example is given in~\cite[Example 6.13.1]{hottbook} of an attempted ``higher inductive type'' for which it seems impossible to write down an induction principle.
+Unfortunately, we do not yet know a \emph{syntactic} criterion on such terms which ensures the requisite naturality and includes all desired examples.
+
+The computation rules for $\torustype$ also involve special properties of path-concatenation, and also some apparently unavoidable propositional equalities.
+As in the previous cases, we have
+\begin{align}
+  \ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf,\fbase) &\jdeq f_\fbase\\
+  \ap{\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)}(\fmerid_1) &\jdeq f_{\fmerid_1}\\
+  \ap{\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)}(\fmerid_2) &\jdeq f_{\fmerid_2}
+\end{align}
+but what about \fsurf?
+Writing $f$ for $\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)$, we have
+\begin{align}
+  \ap{\ap{f}}(\fsurf)
+  &: \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{\ap{f}(\fmerid_1 \ct \fmerid_2)}{\ap{f}(\fmerid_2 \ct \fmerid_1)}{\fsurf}\\
+  f_\fsurf &: \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{f_{\fmerid_1} \ct f_{\fmerid_2}}{f_{\fmerid_2} \ct f_{\fmerid_1}}{\fsurf}
+\end{align}
+However, while we have $\ap{f} (\fmerid_1) \jdeq f_{\fmerid_1}$ and $\ap{f} (\fmerid_2) \jdeq f_{\fmerid_2}$ by the previous computation rules, we do not have ${\ap{f}(\fmerid_1 \ct \fmerid_2)}$ judgmentally equal to $\ap{f} (\fmerid_1) \ct \ap{f} (\fmerid_2)$.
+The most we can say is that there is a \emph{propositional} equality
+\[ \fap_{\ct} : \id[{\idover[B]{f_\fbase}{f_\fbase}{\fmerid_1 \ct \fmerid_2}}]{\ap{f}(\fmerid_1 \ct \fmerid_2)}{\ap{f} (\fmerid_1) \ct \ap{f} (\fmerid_2)}. \]
+(This equality is another expression of the \emph{naturality} of path-concatenation, but this time it is only a \emph{propositional} or \emph{pseudo} naturality.)
+Thus, the best we can do for a computation rule for $\fsurf$ is an equality
+\begin{equation}
+  \fcomp_{\fsurf}: \id{\opp{\fap_{\ct}} \ct \ap{\ap{f}}(\fsurf) \ct \fap_{\ct}}
+  {f_\fsurf}.\label{eq:fsurf-comp}
+\end{equation}
+It doesn't make sense to ask for this as a \emph{judgmental} equality, even though the computation rules for $\fmerid_1$ and $\fmerid_2$ are judgmental, because the equality $\fap_{\ct}$ is defined using the elimination principle for identity types and we have little control over its judgmental behavior.
+In particular, the equality~\eqref{eq:fsurf-comp} will not generally hold judgmentally in our semantics.
+
+By analogy with our introduction of the primitive \fap, one way to avoid this issue would be to assert that the primitive \fap preserves concatenation judgmentally, i.e.\ that we have $\ap{f}(p\ct q) \jdeq \ap{f}(p) \ct \ap{f}(q)$.
+Unfortunately, this is not true in most known semantics (with the \mswarning*{Make sure that's true}{notable exception} of the 1-groupoid model~\cite{hs:gpd-typethy}).
+
+In our construction of semantics, we will see that there turns out to be a sort of partially defined ``primitive path-concatenation'' that is propositionally equal to the usual one, and which is preserved judgmentally by the primitive $\ap{f}$ \emph{when $f$ is defined by induction} (but not for all $f$).
+This will be what enables us to construct the \emph{propositional} equality~\eqref{eq:fsurf-comp}, just as the judgmental rules for primitive \fap enable the deduction of propositional rules for the defined \fapp.
+However, this more complicated structure is tricky and probably unhelpful to represent syntactically.
+
+In short, although our method of constructing semantics works in simple cases, and ought to work in all cases in principle, the resulting rules for more complicated and higher-dimensional HITs contain proliferating propositional equalities that are tedious and difficult to write down and work with.
+We do not yet have a satisfactory solution to this problem; which is not hugely surprising as it is closely related to the coherence problem for weak $\infty$-categories.
+
+
 \subsection{Higher $W$-types}
 \label{sec:higher-w-types}
 
-\todo{Define higher $W$-types, and conjecture their general expressivity}
+We end this section by presenting a general class of HITs which we call \textbf{higher $W$-types}.
+Ordinary $W$-types are a sort of parametrized inductive type that are ``universal'', in that all inductive types can be constructed out of $W$-types (and a few other basic type formers such as coproducts and $\Sigma$-types).
+We conjecture that higher $W$-types, or something like them, have an analogous property for HITs, but this is unproven; they do certainly include very many examples.
+
+\todo{Define higher $W$-types.}
+\msnote{Can you do this?  You've thought about them more than I have.}
 
 \section{Semantics of HoTT}
 \label{sec:hott-semantics}
@@ -583,7 +697,7 @@ If $(X,b,l)$ is a fibrant circle algebra over $\Gamma$, then any $f : \Gamma' \t
 The formation and introduction rules say exactly that the circle $\circtype$ is a fibrant circle algebra over $1$.
 
 \begin{definition}
-A \emph{dependent circle algebra} over a fibrant circle algebra $(X,b,l)$ over $\Gamma$ consists of a fibration $Y \fibto X$, equipped with a map $\bbar : \Gamma \to Y$ over $b$, and a map $lbar : \Gamma \to \pathsover[\Gamma]{X}{Y}$ over $(\bbar,l,\bbar) : \Gamma \to Y \times_X \paths[\Gamma]{X} \times_X Y$. 
+A \emph{dependent circle algebra} over a fibrant circle algebra $(X,b,l)$ over $\Gamma$ consists of a fibration $Y \fibto X$, equipped with a map $\bbar : \Gamma \to Y$ over $b$, and a map $\lbar : \Gamma \to \pathsover[\Gamma]{X}{Y}$ over $(\bbar,l,\bbar) : \Gamma \to Y \times_X \paths[\Gamma]{X} \times_X Y$. 
 \end{definition}
 
 The premises of the elimination and computation rules, in context $\Gamma$, posit precisely a dependent circle algebra over the pullback of $\circtype$ along $\Gamma \to 1$.
