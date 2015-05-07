@@ -205,7 +205,7 @@ A type family (or dependent type) indexed by $A$ is then described by a hypothet
 Any such family has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
 As usual, if $B(x)$ is independent of $x$, we write $A\to B$ for $\prd{x:A} B(x)$.
 
-Besides dependent products\footnote{And coinductive types, which we will not consider here.}, all standard type formers can be regarded as special cases of the general notion of \emph{inductive type} such as in~\cite{gimenez:recursion}.
+Besides dependent products\footnote{And coinductive types, which we will not consider here; see~\cite{acs:mtypes-hott}.}, all standard type formers can be regarded as special cases of the general notion of \emph{inductive type} such as in~\cite{gimenez:recursion}.
 We will use an \msnote*{Or whatever; I just chose something for now for definiteness}{Agda-like syntax} for describing inductive types.
 For instance, we write the natural number type as
 \indef{\lN}{
@@ -560,7 +560,7 @@ and therefore
 \[ \fapeq(\floop) : \id[B]{\ap'_f(\floop)}{f_\floop} \]
 Thus, in MLTT regarded as a fragment of our type theory, we have HITs with judgmental computation rules for point-constructors and propositional computation rules for path-constructors.
 Most work with HITs so far has used propositional computation rules of this form for path-constructors (with the defined $\ap'$).
-One reason for this is that if we want to use $\ap'$ (since a primitive $\ap$ is not available in existing proof assistants), then such propositional rules are all we can get out of our semantics in general.
+One reason for this is that if we want to use $\ap'$ (since the cubical $\ap$ is not available in existing proof assistants), then such propositional rules are all we can get out of our semantics in general.
 Another, perhaps more compelling, reason is while that existing proof assistants do not implement HITs natively, there is a hack using ``private types'' due to Licata~\cite{licata:private-types} which enables them to be mimicked, but only with propositional computation rules for path-constructors.
 
 Judgmental computation rules for \emph{point}-constructors are unproblematic from any perspective: they don't require choosing between $\ap$ and $\ap'$, they do hold in the semantics, and they can be implemented in proof assistants using the private-types hack.
@@ -568,11 +568,11 @@ Judgmental computation rules for \emph{point}-constructors are unproblematic fro
 Note also that the (judgmental!) computation rules for point-constructors are necessary in order for the computation rules for path-constructors to be well-typed.
 For example, by definition we have
 \begin{align}
-  \ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) &:
+  \ap_{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) &:
   \idover{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fzero)}{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fone)}{\fseg}\\
   f_\fseg &: \idover{f_\fzero}{f_\fone}{\fseg}.
 \end{align}
-Only the computation rules for $\fzero$ and $\fone$ ensure that these two types coincide, so that it makes sense to ask whether $\ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg)$ and $f_\fseg$ are equal.
+Only the computation rules for $\fzero$ and $\fone$ ensure that these two types coincide, so that it makes sense to ask whether $\ap_{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg)$ and $f_\fseg$ are equal.
 If we had only propositional computation rules such as
 \begin{align}
   \fcomp_\fzero &: \id{\ind{I}(f_\fzero,f_\fone,f_\fseg,\fzero)}{f_\fzero}\\
@@ -580,7 +580,7 @@ If we had only propositional computation rules such as
 \end{align}
 then in order for the computation rule of \fseg to make sense, we would need to transport along (or, equivalently, compose with) these paths; thus we could at best ask for
 \[ \fcomp_\fseg :
-\id{\opp{\fcomp_\fzero}\ct \ap{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) \ct \fcomp_\fone}{f_\fseg}
+\id{\opp{\fcomp_\fzero}\ct \ap_{\ind{I}(f_\fzero,f_\fone,f_\fseg)}(\fseg) \ct \fcomp_\fone}{f_\fseg}
 \]
 Such modifications quickly become quite tedious, so it is fortunate that judgmental computation rules for point-constructors are unproblematic.
 However, when considering \emph{higher} path-constructors---or more generally, path-constructors whose source and target refer to previous path-constructors---if we are restricted to propositional computation rules for the previous path-constructors, then there is no escape.
@@ -625,34 +625,35 @@ The computation rules for $\torustype$ also involve special properties of path-c
 As in the previous cases, we have
 \begin{align}
   \ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf,\fbase) &\jdeq f_\fbase\\
-  \ap{\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)}(\fmerid_1) &\jdeq f_{\fmerid_1}\\
-  \ap{\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)}(\fmerid_2) &\jdeq f_{\fmerid_2}
+  \ap_{\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)}(\fmerid_1) &\jdeq f_{\fmerid_1}\\
+  \ap_{\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)}(\fmerid_2) &\jdeq f_{\fmerid_2}
 \end{align}
 but what about \fsurf?
 Writing $f$ for $\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf)$, we have
 \begin{align}
-  \ap{\ap{f}}(\fsurf)
-  &: \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{\ap{f}(\fmerid_1 \ct \fmerid_2)}{\ap{f}(\fmerid_2 \ct \fmerid_1)}{\fsurf}\\
+  \ap_{\ap_{f}}(\fsurf)
+  &: \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{\ap_{f}(\fmerid_1 \ct \fmerid_2)}{\ap_{f}(\fmerid_2 \ct \fmerid_1)}{\fsurf}\\
   f_\fsurf &: \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{f_{\fmerid_1} \ct f_{\fmerid_2}}{f_{\fmerid_2} \ct f_{\fmerid_1}}{\fsurf}
 \end{align}
-However, while we have $\ap{f} (\fmerid_1) \jdeq f_{\fmerid_1}$ and $\ap{f} (\fmerid_2) \jdeq f_{\fmerid_2}$ by the previous computation rules, we do not have ${\ap{f}(\fmerid_1 \ct \fmerid_2)}$ judgmentally equal to $\ap{f} (\fmerid_1) \ct \ap{f} (\fmerid_2)$.
+However, while we have $\ap_{f} (\fmerid_1) \jdeq f_{\fmerid_1}$ and $\ap_{f} (\fmerid_2) \jdeq f_{\fmerid_2}$ by the previous computation rules, we do not have ${\ap_{f}(\fmerid_1 \ct \fmerid_2)}$ judgmentally equal to $\ap_{f} (\fmerid_1) \ct \ap_{f} (\fmerid_2)$.
 The most we can say is that there is a \emph{propositional} equality
-\[ \fap_{\ct} : \id[{\idover[B]{f_\fbase}{f_\fbase}{\fmerid_1 \ct \fmerid_2}}]{\ap{f}(\fmerid_1 \ct \fmerid_2)}{\ap{f} (\fmerid_1) \ct \ap{f} (\fmerid_2)}. \]
+\[ \fap_{\ct} : \id[{\idover[B]{f_\fbase}{f_\fbase}{\fmerid_1 \ct \fmerid_2}}]{\ap_{f}(\fmerid_1 \ct \fmerid_2)}{\ap_{f} (\fmerid_1) \ct \ap_{f} (\fmerid_2)}. \]
 (This equality is another expression of the \emph{naturality} of path-concatenation, but this time it is only a \emph{propositional} or \emph{pseudo} naturality.)
 Thus, the best we can do for a computation rule for $\fsurf$ is an equality
 \begin{equation}
-  \fcomp_{\fsurf}: \id{\opp{\fap_{\ct}} \ct \ap{\ap{f}}(\fsurf) \ct \fap_{\ct}}
+  \fcomp_{\fsurf}: \id{\opp{\fap_{\ct}} \ct \ap_{\ap_{f}}(\fsurf) \ct \fap_{\ct}}
   {f_\fsurf}.\label{eq:fsurf-comp}
 \end{equation}
 It doesn't make sense to ask for this as a \emph{judgmental} equality, even though the computation rules for $\fmerid_1$ and $\fmerid_2$ are judgmental, because the equality $\fap_{\ct}$ is defined using the elimination principle for identity types and we have little control over its judgmental behavior.
 In particular, the equality~\eqref{eq:fsurf-comp} will not generally hold judgmentally in our semantics.
 
-By analogy with our introduction of the primitive \fap, one way to avoid this issue would be to assert that the primitive \fap preserves concatenation judgmentally, i.e.\ that we have $\ap{f}(p\ct q) \jdeq \ap{f}(p) \ct \ap{f}(q)$.
+By analogy with our introduction of the primitive \fap, one way to avoid this issue would be to assert that the primitive \fap preserves concatenation judgmentally, i.e.\ that we have $\ap_{f}(p\ct q) \jdeq \ap_{f}(p) \ct \ap_{f}(q)$.
 Unfortunately, this is not true in most known semantics (with the \mswarning*{Make sure that's true}{notable exception} of the 1-groupoid model~\cite{hs:gpd-typethy}).
 
-In our construction of semantics, we will see that there turns out to be a sort of partially defined ``primitive path-concatenation'' that is propositionally equal to the usual one, and which is preserved judgmentally by the primitive $\ap{f}$ \emph{when $f$ is defined by induction} (but not for all $f$).
-This will be what enables us to construct the \emph{propositional} equality~\eqref{eq:fsurf-comp}, just as the judgmental rules for primitive \fap enable the deduction of propositional rules for the defined \fapp.
+In our construction of semantics, we will see that there turns out to be a sort of partially defined ``primitive path-concatenation'' that is propositionally equal to the usual one, and which is preserved judgmentally by the primitive $\ap_{f}$ \emph{when $f$ is defined by induction} (but not for all $f$).
+This will be what enables us to construct the \emph{propositional} equality~\eqref{eq:fsurf-comp}, just as the judgmental rules for primitive \fap enable the deduction of propositional rules for the defined $\ap'$.
 However, this more complicated structure is tricky and probably unhelpful to represent syntactically.
+\msnote{Actually, that may be closely like what cubical type theory is doing\dots}
 
 In short, although our method of constructing semantics works in simple cases, and ought to work in all cases in principle, the resulting rules for more complicated and higher-dimensional HITs contain proliferating propositional equalities that are tedious and difficult to write down and work with.
 We do not yet have a satisfactory solution to this problem; which is not hugely surprising as it is closely related to the coherence problem for weak $\infty$-categories.

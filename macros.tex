@@ -66,9 +66,7 @@
 \newcommand{\idover}[4][]{\fId_{#1}(#2,#3)_{#4}}
 \newcommand{\paths}[2][]{\cP_{#1}(#2)}
 \newcommand{\pathsover}[3][]{\cP_{#1}(#3;#2)}
-\newcommand{\ap}[1]{\fap_{#1}}
-\newcommand{\fapp}{\ensuremath{\fap'}}
-\newcommand{\app}[1]{\fapp_{#1}}
+\let\ap\fap
 \newcommand{\circtype}{\ensuremath{S^1}\xspace}
 \newcommand{\torustype}{\ensuremath{T^2}\xspace}
 \newcommand{\spheretype}[1]{\ensuremath{S^{#1}}\xspace}
@@ -93,10 +91,6 @@
 
 % Judgmental equality
 \newcommand{\jdeq}{\equiv}
-
-%%% recursor and induction
-\newcommand{\rec}[1]{\mathsf{rec}_{#1}}
-\newcommand{\ind}[1]{\mathsf{ind}_{#1}}
 
 % Placeholders
 \newcommand{\blank}{\mathord{\hspace{1pt}\text{--}\hspace{1pt}}}
