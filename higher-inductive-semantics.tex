@@ -210,6 +210,9 @@ The issues that must be dealt with include the following:
   In particular, any finite number of constructors can always be ``coalesced'' into a single one, as is done when representing arbitrary inductive types by W-types.
   For HITs this is no longer the case, because the boundary of one path-constructor generally needs involves previous constructors (for example, the source and target of the path-constructor \floop of $\circtype$ are the previous constructor \fbase).
   This means that the constructors of a HIT must be given \emph{in an order}, with each allowed to refer to the previous ones, and we need to specify the syntax and semantics of ``$n$-constructor HITs'' inductively on $n$.
+
+  One could imagine relaxing the restriction that constructors can only refer to previous ones, allowing all sorts of mutual references, but it is not clear whether our methods could be extended to support that.
+  Note, though, that since point-constructors have no way to refer to other constructors at all, they might as well all be specified first.
 \item Recursive constructors, such as $\fsucc$ for the natural numbers and the truncation-constructor for $\brck{A}$.
   This mean specifying the allowable ways that a HIT can appear in the domains of its own constructors.
   The usual syntactic restriction is ``strict positivity'', which semantically ensures an ``accessibility'' property of a certain functor.
@@ -267,6 +270,8 @@ Here are the distinguishing features of our hybrid type theory:
 \item There are no universe types.
   Instead, ``being a type'' is a separate judgment form.
   We make this choice for two reasons: firstly, in many homotopical models it is not known how to construct universes; and secondly, we do not know how to deal with issue~\ref{item:issue:size} above.
+  (It should be noted, however, that all the \emph{homotopy-theoretic} results about HITs mentioned in \cref{sec:hit-apps} require the presence of a universe satisfying the univalence axiom.
+  Such a universe does exist in some models, such as those of~\cite{klv:ssetmodel,shulman:invdia,shulman:elreedy}; while other models of interest, such as those arising from $(\infty,1)$-toposes, have instead a ``weakly Tarski'' universe, which is conjecturally sufficient for these proofs.)
 \item In fact, as in~\cite{vv:hts}, we include two different judgment forms for types: one for ``fibrant'' types and one for non-fibrant (i.e.\ not-necessarily-fibrant) ones.
   The embedding of ordinary MLTT in our hybrid theory sees only the fibrant types; the non-fibrant ones enable us to give a clean treatment of issue~\ref{item:issue:naturality} above without running into the failure of pullback to preserve fibrant replacement.
 \item We include the ``standard'' type constructors of $\Pi$, $\Sigma$, and the unit type \unittype.
@@ -299,8 +304,9 @@ In each case, we first set out the syntactic rules, then the operations on hybri
 Then we show that the hybrid CwFs arising from model categories as in \cref{sec:model-categories} admit the weakly stable version of the structure; this is where the real heart of the paper lies.
 Finally, we sketch how this structure can be transferred back to rules that make sense in ordinary MLTT.
 \begin{itemize}
+\item We begin in \cref{sec:syntax} with an overview of the syntax for HITs, so that the sections to follow can concentrate on the specifics relevant to particular examples.
 \item \todo{An ordinary inductive type or two?}
-\item We begin in \cref{sec:circtype} with $\circtype$, which involves only path-constructors, multiple constructors, fibrancy, and a certain amount of stability.
+\item In \cref{sec:circtype} we start with the simplest example of $\circtype$, which involves only path-constructors, multiple constructors, fibrancy, and a certain amount of stability.
   These are all issues which even the simplest of HITs must deal with.
 \item In \cref{sec:susp} we consider the suspension $\susp A$, which introduces a type parameter $A$.
 \item In \cref{sec:torustype} we consider the torus $\torustype$, which involves a higher path-constructor and also the cubical workaround for path operations in boundaries.
@@ -318,77 +324,33 @@ Finally, we sketch how this structure can be transferred back to rules that make
 \section{Syntactic type theory}
 \label{sec:syntactic-type-theory}
 
-In this section we briefly describe the basic type theory we will be using, which for technical reasons is a little unusual.
+In this section we describe our base hybrid type theory.
 
-\subsection{The basic theory}
-\label{sec:basic-theory}
-
-First of all, we do not include any universes.
-Some of our models (particularly the simplicial set model~\cite{klv:ssetmodel}) have universes, but not all of them are known to, and so since we have little need for universes in this paper, we omit them.
-(It should be noted, however, that all the \emph{homotopy-theoretic} results about HITs mentioned in \cref{sec:hit-apps} require the presence of a universe satisfying the univalence axiom.
-But many models of interest, such as those arising from $(\infty,1)$-toposes, do have a ``weakly Tarski'' universe, and this is conjecturally sufficient for these proofs.)
+\subsection{Contexts and judgments}
+\label{sec:cxt-jdg}
 
 The absence of universes means that we need a separate judgment ``$A \type$'' indicating that $A$ is a type.
 A type family (or dependent type) indexed by $A$ is then described by a hypothetical judgment $\jd{x:A |- B(x) \type}$.
-Any such family has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
+
+\subsection{Dependent products}
+\label{sec:pi-syntax}
+
+Any type family $\jd{x:A |- B(x) \type}$ has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
 As usual, if $B(x)$ is independent of $x$, we write $A\to B$ for $\prd{x:A} B(x)$.
 
-Besides dependent products\footnote{And coinductive types, which we will not consider here; see~\cite{acs:mtypes-hott}.}, all standard type formers can be regarded as special cases of the general notion of \emph{inductive type} such as in~\cite{gimenez:recursion}.
-We will use an \msnote*{Or whatever; I just chose something for now for definiteness}{Agda-like syntax} for describing inductive types.
-For instance, we write the natural number type as
-\indef{\lN}{
-  \fzero : \lN \OR
-  \fsucc : \lN \to \lN
-}
-\msnote{This syntax looks wonky without universes.}
-and the dependent pair type $\sm{x:A} B(x)$ as
-\indef{\sm{x:A} B(x)}{
-  \fpair : \prd{x:A} B(x) \to \sm{x:A} B(x)
-}
-Note that as usual, the scope of $\prd{x:A}$ extends as far to the right as possible, so that $\prd{x:A} B(x) \to \sm{x:A} B(x)$ means $\prd{x:A} \big(B(x) \to \sm{x:A} B(x)\big)$.
+As usual, the scope of $\prd{x:A}$ extends as far to the right as possible, so that $\prd{x:A} B(x) \to \sm{x:A} B(x)$ means $\prd{x:A} \big(B(x) \to \sm{x:A} B(x)\big)$.
 
-We allow inductive types to contain both \emph{parameters} and \emph{indices}.
-Having a \emph{parameter} means essentially that we define a whole family of inductive types all at once, and each member of the family is inductively defined on its own.
-For instance, we can define the dependent-pair-type operation with $A$ and $B$ as parameters:
-\msnote{What should the syntax be for type parameters in the absence of a universe?}
-\indef{\sum \; (A \type) \; (\jd{x:A |- B(x)\type})}{
-  \fpair : \prd{x:A} B(x) \to \sm{x:A} B(x)
-}
-This means that each type $\sm{x:A} B(x)$ has its own induction principle, even though we have defined all of them together at once.
-Note that although we have no universes, we allow types and type families to appear as parameters
-\msnote{There may be an issue here with universe sizes if there are universes.}
- in an inductive definition; this is justified by the coherence theorem of~\cite{lw:localuniv}.
-\msnote{Is there a way to specify syntactically what sorts of ``type family parameters'' are allowed?}
-
-Having an \emph{index} means that we define a family of types by induction together, so that rather than each member of the family having an induction principle, the family as a whole has one induction principle.
-Syntactically, the difference is that the constructors can take input from one element of the type family and give output in another, such as the standard inductive definition of length-indexed lists (vectors):%
-\msnote{Once again, the syntax looks wonky.}
-\indeff{\fVec \; (A\type)}{\lN\to\fType}{
-  \fnil : \fVec_A(0) \OR
-  \fcons : \prd{n:\lN} A \to \fVec_A(n) \to \fVec_A(n+1)
-}
-Here $A$ is a parameter and $n:\lN$ is an index.
-
-As we will see in \cref{sec:hott-semantics}, it follows directly from the work in~\cite{lw:localuniv} that all of our models contain nonrecursive inductive types such as $\sum$s, disjoint unions $A+B$, and the empty type $\emptyset$.
-However, in general it is not immediately obvious that they have even very simple ordinary inductive types such as $\lN$, although some results in this direction can be found in~\cite{klv:ssetmodel,vdbm:wtypes-hott}.
-A general theorem about inductive types will follow as a degenerate case of our semantics for \emph{higher} inductive types.
+\subsection{Dependent sums}
+\label{sec:sigma-syntax}
 
 \subsection{Cubical identity types}
 \label{sec:cubic-ident-types}
 
-It is common to define the \emph{identity type} as an inductive family such as
-\indeff{\fId \; (A\type)}{A\to A\to \fType}{
-  \refl : \prd{x:A} \id[A]xx
-}
-or
-\indeff{\fId \; (A\type) (a:A)}{A\to \fType}{
-  \refl : \id[A]aa
-}
-(The first gives rise to the ``Martin-L\"{o}f eliminator'', the second to the ``Paulin-Mohring eliminator''.)
-The distinguishing feature of \emph{homotopy} type theory is that the identity type $\id[A]xx$ can contain paths other than $\refl$, corresponding to loops in $A$ viewed as a ``space''.
+In ordinary MLTT, one defines the \emph{identity type} as an inductive family $\jd{x:A,y:A |- \id[A]{x}{y} \type}$ generated by reflexivity $\jd{x:A |- \refl_x : \id[A]xx}$.
+Although its only introduction rule is reflexivity, the distinguishing feature of \emph{homotopy} type theory is that identity types can contain paths \emph{other} than $\refl$, corresponding to loops in $A$ viewed as a ``space''.
 For this reason we will sometimes refer to elements of an identity type as \emph{paths}.
 
-However, the above definition of identity types is not ideal when discussing HITs, because certain equalities, notably those involving the application of functions to paths, are propositional rather than judgmental.
+However, this definition of identity types is not ideal when discussing HITs, because certain equalities, notably those involving the application of functions to paths, are propositional rather than judgmental.
 This makes complicated homotopy-theoretic proofs increasingly difficult, such as $T^2 = S^1\times S^1$~\cite{lb:torus}.
 More seriously, it is a substantial obstacle to the semantic methods we plan to employ in this paper, which rely on \emph{strict} algebraic structures in model categories.
 
@@ -398,7 +360,7 @@ Such lines are encoded by a special context of ``dimension variables'' to the le
 \[ x\dim, y\dim \cb a:A \pr b:B \]
 where $A$ might depend on $x$ and $y$, while $b$ and $B$ might depend on $x$, $y$, and $a$.
 The semicolon separates the ``dimension context'' from the ordinary one.
-It is helpful (and semantically valid) to think of ``$x\dim$'' as ``$x:I$'' where $I$ is a sort of ``interval type'';
+It is helpful (and, as we will see, semantically valid) to think of ``$x\dim$'' as ``$x:I$'' where $I$ is a sort of ``interval type'';
 placing such variables in a separate context just simplifies the theory and its semantics.
 The theory is ``cubical'' because from this viewpoint a dimension context $x\dim, y\dim, z\dim$ corresponds to a ``cube'' $I\times I\times I$.
 
@@ -411,7 +373,7 @@ Relative to an ordinary function abstraction, the main wrinkle is that we indica
 
 Specifically, the rule for forming identity types looks just like the one in MLTT, except for the presence of an extra dimension context $\Psi$:
 \begin{equation}
-\inferrule{\Psi;\Gamma \vdash A \type \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[A]{a_0}{a_1}\type}\label{eq:cubical-idform-nondep}
+\inferrule{\Psi;\Gamma \vdash A \type \\ \Psi;\Gamma \vdash a_0 :A \\ \Psi;\Gamma \vdash a_1:A}{\Psi;\Gamma\vdash \id[A]{a_0}{a_1}\type}\label{eq:cubical-idform-nondep}
 \end{equation}
 (Actually, there is a further enhancement to this which we postpone discussing until later.)
 But the rule for introducing terms in an identity type looks like $\lambda$-abstraction:
@@ -501,26 +463,24 @@ So far, however, we have not explained how the identity types are to inherit all
 In MLTT, all of these data are derived from the eliminator for $\fId$ defined as an inductive family.
 In cubical type theory, all of these data are essentially \emph{postulated} in a uniform way (as cubical ``Kan composition'' or ``Kan filling'' operations), and from them we can derive the usual eliminator of $\fId$ (though with only a propositional computation rule).
 We do not want to take the latter route, because the form of the cubical Kan operations appears very specialized to the cubical set model of type theory, whereas we want our type theory to admit semantics in all the standard simplicial models as well (so that we can prove that HITs exist there).
-But we do also want our results to apply to the cubical set model as well.
-Thus, we take the ``common core'' of the two theories and postulate the inductive eliminator for $\fId$ along with a propositional computation rule for it.\msnote{Not quite sure about this.}
+Thus, we instead postulate the inductive eliminator for $\fId$ and its usual computation rule:
+\[
+\inferrule{\Psi;\Gamma,x,y:A,p:\id[A]xy \vdash C \type \\ \Psi;\Gamma,x:A \vdash c_\refl : C\subst{x,x,\refl_x}{x,y,p}}{\Psi;\Gamma,x,y:A,p:\id[A]xy \vdash J(\dots) : C \\ \Psi;\Gamma,x:A \vdash J(\dots) \jdeq c_\refl} \]
 The resulting type theory is not, of course, computationally well-behaved, but that is not our concern here.
 
 It is worth emphasizing that in our \emph{construction} of HITs we do not use this eliminator at all.
 Instead the eliminator serves an auxiliary purpose.
-For one thing, our verification in \cref{sec:hott-semantics} that the identity types in our models support this can be regarded as a consistency check that our ``identity types'' really deserve that name.
+For one thing, our verification in \cref{sec:model-categories} that the identity types in our models support this rule can be regarded as a consistency check that our ``identity types'' really deserve that name.
 More importantly, the presence of the eliminator allows us to compare our well-behaved $\ap_f$ with the traditional ill-behaved one, which we denote $\ap'_f$.
-Since both $\ap_f(\refl_a)$ and $\ap'_f(\refl_a)$ are equal to $\refl_{f(a)}$ (the former judgmentally, the latter only propositionally since our eliminator has a propositional computation rule), we can use the eliminator again to show that they are propositionally equal; that is, we have a term
+Since both $\ap_f(\refl_a)$ and $\ap'_f(\refl_a)$ are equal to $\refl_{f(a)}$, we can use the eliminator again to show that they are propositionally equal; that is, we have a term
 \[ \jd{a_0:A , a_1:A, p:\id[A]{a_0}{a_1} |- \fapeq(p) : \id[{\id[B]{f(a_0)}{f(a_1)}}]{\ap'_f(p)}{\ap_f(p)}} \]
 This, in turn, enables us to translate the rules for our HITs, which involve $\ap_f$, into rules involving $\ap'_f$ instead.
-(We will discuss this further in \cref{sec:syntax}.)
+(We will discuss this further in later sections.)
 These translated rules are more complicated, but they can be stated in plain MLTT.
 In this way, the use of cubical type theory can be entirely eliminated from our results, yielding a statement about HITs that exist in a certain class of models of MLTT.
 
-Returning to the (non-)uses of the eliminator, it is true that some more complicated HITs, such as the torus, incorporate the $\infty$-groupoid operations in their definition.
-However, for this purpose the operations derived as usual from the eliminator are, like $\ap'_f$, insufficiently well-behaved for our model construction to work.
-One solution would be to postulate the cubical Kan operations, as in CTT; but we could also potentially postulate simplicial Kan operations, or $\infty$-groupoid operations in the style of Batanin.
-Whatever choice is made, one would then have to show that these operations exist in the models of interest.
-We will not investigate this question in detail, but in \cref{??} we will consider the simple example of the torus itself, which hopefully gives an idea for how such an argument might proceed in the general case.
+Returning to the (non-)uses of the eliminator, it is true that some HITs appear to incorporate the $\infty$-groupoid operations in their definition, such as the composites of paths appearing in the boundary of the 2-path constructor of $\torustype$.
+However, as mentioned in \cref{sec:layers-complexity}, we do not know how to model these directly; instead we use a cubical workaround that does not actually require the eliminator.
 
 
 \section{Semantic type theory}
@@ -532,17 +492,18 @@ We will not investigate this question in detail, but in \cref{??} we will consid
 
 
 
-\section{Syntax of HITs}
+\section{Overview of HIT syntax}
 \label{sec:syntax}
 
-In this section we will describe the type-theoretic rules for higher inductive types, so that we know what we want to model in the semantics.
-We will begin with simple specific examples and work up to fairly general ones (although, as we have said, a fully general specification of what should count as ``a higher inductive type'' is not yet known).
+Before beginning our consideration of examples, in this section we will give an overview of what the rules for HITs tend to look like.
+This is \emph{not} a formal description, but serves only to orient the reader, so that in later sections when we do give formal descriptions their overall shape will not be a complete surprise.
+
+\todo{Rewrite this section using dimension variables.}
 
 \subsection{Specification of HITs}
-\label{sec:specification}
+\label{sec:hit-specs}
 
-As mentioned in \cref{sec:hit-egs}, a higher inductive type is specified like an ordinary inductive type, except that in addition to \emph{point-constructors} whose ouput is an \emph{element} of the type being defined, we allow \emph{path-constructors} whose output is a \emph{path} (i.e.\ an equality) in that type.
-We extend the syntax for describing inductive types from \cref{sec:syntactic-type-theory} to include such path-constructors.
+In this section we will use an informal Agda-like syntax for describing HITs.
 For instance, the higher inductive circle $\circtype$ can be written as
 \indef{\circtype}{
   \fbase : \circtype \OR
@@ -553,11 +514,6 @@ and the $(-1)$-truncation $\brck{A}$ can be written as
   \fproj : A \to \brck{A} \OR
   \fsquash : \prd{x,y:\brck{A}} \id[\brck{A}]{x}{y}
 }
-We may also allow higher path-constructors; for instance, the 2-sphere $\spheretype{2}$ can be written as
-\indef{\spheretype{2}}{
-  \fbase : \spheretype{2} \OR
-  \fsurf : \id[{\id[\spheretype{2}]{\fbase}{\fbase}}]{\refl}{\refl}
-}
 while the torus $\torustype$ can be written as
 \indef{\torustype}{
   \fbase : \torustype \OR
@@ -566,27 +522,17 @@ while the torus $\torustype$ can be written as
   \fsurf : \id[{\id[\torustype]{\fbase}{\fbase}}]{\fmerid_1 \ct \fmerid_2}{\fmerid_2 \ct \fmerid_1}
 }
 where $p\ct q$ denotes the concatenation of paths (i.e.\ the transitivity of equality).
-In general, the \emph{domain} of a path-constructor is of the same form as the domain of a point-constructor (though we will discuss below some possible generalizations of this), while its \emph{codomain} is some iterated path-type of the HIT being constructed.
+
+In general, the \emph{domain} of a path-constructor is of the same form as the domain of a point-constructor: it must be a strictly positive functor of the type being defined.
+The \emph{codomain} is some iterated path-type of the HIT being constructed.
 
 Note that specifying the codomain of a path-constructor requires specifying terms belonging to the HIT being defined and perhaps also to its iterated path-spaces.
 For instance, in $\circtype$ we must specify $\fbase$ and $\fbase$ to be the source and target of the path $\floop$; while in $\torustype$ we must specify $\fbase$ and $\fbase$, and then also ${\fmerid_1 \ct \fmerid_2}$ and ${\fmerid_2 \ct \fmerid_1}$, to give the source and target of $\fsurf$.
 These terms will often refer to other point- and perhaps path-constructors, such as $\fbase$ and $\fmerid_1$ and $\fmerid_2$.
 
-This is a departure from ordinary inductive types, in which (at least usually) the type of each constructor must ``stand alone'' without referring to any other constructor.
-It immediately presents us with the question of \emph{which} constructors can be referred to in specifying the type of a given constructor.
-In this paper, we will always suppose that the constructors (both point- and path-) of a HIT are specified \emph{in an order}, and we allow the type of each constructor to refer only to those constructors appearing \emph{before} it; one can imagine relaxing this restriction, but it is not obvious whether our method for constructing semantics could handle such a relaxation.
-Note that since point-constructors have no way to refer to other constructors at all, they might as well all be specified first.
-
-There is an additional technical restriction on the terms ocurring in the codomain of a path-constructor, which we regard as vaguely analogous to the ``strict positivity'' condition on constructor domains: they must be \emph{natural}.
-The meaning of this, and its importance, will be explained later.
-\msnote{Say something more here once we decide how to deal with fibrancy?}%
-(In fact, as we will see, this is one area where our current methods are not completely satisfactory.)
-\msnote{Can we come up with a syntactic condition ensuring naturality?}
-
 \subsection{Rules for HITs}
 \label{sec:rules}
 
-So much for how to \emph{specify} a HIT; how does such a type \emph{behave}?
 In general, every type forming operation in type theory comes with \emph{formation}, \emph{introduction}, \emph{elimination}, and \emph{computation} rules.
 The above specifications of HITs give us the \textbf{formation} rules easily; in these simple cases, the formation rule is just ``such-and-such type exists'', e.g.
 \[ \inferrule{ }{\circtype\type} \]
@@ -727,10 +673,74 @@ It should be noted, though, that one can do quite a lot using only 1-dimensional
 For instance, a type equivalent to $\spheretype{2}$ can be defined as $\susp \circtype$, and more generally an $n$-sphere $\spheretype{n}$ can be obtained by iterated suspension.
 One can even argue that \emph{all} higher-dimensional path-constructors are reducible to 1-dimensional ones, as in~\cite{lumsdaine:hub-and-spoke} --- although this reduction does not preserve judgmentality of the computation rules, and moreover it uses path-constructors whose domains and codomains are more general than those that we currently know how to deal with in our semantics (specifically, they involve the eliminators for other HITs).
 
-\subsection{Naturality}
-\label{sec:naturality}
 
-\todo{Work on this section}
+\section{The circle}
+\label{sec:circtype}
+
+\todo{Reorganize along general lines}
+
+As we did for inductive types above, to model the circle we first set up a (fibered) category of “algebras”, with a notion of “fibration”, and observe that a stably trivially cofibrant object in this category will model the rules for the circle.
+%
+In the case of the circle, it is then easy to construct such an object by hand.
+
+\begin{definition}
+A \emph{fibrant circle algebra} over $\Gamma \in \E$ is a fibration $X \fibto \Gamma$ equipped with a section $b : \Gamma \to X$, and a map $l : \Gamma \to \paths[\Gamma]{X}$ over $(b,b) : \Gamma \to X \times_\Gamma X$.
+%
+If $(X,b,l)$ is a fibrant circle algebra over $\Gamma$, then any $f : \Gamma' \to \Gamma$ induces a pullback fibrant circle algebra $f^*(X,b,l) := (f^*X,f^*b,f^*l)$ over $\Gamma'$.
+\end{definition}
+
+The formation and introduction rules say exactly that the circle $\circtype$ is a fibrant circle algebra over $1$.
+
+\begin{definition}
+A \emph{dependent circle algebra} over a fibrant circle algebra $(X,b,l)$ over $\Gamma$ consists of a fibration $Y \fibto X$, equipped with a map $\bbar : \Gamma \to Y$ over $b$, and a map $\lbar : \Gamma \to \pathsover[\Gamma]{X}{Y}$ over $(\bbar,l,\bbar) : \Gamma \to Y \times_X \paths[\Gamma]{X} \times_X Y$. 
+\end{definition}
+
+The premises of the elimination and computation rules, in context $\Gamma$, posit precisely a dependent circle algebra over the pullback of $\circtype$ along $\Gamma \to 1$.
+
+\begin{definition}
+A \emph{(strict) section} of a dependent circle algebra $(Y,\bbar,\lbar)$ over $(X,b,l)$, $\Gamma$ is a section $s$ of the fibration $Y \fibto X$, such that $s(b) = \bbar$, $\paths[\Gamma]{s}(l) = \lbar$.
+
+If $Y = (Y,\bbar,\lbar)$ is a dependent circle algebra over $X = (X,b,l)$, in context $\Gamma$, then pulling back along $f : \Gamma' \to \Gamma$ induces a dependent circle algebra $f^*Y$ over $f^*X$.
+\end{definition}
+
+The eliminator, together with the (judgemental) computation rules, provide a section for every dependent circle algebra over any pullback of  $\circtype$, along with stability conditions, which we disregard for now but will return to in Lemma~\ref{lemma:circle-coherence} below.
+%
+Based on this, we define:
+\begin{definition}
+A fibrant circle algebra is \emph{trivially cofibrant} if every dependent circle algebra over it has a section, and \emph{stably trivially cofibrant} if every pullback of it is trivially cofibrant.
+\end{definition}
+
+So far, we have set up these definitions following the syntactic presentation as closely as possible, and not relying on any features particular to the model-categorical setting.
+%
+However, in this setting---in particular, with strict functoriality of $\paths{-}$---these fit into a rather cleaner big picture:
+
+\begin{definition}
+There is an $\E$-indexed category $\Alg[\E]{\circtype}$, with an $\E$-indexed forgetful functor $U : \Alg[\E]{\circtype} \to \Eself$.
+
+Objects of $\Alg[\E]{\circtype}$ consist of triples $(p:X \to \Gamma,b,l)$, as before, but with $p$ not assumed to be a fibration.
+%
+Maps of $(X',b',l') \to (X,b,l)$ in $\Alg[\E]{\circtype}(\Gamma)$ consist of maps $f : X' \to X$ over $\Gamma$, with $f(b') = b$, $\paths[\Gamma]{f}(l') = l$.
+
+The functor $U$ sends a circle algebra $(X,b,l)$ over $\Gamma$ to its underlying map $p:X \to \Gamma$.
+
+Moreover, $U$ induces an indexed subcategory of \emph{fibrations} in $\Alg[\E]{\circtype}$. 
+\end{definition}
+
+With this setting, a fibrant circle algebra over $\Gamma$, as originally defined, is exactly a fibrant object of $\Alg[\E]{\circtype}(\Gamma)$; a dependent circle algebra over $(X,b,l)$ is just a fibration over $(X,b,l)$ in $\Alg[\E]{\circtype}$; and a section of one is exactly a section in the usual sense.
+
+\todo{Construct stable initial algebra as pushout; then, stably triv cof alg as fibrant replacement.}
+
+\todo{State local universes lemma: “weakly stable triv cof alg in $\E$ gives strictly stable circle type in $\E_!$”.}
+
+\section{Suspension}
+\label{sec:susp}
+
+
+
+\section{The torus}
+\label{sec:torustype}
+
+\todo{Leftovers here}
 
 When we move on to higher-dimensional HITs, the elimination and computation rules start to involve the requirement of \emph{naturality} that we briefly mentioned before.
 Consider the torus type $\torustype$, whose induction principle looks like this:
@@ -796,105 +806,21 @@ In short, although our method of constructing semantics works in simple cases, a
 We do not yet have a satisfactory solution to this problem; which is not hugely surprising as it is closely related to the coherence problem for weak $\infty$-categories.
 
 
-\subsection{Higher $W$-types}
-\label{sec:higher-w-types}
-
-We end this section by presenting a general class of HITs which we call \textbf{higher $W$-types}.
-Ordinary $W$-types are a sort of parametrized inductive type that are ``universal'', in that all inductive types can be constructed out of $W$-types (and a few other basic type formers such as coproducts and $\Sigma$-types).
-We conjecture that higher $W$-types, or something like them, have an analogous property for HITs, but this is unproven; they do certainly include very many examples.
-
-\todo{Define higher $W$-types.}
-\msnote{Can you do this?  You've thought about them more than I have.}
+\section{Propositional truncation}
+\label{sec:brck}
 
 
-\section{Semantics of simple HITs}
-\label{sec:simple-semantics}
+\section{Some non-examples}
+\label{sec:loopy}
 
-\subsection{Circle}
 
-As we did for inductive types above, to model the circle we first set up a (fibered) category of “algebras”, with a notion of “fibration”, and observe that a stably trivially cofibrant object in this category will model the rules for the circle.
-%
-In the case of the circle, it is then easy to construct such an object by hand.
+\section{Simple higher $W$-types}
+\label{sec:twoconstr-hwt}
 
-\begin{definition}
-A \emph{fibrant circle algebra} over $\Gamma \in \E$ is a fibration $X \fibto \Gamma$ equipped with a section $b : \Gamma \to X$, and a map $l : \Gamma \to \paths[\Gamma]{X}$ over $(b,b) : \Gamma \to X \times_\Gamma X$.
-%
-If $(X,b,l)$ is a fibrant circle algebra over $\Gamma$, then any $f : \Gamma' \to \Gamma$ induces a pullback fibrant circle algebra $f^*(X,b,l) := (f^*X,f^*b,f^*l)$ over $\Gamma'$.
-\end{definition}
 
-The formation and introduction rules say exactly that the circle $\circtype$ is a fibrant circle algebra over $1$.
+\section{Higher $W$-types}
+\label{sec:hwt}
 
-\begin{definition}
-A \emph{dependent circle algebra} over a fibrant circle algebra $(X,b,l)$ over $\Gamma$ consists of a fibration $Y \fibto X$, equipped with a map $\bbar : \Gamma \to Y$ over $b$, and a map $\lbar : \Gamma \to \pathsover[\Gamma]{X}{Y}$ over $(\bbar,l,\bbar) : \Gamma \to Y \times_X \paths[\Gamma]{X} \times_X Y$. 
-\end{definition}
-
-The premises of the elimination and computation rules, in context $\Gamma$, posit precisely a dependent circle algebra over the pullback of $\circtype$ along $\Gamma \to 1$.
-
-\begin{definition}
-A \emph{(strict) section} of a dependent circle algebra $(Y,\bbar,\lbar)$ over $(X,b,l)$, $\Gamma$ is a section $s$ of the fibration $Y \fibto X$, such that $s(b) = \bbar$, $\paths[\Gamma]{s}(l) = \lbar$.
-
-If $Y = (Y,\bbar,\lbar)$ is a dependent circle algebra over $X = (X,b,l)$, in context $\Gamma$, then pulling back along $f : \Gamma' \to \Gamma$ induces a dependent circle algebra $f^*Y$ over $f^*X$.
-\end{definition}
-
-The eliminator, together with the (judgemental) computation rules, provide a section for every dependent circle algebra over any pullback of  $\circtype$, along with stability conditions, which we disregard for now but will return to in Lemma~\ref{lemma:circle-coherence} below.
-%
-Based on this, we define:
-\begin{definition}
-A fibrant circle algebra is \emph{trivially cofibrant} if every dependent circle algebra over it has a section, and \emph{stably trivially cofibrant} if every pullback of it is trivially cofibrant.
-\end{definition}
-
-So far, we have set up these definitions following the syntactic presentation as closely as possible, and not relying on any features particular to the model-categorical setting.
-%
-However, in this setting---in particular, with strict functoriality of $\paths{-}$---these fit into a rather cleaner big picture:
-
-\begin{definition}
-There is an $\E$-indexed category $\Alg[\E]{\circtype}$, with an $\E$-indexed forgetful functor $U : \Alg[\E]{\circtype} \to \Eself$.
-
-Objects of $\Alg[\E]{\circtype}$ consist of triples $(p:X \to \Gamma,b,l)$, as before, but with $p$ not assumed to be a fibration.
-%
-Maps of $(X',b',l') \to (X,b,l)$ in $\Alg[\E]{\circtype}(\Gamma)$ consist of maps $f : X' \to X$ over $\Gamma$, with $f(b') = b$, $\paths[\Gamma]{f}(l') = l$.
-
-The functor $U$ sends a circle algebra $(X,b,l)$ over $\Gamma$ to its underlying map $p:X \to \Gamma$.
-
-Moreover, $U$ induces an indexed subcategory of \emph{fibrations} in $\Alg[\E]{\circtype}$. 
-\end{definition}
-
-With this setting, a fibrant circle algebra over $\Gamma$, as originally defined, is exactly a fibrant object of $\Alg[\E]{\circtype}(\Gamma)$; a dependent circle algebra over $(X,b,l)$ is just a fibration over $(X,b,l)$ in $\Alg[\E]{\circtype}$; and a section of one is exactly a section in the usual sense.
-
-\todo{Construct stable initial algebra as pushout; then, stably triv cof alg as fibrant replacement.}
-
-\todo{State local universes lemma: “weakly stable triv cof alg in $\E$ gives strictly stable circle type in $\E_!$”.}
-
-\subsection{Suspension}
-
-\todo{Same pattern as for circle, but including fibrant replacement, and now only weakly stable}
-
-\todo{Other simple examples?}
-
-\subsection{Propositional truncation}
-\todo{$(–1)$-truncation: set up the (now less trivial) category of algebras by hand. Note again that an initial one will model the types.}
-
-\todo{Recall \emph{dialgebras}; recognise the algebras above as (iterated) dialgebras.}
-
-\todo{Recall/give initial dialgebra theorems.  Conclude: we have models of the types.}
-
-\section{Semantics of higher $W$-types}
-\label{sec:higherw-semantics}
-
-\todo{Set up endofunctors for iterated dialgebra construction.}
-
-\todo{Note that initial dialgebras model higher $W$-types}
-
-\todo{Note that we have initial dialgebras}
-
-\section{Generalisations}
-\label{sec:generalisations}
-
-\todo{Higher path constructors, higher recursive calls, weakly natural sources and targets, induction-induction, induction-recursion, etc.}
-
-\todo{How some of these (and simpler examples) can be reduced to higher W-types?}
-
-\todo{Perhaps give or sketch semantics of some higher I-R type?}
 
 \bibliographystyle{alpha}
 \bibliography{basictex/all}
