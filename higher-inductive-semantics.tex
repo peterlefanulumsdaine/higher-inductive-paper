@@ -18,12 +18,14 @@
 The now-standard homotopy-theoretic models of Voevodsky, Awodey--Warren, et al, show that dependent type theory is expressive enough to talk about homotopy-theoretic properties and constructions.
 %
 However, traditional type theory provides no way to \emph{construct} homotopically non-trivial types.
+Voevodsky's Univalence Axiom goes some way in this direction by ensuring that the universe is homotopically non-trivial, but there is a limit to the additional homotopy types that can be constructed from this.
 
 Higher Inductive Types (HITs) were introduced to remedy this gap (in conjunction with the Univalence Axiom).
 %
 They generalise ordinary inductive definitions, allowing constructors to produce not only points but \emph{paths} in the posited type.
+However, they are also of interest in the absence of Univalence, because they provide well-behaved quotients and free-algebra constructions.
 
-Here we show that many homotopy-theoretic models of dependent type theory also model HITs, using a generalisation of the initial-algebra semantics of ordinary inductive types.
+Here we show that many homotopy-theoretic (and non-homotopy-theoretic) models of dependent type theory also model HITs, using a generalisation of the initial-algebra semantics of ordinary inductive types.
 %
 Precisely, we show that \todo{\ldots} .
 \end{abstract}
@@ -43,11 +45,12 @@ Our concern here is with the second, known as \emph{higher inductive types (HITs
 The basic idea of HITs was initially conceived at the Oberwolfach meeting in February 2011 by the present authors along with Bauer and Warren.
 The first real application of HITs was the second author's formalized proof that $\pi_1(\circtype)=\lZ$, using a HIT definition of the circle $\circtype$~\cite{ls:pi1s1}.
 Since then, many people have contributed to the further development of HITs; we will summarize some of their contributions in \cref{sec:hit-apps} below.
-The syntax and use of HITs is explained in detail in Chapter 6 of the Homotopy Type Theory book~\cite{hottbook}, while many of their recent applications can be found in its Chapter 8.
+The syntax and use of HITs is explained by way of many examples (and some imprecise general remarks) in Chapter 6 of the Homotopy Type Theory book~\cite{hottbook}, while many of their recent applications can be found in its Chapter 8.
 
-However, what is still missing from the literature is a proof that HITs really do exist in homotopy-theoretic models of type theory, analogous to the proofs in~\cite{klv:ssetmodel,shulman:invdia,shulman:elreedy} that the univalence axiom holds in (some) such models.
+However, what is still missing from the literature is a precise specification of the rules for a sufficiently general class of HITs and a proof that these HITs really do exist in homotopy-theoretic models of type theory, analogous to the proofs in~\cite{klv:ssetmodel,shulman:invdia,shulman:elreedy} that the univalence axiom holds in (some) such models.
 This is what we aim to provide in the present paper.
 The central ideas of the construction were developed by the authors in the summer of 2011, and disseminated as talks and sketchy notes over the next few years, but have not been written out comprehensively until now.
+
 
 \subsection{What are HITs?}
 \label{sec:what-are-hits}
@@ -57,6 +60,8 @@ There are many different ways to motivate HITs.
 From a homotopy-theoretic point of view, they provide a way to construct interesting homotopy types in type theory.
 Homotopy type theory (with univalence, but without HITs) excels at proving formal theorems about \emph{general} homotopy types, such as the ``5-lemma'' for fibration sequences or an ``unstable octahedral axiom'' for composites of fibrations.
 But it suffers from a paucity of ways to obtain \emph{particular} homotopy types, such as spheres, tori, manifolds, Eilenberg--MacLane spaces, etc.
+Voevodsky's univalence axiom can be used for this to a certain extent --- for example, one can define the classifying space of a group $G$ as the type of $G$-torsors --- but this tends to require ``resizing axioms'' and is limited in its flexibility.
+
 Higher inductive types remedy this situation, and can be thought of a type-theoretic analogue of the basic homotopical notion of \emph{cell complexes}.
 They include both ``small, concrete'' cell complexes, such as CW presentations of spheres and tori, and ``large, abstract'' cell complexes such as those appearing in the construction of Postnikov towers and localizations by Quillen's small object argument.
 Moreover, they provide a concise language for speaking about the latter that avoids referring explicitly to small objects and transfinite compositions.
@@ -68,6 +73,7 @@ Ordinary inductive types in type theory excel at specifying how to construct the
 The standard solution is to equip each type with a secondary ``type of equalities'', forming a structure called a \emph{setoid}; this mostly works but results in a terrific amount of bookkeeping to carry around the setoid equalities everywhere.
 Instead, higher inductive types augment ordinary inductive types with a basic way to ``specify the equalities between elements''.
 The resulting equalities are actual equalities in the Leibniz sense, hence require no bookkeeping; they are automatically respected by everything in sight.
+(In a homotopical world, the analogue of a setoid is an $\infty$-groupoid in type theory~\cite{coquand...}, but similar considerations apply.)
 
 From a category-theoretic point of view, HITs provide a concise language for presentations of monads.
 It is well-known that categorically, ordinary inductive types are free algebras for polynomial endofunctors.
@@ -76,9 +82,11 @@ If $F$ is additionally a \emph{monad}, then we also have ``monad-algebras'', for
 In well-behaved categories, every polynomial endofunctor $F$ gives rise to a \emph{free monad} $\freemonad{F}$, so that that $F$-endofunctor-algebras are equivalent to $\freemonad{F}$-monad-algebras; thus we could equally well say that ordinary inductive types are free algebras for free monads.
 However, the monads that arise naturally in mathematics are usually not free; but they are \emph{presented}, meaning that they are a colimit in the category of monads of a diagram consisting of free monads.
 Higher inductive types, then, provide free algebras for these more general \emph{presented} monads.
+(In homotopical models, these monads must be ``homotopically'' presented, which means roughly that the relevant colimit of monads must be a ``homotopy colimit''.
+We will make this precise when we discuss higher W-types.
+It is natural to conjecture that these are also colimits in the $(\infty,1)$-category of $(\infty,1)$-monads, but we have not investigated this question.)
 
-Note that the type-theoretic and category-theoretic motivations presented above say nothing about homotopy theory.
-(Although they can be easily extended to do so: the homotopical analogue of a setoid is an $\infty$-groupoid in type theory~\cite{coquand...}, and homotopically presented monads are simply colimits in the $(\infty,1)$-category of $(\infty,1)$-monads.)
+Note that the type-theoretic and category-theoretic motivations presented above do not depend on homotopy theory at all.
 Indeed, higher inductive types \emph{could} have been invented completely independently of the homotopical interpretation of type theory.
 Although historically, it was the first, homotopy-theoretic, motivation which gave rise to them, they are still interesting and highly nontrivial even in Extensional Type Theory, where there is no higher homotopical information.
 In particular, they supply well-behaved quotients and free algebras of all sorts, going beyond what exists in elementary toposes, and even beyond what can be constructed in ZF set theory without the axiom of choice, while nevertheless remaining constructive (at least in many, and conjecturally all, senses of the word).
@@ -103,11 +111,15 @@ From the homotopical point of view, we are describing the circle $\circtype$ as 
 
 The existence of \floop also entails the existence of many other paths from \fbase to \fbase; for instance, we can compose \floop with itself (i.e.\ apply the transitivity of equality), or invert it (i.e.\ apply the symmetry of equality), and so on.
 Saying that \floop is an inductive generator of $\circtype$ means that \emph{none} of these paths are (\textit{a priori}) equal to each other.
-(The theorem that $\pi_1(\circtype)=\lZ$ amounts to showing that, in the presence of the univalence axiom, we get \emph{exactly} the paths $\floop^n$ for $n$ an integer.)
+The theorem that $\pi_1(\circtype)=\lZ$ amounts to showing that, in the presence of the univalence axiom, every path we get is (propositionally) equal to $\floop^n$ for exactly one integer $n$.
 
 Of course, we can also add paths between points that were not previously equal at all.
 For instance, the \textbf{interval} $I$ is generated by two point-constructors, \fzero and \fone, and one path-constructor \fseg which constructs a path from \fzero to \fone.
 Unsurprisingly, this turns out to be equivalent to the unit type (but it is not completely boring either, e.g.\ its existence implies function extensionality).
+
+We can also add more than one path between two points.
+For instance, if $A$ is any type we can define the \textbf{suspension} of $A$, denoted $\susp A$, which has two point-constructors $\fnorth$ and $\fsouth$ and one path-constructor $\fmerid$ which constructs one path from $\fnorth$ to $\fsouth$ for every element of $A$.
+The circle $\circtype$ is equivalent to the suspension of the 2-element type, while by iteratively suspending it we can define higher-dimensional spheres: $\spheretype {n+1}$ is $\susp {\spheretype n}$.
 
 Additionally, since we are interested not only in \emph{whether} two points are equal, but \emph{how many} paths there are between them, we also allow path-constructors which construct \emph{paths between paths}, or \emph{paths between paths between paths}, and so on.
 Homotopically, these correspond to cells of higher dimension in a cell complex, and indeed any (finite) cell complex can be presented as a HIT.
@@ -117,6 +129,7 @@ And the \textbf{2-sphere} $\spheretype 2$ has one point-constructor \fbase and o
 The ability to assert equalities also means that we can construct \textbf{colimits} of types.
 With ordinary inductive types we can construct coproducts (sum types) and an initial object (the empty type), but not other colimits such as coequalizers or pushouts.
 With HITs, however, these are easy to do.
+For example, the coequalizer of two functions $f,g:A\to B$ has one point-constructor $q:B\to \fcoeq(f,g)$ and one path constructor giving for each $a:A$ a path from $q(f(a))$ to $q(g(a))$.
 
 The real power of HITs starts to show itself when we introduce path-constructors with recursive inputs, analogous to recursive point-constructors like \fsucc for the natural numbers.
 The first such example is the \textbf{squash}~\cite{nuprlbook} or \textbf{bracket type}~\cite{ab:bracket-types} of a type $A$, which is intended to be a type $\brck{A}$ that contains at most one element, and does so exactly if $A$ has an element.
@@ -131,16 +144,21 @@ For instance, the \textbf{$0$-truncation} $\trunc 0 A$, also known as $\pi_0(A)$
 In homotopy theory, the $n$-truncations of a type are called its \emph{Postnikov tower}.
 
 By including both recursive point-constructors and recursive path-constructors, we can directly construct \textbf{free algebras} of any desired sort.
-For instance, the \textbf{free group} $\freegroup{A}$ on a type $A$
-\mswarning{Of course, to make $\freegroup{A}$ a set, we need to truncate it.  Should we mention that or sweep it under the rug?}
-is generated by one point-constructor taking input from $A$; three point-constructors taking respectively no input (the identity element), two inputs from $\freegroup{A}$ itself (the multiplication), and one input from $\freegroup{A}$ (the inversion); and various path-constructors asserting the group axioms.
+For instance, the \textbf{free group} $\freegroup{A}$ on a type $A$ is generated by one point-constructor taking input from $A$; three point-constructors taking respectively no input (the identity element), two inputs from $\freegroup{A}$ itself (the multiplication), and one input from $\freegroup{A}$ (the inversion); and various path-constructors asserting the group axioms (plus the above 0-truncation constructor, since we want a free group rather than a free $\infty$-group).
 The resulting induction principle of the HIT $\freegroup{A}$ says almost verbatim that it \emph{is} the free group on $A$.
 In this way, HITs enable us to ``construct'' free structures of all sorts merely by asserting their universal property.
 
 One final example will serve to suggest the extreme flexibility of HITs.
-Let $f:A\to B$ be a given function and $X$ a type, and consider the HIT $\local{f}{X}$ with the following constructors: (1) a point-constructor taking input from $X$, (2) a point-constructor \fext taking as input a function $g:A\to \local{f}{X}$ and an element $b:B$, (3) a path-constructor saying that for any $g:A\to \local{f}{X}$ and $a:A$ we have $\fext(g,f(a))=g(a)$, and (4) a path-constructor saying that for any $h:B\to \local{f}{X}$ and $b:B$ we have $\fext(h\circ f,b)=h(b)$.
-\mswarning{Of course, this isn't quite right, it's a qinv rather than an equivalence.}
-Then $\local{f}{X}$ is none other than the \textbf{localization} of $X$ at $f$: the universal type equipped with a map from $X$ which is \textbf{$f$-local} in the sense that $(\blank\circ f):(\local{f}{X})^B \to (\local{f}{X})^A$ is an equivalence.
+Let $f:A\to B$ be a given function and $X$ a type, and consider the HIT $\local{f}{X}$ with the following constructors:
+\begin{enumerate}
+\item a point-constructor taking input from $X$.
+\item two point-constructor \fext and $\fext'$, both taking as input a function $g:A\to \local{f}{X}$ and an element $b:B$.
+\item a path-constructor that for $g:A\to \local{f}{X}$ and $a:A$ we have $\fext(g,f(a))=g(a)$.
+\item a path-constructor that for $h:B\to \local{f}{X}$ and $b:B$ we have $\fext'(h\circ f,b)=h(b)$.
+\end{enumerate}
+Then $\local{f}{X}$ is none other than the \textbf{localization} of $X$ at $f$: the universal type equipped with a map from $X$ which is \textbf{$f$-local} in the sense that $(\blank\circ f):(\local{f}{X})^B \to (\local{f}{X})^A$ is a homotopy equivalence.
+(We have expressed ``being a homotopy equivalence'' as ``having a homotopy left inverse and also a homotopy right inverse'', because this correctly makes ``the type of homotopy equivalences'' into a subtype of the type of functions.
+See e.g.~\cite[Chapter 4]{hottbook} for further discussion.)
 Localizations are ubiquitous in homotopy theory, generally being constructed as transfinite cell complexes with the small object argument; HITs allow us to construct them just like free groups, merely by asserting their universal property.
 
 
@@ -154,12 +172,12 @@ A fair amount of work so far has concentrated on reproducing homotopy-theoretic 
 Here the $n^{\mathrm{th}}$ homotopy group $\pi_n(X)$ of a type $X$ (equipped with a basepoint) is defined to be the $0$-truncation of its $n$-fold loop space $\Omega^n X$ (the latter being definable without HITs).
 The first such computation, as mentioned above, was the second author's proof that $\pi_1(\circtype)=\lZ$, and also $\pi_n(\circtype)=0$ for $n>1$, by showing that in fact $\Omega \circtype = \lZ$.
 Licata~\cite{ls:pi1s1} later improved this proof, isolating a general method now known as ``encode--decode'' for computing with loop spaces of HITs.
-Using this method, he and Brunerie calculated $\pi_k(\spheretype n) = 0$ for $k<n$ and $\pi_n(\spheretype n) = \lZ$.
+Using this method, he and Brunerie calculated $\pi_k(\spheretype n) = 0$ for $k<n$ and $\pi_n(\spheretype n) = \lZ$~\cite{lb:pinsn}.
 The first author and Brunerie used the Hopf fibration to show $\pi_3(\spheretype 2) = \lZ$, and Brunerie used the James construction to show $\pi_4(\spheretype 3) = \lZ/2$.
 
 HITs have also proven useful in more abstract homotopy-theoretic theorems.
 The first author proved the Freudenthal suspension theorem in type theory, and with Licata and Finster generalized it to the Blakers--Massey theorem; the role of HITs being to construct suspensions and pushouts (as well as define homotopy groups by truncation).
-The second author proven the van Kampen theorem, and Hou developed the theory of covering spaces.
+The second author proved the van Kampen theorem, and Hou developed the theory of covering spaces.
 Licata and Finster~\cite{lf:emspaces} have constructed Eilenberg--MacLane spaces $K(G,n)$, enabling the represented definition of cohomology and verification of the Eilenberg--Steenrod axioms.
 Finally, Voevodsky constructed the long exact sequence associated to a fibration, and the second author used this to construct the cohomological Serre spectral sequence.
 There is every prospect that this formalization of homotopy theory in type theory will continue fruitfully.
@@ -175,20 +193,130 @@ Finally, HITs may even have direct applications to theoretical computer science.
 Angiuli, Morehouse, Licata, and Harper~\cite{amlh:htpy-patch} have used them to model a theory of ``patches'' for version control systems.
 
 
-\subsection{An outline of this paper}
+\subsection{Layers of complexity}
+\label{sec:layers-complexity}
+
+The goal of this paper is to formulate precise syntax for a reasonably general class of HITs, and show that they exist in a reasonably general class of homotopical models.
+However, our most general version requires dealing with many separate technical problems at once, so for expositional clarity we build up to it in stages.
+The issues that must be dealt with include the following:
+\begin{enumerate}
+\item Path-constructors (the basic distinguishing feature of HITs).
+  In particular, when specifying the elimination and computation rule of a HIT, we need to know how (dependent) functions ``act on paths''.\label{item:issue:ap}
+\item Higher path-constructors, eventually including those of arbitrary dimension.
+  This brings extra complexity in the specification of their boundaries, since they must lie in iterated higher identity types.
+\item Parameters to the specification.  For example, the natural numbers are a single inductive type with no parameters, and likewise the circle is a HIT with no parameters; whereas a coproduct type $A+B$ is defined parametrically over $A$ and $B$, and likewise the suspension $\susp A$ is parametric in $A$.
+\item Multiple constructors.
+  The constructors of an ordinary inductive type are always completely independent, in that none of them can ``refer to'' the others in any way.
+  In particular, any finite number of constructors can always be ``coalesced'' into a single one, as is done when representing arbitrary inductive types by W-types.
+  For HITs this is no longer the case, because the boundary of one path-constructor generally needs involves previous constructors (for example, the source and target of the path-constructor \floop of $\circtype$ are the previous constructor \fbase).
+  This means that the constructors of a HIT must be given \emph{in an order}, with each allowed to refer to the previous ones, and we need to specify the syntax and semantics of ``$n$-constructor HITs'' inductively on $n$.
+\item Recursive constructors, such as $\fsucc$ for the natural numbers and the truncation-constructor for $\brck{A}$.
+  This mean specifying the allowable ways that a HIT can appear in the domains of its own constructors.
+  The usual syntactic restriction is ``strict positivity'', which semantically ensures an ``accessibility'' property of a certain functor.
+\item Delimiting the terms that may specify the source and target of a path-constructor (or more generally the ``boundary'' of a higher path-constructor).
+  We recall below an example from~\cite[\S6.13]{hottbook} showing that these cannot be completely arbitrary.
+  Semantically, they have to be ``natural transformations'', but it requires some work to specify a corresponding syntactic restriction.\label{item:issue:naturality}
+\item Fibrancy.
+  In homotopical models, types are generally interpreted by the fibrant objects, or more generally the fibrations, of a Quillen model category.
+  However, the categorical constructions we use generally do not preserve fibrancy, so we need to incorporate a ``fibrant replacement'' in an algebraically well-behaved way.
+\item Stability under pullback.
+  In type theory all constructions must be strictly preserved by substitution, but in categorical models they are generally only preserved ``weakly'', up to isomorphism or even only up to homotopy.
+  This is particularly problematic for fibrant replacement, which in general is not preserved by pullback \emph{at all}.
+\item Path operations in boundaries.
+  The three previous issues interact in a particularly troublesome way when we want the boundary of a path-constructor to involve operations such as path composition, such as for the 2-path-constructor of $\torustype$.
+  Because such compositions generally only exist in fibrant objects, this seems to require that we incorporate fibrancy ``at all stages of the' construction'', but this makes the problem of stability much more difficult.
+  Moreover, path compositions are only ``natural up to homotopy'', whereas our current machinery requires strict 1-categorical naturality for the source and target.
+  We do not have a complete solution to this problem, but we will present a workaround that covers the majority of use cases.\label{item:issue:pathops}
+\item Preservation of size.
+  In a type theory with universes, one would like the universes to be closed under all type forming operations, including HITs with type parameters.
+  Semantically, however, this corresponds to having a construction on fibrations that preserves the size of its \emph{fibers}, even if the base object is of a larger size, and this is generally not the case when a construction involves fibrant replacement.
+  We do not have a satisfactory solution to this problem.\label{item:issue:size}
+\end{enumerate}
+
+There are also further levels of complexity that one may imagine incorporating, but which we leave to future work:
+
+\begin{itemize}
+\item Path-constructors whose dimension depends on a parameter, such as the $n$-dimensional spheres used in~\cite{lb:pinsn}.
+\item Constructors that add paths of \emph{all} dimensions, such as the localizations of~\cite{shulman:univprop-nofunext}.
+\item Higher inductive families.
+  In addition to parameters, ordinary inductive types may have \emph{indices}, such as lists that are indexed by their length (usually called ``vectors'').
+  The difference is that although we define the coproduct types $A+B$ for all $A$ and $B$ at once, each individual type $A+B$ has its own induction principle; whereas the type of 3-element lists has no induction principle on its own but only as part of the whole family of $n$-element lists for all $n$.
+\item Mutually defined higher inductive types.
+  As with ordinary inductive types, these could probably be encoded as higher inductive families over a finite type.
+\item Higher inductive-inductive types.
+  Ordinary inductive-inductive types allow defining a type and a type family over that type by mutual induction.
+  Some ``higher inductive-inductive types'' are used in~\cite[Chapter 11]{hottbook}, but we will not attempt to discuss them in this paper.
+  In fact, even the existence of ordinary inductive-inductive types in homotopical models is unproven.
+\item Higher inductive-recursive types.
+  If these exist, they can be used to construct univalent Tarski-style universes inside any given univalent universe~\cite{shulman:hiru-tdd}.
+  But as in the inductive-inductive case, even the existence of ordinary inductive-recursive types in homotopical models is unproven.
+\end{itemize}
+
+
+\subsection{A hybrid type theory}
+\label{sec:hybrid-tt}
+
+To deal with all these technical problems, we have found it convenient to work in a slightly bizarre type theory, which is a three-way hybrid between classical Martin-L\"of type theory, the ``cubical type theories'' of~\cite{bch:tt-cubical,ak:cubical,lb:cubical-tt}, and the ``homotopy type system'' of~\cite{vv:hts}.
+Our primary interest is in constructing HITs in models of ordinary MLTT.
+However, by incorporating some features of these other two theories (which are valid in all the homotopical models we consider), we are able to deal more cleanly with some of the technical problems.
+We can then translate the results back into ordinary MLTT.
+We do not have a fully general algorithm for this translation,\msnote{Anything better we can say here?} but we will describe how it works for several examples.
+
+Here are the distinguishing features of our hybrid type theory:
+\begin{itemize}
+\item There are no universe types.
+  Instead, ``being a type'' is a separate judgment form.
+  We make this choice for two reasons: firstly, in many homotopical models it is not known how to construct universes; and secondly, we do not know how to deal with issue~\ref{item:issue:size} above.
+\item In fact, as in~\cite{vv:hts}, we include two different judgment forms for types: one for ``fibrant'' types and one for non-fibrant (i.e.\ not-necessarily-fibrant) ones.
+  The embedding of ordinary MLTT in our hybrid theory sees only the fibrant types; the non-fibrant ones enable us to give a clean treatment of issue~\ref{item:issue:naturality} above without running into the failure of pullback to preserve fibrant replacement.
+\item We include the ``standard'' type constructors of $\Pi$, $\Sigma$, and the unit type \unittype.
+\item Identity types are not defined as inductive families.
+  Instead, as in~\cite{lb:cubical-tt}, there is an additional context of ``dimension variables'', with identity types defined by a sort of ``dependent abstraction'' over a dimension variable.
+  Homotopically, this corresponds to identifying ``paths'' with ``maps out of an interval object''.
+  This results in a much-better-behaved notion of ``applying a function to a path'', which makes it much easier to specify the elimination and computation rules for HITs (issue~\ref{item:issue:ap} above).
+  The ``cubes'' resulting from multiple dimension contexts also figure into our workaround for issue~\ref{item:issue:pathops} above.
+\item Unlike in~\cite{lb:cubical-tt} and other cubical type theories, however, we do not assert any ``Kan operations'' on the identity types, nor do we ``define'' the identity types by recursion over the structure of types.
+  Instead, we assert that they satisfy the usual elimination and computation rules as if they were an inductive family.
+  Of course, type-theoretically this is horrible because we are giving one type two different elimination rules, but it is valid in the models we consider, and it enables us to see ordinary MLTT as a fragment of our hybrid type theory.
+\end{itemize}
+
+\subsection{An outline of the paper}
 \label{sec:outline}
 
-Unlike for ordinary inductive types, there is not yet a general presentation of what ``a higher inductive type'' entails.
-Some fairly general schemata have been given (some of which we will discuss), but none of them includes all the examples of higher inductive types that have been proposed.
-In particular, this means that our semantic construction of HITs cannot yet be phrased as a single theorem.
+The construction of category-theoretic models of type theory depends on (1) knowing that from the syntax of type theory one can construct the initial model of a certain essentially algebraic theory, and (2) knowing that ordinary categories give rise to models of that same theory.
+The former fact is considered folklore in type theory, but in fact has not been carefully proven except for one particular type theory in~\cite{streicher:semtt}.
+We will not attempt to prove it for our type theory either; instead, we will describe our type theories both ``syntactically'' in the traditional way and ``semantically'' in terms of the algebraic theories they are expected to correspond to.
+Formally, therefore, what we will do is only part (2): we describe certain essentially algebraic theories and show that from certain Quillen model categories we can construct models of these theories.
 
-However, the \emph{methods} that we present in this paper can in fact be applied to all proposed examples of HITs that we are aware of.
-For this reason, and also for expositional clarity, the structure of this paper is largely example-based.
+We begin by laying out the base ``hybrid'' type theory, before any HITs are added.
+In \cref{sec:syntactic-type-theory} we describe it syntactically in the traditional style, with judgments and variable binding.
+Then in \cref{sec:semantic-type-theory} we describe its intended algebraic models, an enhancement of ``categories with families'' (CwF)~\cite{?}.\msnote{Are we actually using CwF, or something else?}
+We also recall the coherence theorem of~\cite{lw:localuniv}, which shows that ``weakly stable'' or ``pseudo stable'' structure on such a CwF gives rise to strictly stable structure on a related CwF, and explain at the level of CwF how to see ordinary MLTT (without universes) as a reduct of our hybrid type theory (at the traditional syntactic level of \cref{sec:syntactic-type-theory}, this is clear because the rules of MLTT are included in ours).
+Next, in \cref{sec:model-categories} we describe how we pass from homotopy theory (specifically, well-behaved Quillen model categories) to hybrid CwFs with weakly stable structure (to which the coherence theorem can therefore be applied), and show that when we forget down to ordinary MLTT we obtain the same models that have been considered elsewhere in the literature.
 
-\todo{We can wait to write the rest until the rest of the paper settles down.}
+At this point we are finally ready to introduce HITs, by a series of examples that involve successively more of the issues discussed in \cref{sec:layers-complexity}.
+In each case, we first set out the syntactic rules, then the operations on hybrid CwFs they are expected to correspond to, in both strictly and weakly stable forms, and extend the coherence theorem of~\cite{lw:localuniv} to show that weakly stable structure gives rise to strictly stable structure.
+Then we show that the hybrid CwFs arising from model categories as in \cref{sec:model-categories} admit the weakly stable version of the structure; this is where the real heart of the paper lies.
+Finally, we sketch how this structure can be transferred back to rules that make sense in ordinary MLTT.
+\begin{itemize}
+\item \todo{An ordinary inductive type or two?}
+\item We begin in \cref{sec:circtype} with $\circtype$, which involves only path-constructors, multiple constructors, fibrancy, and a certain amount of stability.
+  These are all issues which even the simplest of HITs must deal with.
+\item In \cref{sec:susp} we consider the suspension $\susp A$, which introduces a type parameter $A$.
+\item In \cref{sec:torustype} we consider the torus $\torustype$, which involves a higher path-constructor and also the cubical workaround for path operations in boundaries.
+\item In \cref{sec:brck} we consider the propositional truncation $\brck{A}$, which in addition to a parameter $A$ involves a recursive path-constructor.
+\item In \cref{sec:loopy} we take a brief hiatus to consider some non-examples: HITs that seem reasonable but are not covered by our setup.
+  This motivates our solution to the problem of boundary specifications: they can be arbitrary terms belonging to a \emph{non-fibrant} version of the HIT specified by the previous constructors (thus preventing the appearance of path operations and ensuring strict naturality).
+\item In \cref{sec:twoconstr-hwt} we consider our first general class of HITs: ``higher W-types'' with one point-constructor and one 1-path-constructor.
+  Both constructors are parametrized by an arbitrary type family, like the single constructor of an ordinary W-type.
+  These combine type parameters with recursive constructors, and additionally showcase our general solution to the problem of naturality.
+\item Finally, in \cref{sec:hwt} we consider ``general higher W-types'', which can have arbitrarily many constructors (each parametrized by an arbitrary type family) of arbitrary dimension.
+  At this point we have to induct over the number of constructors, and also specify precisely the syntax for the boundary of an $n$-dimensional cube.
+\end{itemize}
 
-\section{Type theory}
-\label{sec:type-theory}
+
+\section{Syntactic type theory}
+\label{sec:syntactic-type-theory}
 
 In this section we briefly describe the basic type theory we will be using, which for technical reasons is a little unusual.
 
@@ -261,11 +389,11 @@ The distinguishing feature of \emph{homotopy} type theory is that the identity t
 For this reason we will sometimes refer to elements of an identity type as \emph{paths}.
 
 However, the above definition of identity types is not ideal when discussing HITs, because certain equalities, notably those involving the application of functions to paths, are propositional rather than judgmental.
-This makes complicated homotopy-theoretic proofs increasingly difficult, such as $T^2 = S^1\times S^1$~\cite{bl:torus}.
+This makes complicated homotopy-theoretic proofs increasingly difficult, such as $T^2 = S^1\times S^1$~\cite{lb:torus}.
 More seriously, it is a substantial obstacle to the semantic methods we plan to employ in this paper, which rely on \emph{strict} algebraic structures in model categories.
 
 For this reason, we will \emph{not} define the identity types as inductive families.
-Instead, we follow the route taken by the ``cubical type theory'' of~\cite{bl:cubical}, introducing a basic notion of ``line in a type'' that can be internalized to yield identity types.
+Instead, we follow the route taken by the ``cubical type theory'' of~\cite{lb:cubical-tt}, introducing a basic notion of ``line in a type'' that can be internalized to yield identity types.
 Such lines are encoded by a special context of ``dimension variables'' to the left of the ordinary context; thus a particular judgment might look like this:
 \[ x\dim, y\dim \cb a:A \pr b:B \]
 where $A$ might depend on $x$ and $y$, while $b$ and $B$ might depend on $x$, $y$, and $a$.
@@ -395,6 +523,15 @@ Whatever choice is made, one would then have to show that these operations exist
 We will not investigate this question in detail, but in \cref{??} we will consider the simple example of the torus itself, which hopefully gives an idea for how such an argument might proceed in the general case.
 
 
+\section{Semantic type theory}
+\label{sec:semantic-type-theory}
+
+
+\section{Model-categorical semantics}
+\label{sec:model-categories}
+
+
+
 \section{Syntax of HITs}
 \label{sec:syntax}
 
@@ -405,7 +542,7 @@ We will begin with simple specific examples and work up to fairly general ones (
 \label{sec:specification}
 
 As mentioned in \cref{sec:hit-egs}, a higher inductive type is specified like an ordinary inductive type, except that in addition to \emph{point-constructors} whose ouput is an \emph{element} of the type being defined, we allow \emph{path-constructors} whose output is a \emph{path} (i.e.\ an equality) in that type.
-We extend the syntax for describing inductive types from \cref{sec:type-theory} to include such path-constructors.
+We extend the syntax for describing inductive types from \cref{sec:syntactic-type-theory} to include such path-constructors.
 For instance, the higher inductive circle $\circtype$ can be written as
 \indef{\circtype}{
   \fbase : \circtype \OR
@@ -479,7 +616,7 @@ Thus, in this paper we will concentrate on induction principles.
 For an ordinary inductive type $W$, the induction principle says that for any type family $B$ over $W$, if we have operations on $B$ that correspond to, and ``live over'', each constructor of $W$, then we can define a function $f:\prd{x:W}B(x)$.
 For instance, the induction principle for \lN says that if we have a type family $B$ over \lN equipped with $f_\fzero : B(\fzero)$ and $f_\fsucc : \prd{n:\lN} B(n) \to B(\fsucc(n))$, then we are entitled to a function $\ind{\lN}(B,f_\fzero,f_\fsucc):\prd{n:\lN} B(n)$.
 We expect the induction principle for a HIT to be similar; the only question is what sort of operations on $B$ should be required to correspond to the path-constructors.
-This is the role of the \emph{dependent path} type introduced in \cref{sec:type-theory}.
+This is the role of the \emph{dependent path} type introduced in \cref{sec:syntactic-type-theory}.
 
 Consider, for example, the interval:
 \indef{I}{
@@ -669,16 +806,6 @@ We conjecture that higher $W$-types, or something like them, have an analogous p
 \todo{Define higher $W$-types.}
 \msnote{Can you do this?  You've thought about them more than I have.}
 
-\section{Semantics of HoTT}
-\label{sec:hott-semantics}
-
-\todo{Recall: comprehension categories, weakly stable structure, \ldots}
-
-\todo{Give specific statement: ``Good model categories model HoTT.''}
-
-\todo{While here, define/discuss any extra conditions on model categories we'll need.}
-
-\todo{Recall: initial-algebra semantics of ITs.}
 
 \section{Semantics of simple HITs}
 \label{sec:simple-semantics}
