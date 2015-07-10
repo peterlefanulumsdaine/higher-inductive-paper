@@ -153,8 +153,8 @@ Let $f:A\to B$ be a given function and $X$ a type, and consider the HIT $\local{
 \begin{enumerate}
 \item a point-constructor taking input from $X$.
 \item two point-constructor \fext and $\fext'$, both taking as input a function $g:A\to \local{f}{X}$ and an element $b:B$.
-\item a path-constructor that for $g:A\to \local{f}{X}$ and $a:A$ we have $\fext(g,f(a))=g(a)$.
-\item a path-constructor that for $h:B\to \local{f}{X}$ and $b:B$ we have $\fext'(h\circ f,b)=h(b)$.
+\item a path-constructor that for $g:A\to \local{f}{X}$ and $a:A$ we have $\id{\fext(g,f(a))}{g(a)}$.
+\item a path-constructor that for $h:B\to \local{f}{X}$ and $b:B$ we have $\id{\fext'(h\circ f,b)}{h(b)}$.
 \end{enumerate}
 Then $\local{f}{X}$ is none other than the \textbf{localization} of $X$ at $f$: the universal type equipped with a map from $X$ which is \textbf{$f$-local} in the sense that $(\blank\circ f):(\local{f}{X})^B \to (\local{f}{X})^A$ is a homotopy equivalence.
 (We have expressed ``being a homotopy equivalence'' as ``having a homotopy left inverse and also a homotopy right inverse'', because this correctly makes ``the type of homotopy equivalences'' into a subtype of the type of functions.
@@ -332,16 +332,31 @@ In this section we describe our base hybrid type theory.
 The absence of universes means that we need a separate judgment ``$A \type$'' indicating that $A$ is a type.
 A type family (or dependent type) indexed by $A$ is then described by a hypothetical judgment $\jd{x:A |- B(x) \type}$.
 
+We also include a judgment ``$A \fib$'' for ``fibrancy'' of the type (family) $A$.
+Every fibrant type is also a type:
+\[ \inferrule{\Gamma \vdash A\fib}{\Gamma \vdash A\type} \]
+
 \subsection{Dependent products}
 \label{sec:pi-syntax}
 
 Any type family $\jd{x:A |- B(x) \type}$ has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
 As usual, if $B(x)$ is independent of $x$, we write $A\to B$ for $\prd{x:A} B(x)$.
+Notationally, the scope of $\prd{x:A}$ extends as far to the right as possible, so that $\prd{x:A} B(x) \to \sm{x:A} B(x)$ means $\prd{x:A} \big(B(x) \to \sm{x:A} B(x)\big)$.
 
-As usual, the scope of $\prd{x:A}$ extends as far to the right as possible, so that $\prd{x:A} B(x) \to \sm{x:A} B(x)$ means $\prd{x:A} \big(B(x) \to \sm{x:A} B(x)\big)$.
+If both inputs to a dependent product are fibrant, then so is the result:
+\[ \inferrule{\Gamma \vdash A \fib \\ \Gamma, x:A \vdash B \fib}{\Gamma \vdash \tprd{x:A} B \fib} \]
+
 
 \subsection{Dependent sums}
 \label{sec:sigma-syntax}
+
+Any type family $\jd{x:A |- B(x) \type}$ also has a dependent sum $\sm{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule.
+As usual, if $B(x)$ is independent of $x$, we write $A\times B$ for $\sm{x:A} B(x)$.
+
+If both inputs to a dependent sum are fibrant, then so is the result:
+\[ \inferrule{\Gamma \vdash A \fib \\ \Gamma, x:A \vdash B \fib}{\Gamma \vdash \tsm{x:A} B \fib} \]
+
+
 
 \subsection{Cubical identity types}
 \label{sec:cubic-ident-types}
@@ -435,7 +450,7 @@ There are various ways to define this type in ordinary type theory, such as:
 In cubical type theory, we instead obtain dependent paths by using a simple extension of the formation rule for identity types, in which the type $A$ can depend on the dimension variable:
 \[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \type \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\type}\]
 Compared to~\eqref{eq:cubical-idform-nondep}, the main difference is the presence of $s\dim$ in the hypothesis $\Psi,s\dim \cb \Gamma \pr A \type$.
-If we view identity types as ``function types'' out of the interval, then this corresponds to allowing dependent functions, like the generalization from $A\to B$ to $\prod_{x:A} B(x)$.
+If we view identity types as ``function types'' out of the interval, then this corresponds to allowing dependent functions, like the generalization from $A\to B$ to $\prd{x:A} B(x)$.
 To record this dependency of $A$ on $s$, we modify the notation for the identity type to write $\id[s.A]{a_0}{a_1}$ rather than $\id[A]{a_0}{a_1}$, indicating that the dimension variable $s$ may occur free in $A$ but is bound in $\id[s.A]{a_0}{a_1}$.
 
 Now given the setup for dependent paths, i.e. $e:\id[A]xy$ and $u:B(x)$ and $v:B(y)$, we can form
@@ -448,7 +463,7 @@ B(e\dapp s)\dsubst{0}{s} &\jdeq B(e\dapp 0) \jdeq B(x) \qquad\text{and}\\
 B(e\dapp s)\dsubst{1}{s} &\jdeq B(e\dapp 1) \jdeq B(y).
 \end{align*}
 We thus take $\id[s.B(e\dapp s)]{u}{v}$ as the definition of the dependent path type $\idover[B]{u}{v}{e}$.
-This allows us to use the \emph{same} definition of $\ap_f$ in the case when $f$ is a \emph{dependent} function $f:\prod_{x:A} B(x)$: we deduce successively
+This allows us to use the \emph{same} definition of $\ap_f$ in the case when $f$ is a \emph{dependent} function $f:\prd{x:A} B(x)$: we deduce successively
 \begin{align*}
   r\dim \cb p:\id[A]{a_0}{a_1} &\pr p\dapp r : A\\
   r\dim \cb p:\id[A]{a_0}{a_1} &\pr f(p\dapp r) : B(p\dapp r)\\
@@ -481,6 +496,56 @@ In this way, the use of cubical type theory can be entirely eliminated from our 
 
 Returning to the (non-)uses of the eliminator, it is true that some HITs appear to incorporate the $\infty$-groupoid operations in their definition, such as the composites of paths appearing in the boundary of the 2-path constructor of $\torustype$.
 However, as mentioned in \cref{sec:layers-complexity}, we do not know how to model these directly; instead we use a cubical workaround that does not actually require the eliminator.
+
+
+\subsection{Cofibrations}
+\label{sec:cofibrations}
+
+\todo{Experimental!}
+
+We extend the syntax with one further judgment, denoted $\cof{i}{A}{B}$ and read as ``$c$ is a cofibration from $A$ to $B$''.
+All cofibrations are also functions:
+\[ \inferrule{\Gamma \vdash \cof{i}{A}{B}}{\Gamma \vdash i : A \to B} \]
+(Perhaps this should be only an admissible rule?)
+In particular, when $\Gamma \vdash \cof{i}{A}{B}$ it must be that $\Gamma \vdash A \type$ and $\Gamma \vdash B \type$.
+
+We will have one axiomatic cofibration, whose codomain is an axiomatic type.
+\[ \inferrule{\ }{\Gamma \vdash \Delta^1 \type} \qquad 
+\inferrule{\ }{\Gamma \vdash 0 : \Delta^1} \qquad
+\inferrule{\ }{\Gamma \vdash 1 : \Delta^1} \]
+\[ \inferrule{\ }{\Gamma \vdash \cof{[0,1]}{2}{\Delta^2}} \]
+Here $2$ denotes the non-fibrant coproduct $\unittype+\unittype$, and $[0,1]$ denotes the copairing.
+Note that $\Delta^1$ is also not (assumed to be) fibrant.
+Nothing prevents us from assuming further axiomatic cofibrations, as long as they exist in our desired models, but this will be the only one we need.
+(Note, though, that semantically, it appears to be important that all cofibrations be defined in the empty context and pulled back to anywhere else from there.)
+
+There is one ``introduction'' rule for constructing cofibrations:
+\[ \inferrule{\Gamma \vdash \cof{i_1}{A_1}{B_1} \\ \Gamma \vdash \cof{i_2}{A_2}{B_2}}{\Gamma \vdash \cof{i_1\pop i_2}{(A_1 \times B_2) +_{A_1\times A_2} (B_1 \times A_2)}{B_1\times B_2}} \]
+Here the pushout is again a non-fibrant one, and $i_1 \pop i_2$ denotes the ``pushout product'' map induced by the universal property of this pushout.
+
+\todo{Hmm\dots I guess we need non-fibrant HITs if we want to say it this way, which makes for an annoying sort of almost-circularity in exposition.  If we want to describe \emph{general} non-fibrant HITs that include this pushout, described in an analogous way to the fibrant ones, then I guess we ought to allow \emph{any} maps in place of cofibrations, so that by using $2\to \unittype$ we could ``glue in an $\fEq$''.  But that seems kind of like cracking nuts with a sledgehammer; maybe we ought to just give the rules for the non-fibrant pushout explicitly, since it is all we need.}
+
+The ``elimination'' rule for cofibrations is that exponentiating by a cofibration produces a fibration.
+\[ \inferrule{\Gamma \vdash \cof{i}{A}{B} \\ \Gamma, y:B \vdash C \fib \\ \Gamma, x:A \vdash c : C\subst{i(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:B} C} \tprd{x:A} \eq{f(i(x))}{c}\Big) \fib} \]
+Here $\fEq$ denotes the strict non-fibrant equality type.
+
+There is a vague sort of ``harmony'' between the ``introduction'' and ``elimination'' rules in that the instances of elimination for $i_1$ and $i_2$ should imply the corresponding instance for $i_1 \pop i_2$.
+In other words, given that the elimination rule is all we know about cofibrations, we might as well have the introduction rule (at least as long as non-fibrant pushouts exist).
+\msnote{Curiously, it seems to me as though the conservativity result for HTS using presheaves ought to also model non-fibrant \emph{colimits}, since the presheaf category is the free cocompletion.  I'm not sure whether that means anything.}
+
+If we replace dimension variables by variables of type $\Delta^1$, then with the axiomatic cofibration $\cof{[0,1]}{2}{\Delta^1}$ this rule enables us to define the cubical identity types.
+Recall that the formation rule for the latter is:
+\[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \fib \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\fib}\]
+On the other hand, if we substitute $\cof{[0,1]}{2}{\Delta^1}$ in the eliminator for cofibrations, we get
+\[ \inferrule{\Gamma, y:\Delta^1 \vdash A \fib \\ \Gamma, x:2 \vdash a : A\subst{[0,1](x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:\Delta^1} A} \tprd{x:2} \eq{f(i(x))}{a}\Big) \fib} \]
+To go from one to the other, we are just using the universal property of $2$ to copair up $a_0$ and $a_1$.
+Similarly, the introduction rule for $\fId$ now corresponds to an actual abstraction over $\Delta^1$, paired with the reification of two judgmental equalities as an $\fEq$ between functions of domain $2$.
+The elimination rule corresponds to projecting out the function of domain $\Delta^1$ and applying it, while the ``boundary'' computation rules result from projecting out the $\fEq$ term and applying the reflection rule for strict equality.
+
+At this point, there may seem little benefit to reformulating the identity types in terms of cofibrations.
+The payoff will come in \cref{sec:hwt} when we introduce path-constructors of arbitrary dimension.
+In this case, the presence of the operation $\pop$ on cofibrations will allow us to formulate ``a constructor of arbitrary dimension'' as a \emph{single} rule, one of whose premises is a cofibration.
+(It also makes the theory more general, in that we could also define ``HITs'' using any other cofibrations instead.)
 
 
 \section{Semantic type theory}

@@ -20,7 +20,7 @@
 %%%%%
 % Text in typefaces
 
-\autodefs{\fap\fcomp\fzero\fsucc\fpair\ftt\fbase\floop\fone\fseg\fnorth\fsouth\fmerid\fsurf\fext\fdata\fwhere\fId\fproj\fsquash\frefl\fType\ftype\fVec\fnil\fcons\fdim\fapeq\fcoeq}
+\autodefs{\fap\fcomp\fzero\fsucc\fpair\ftt\fbase\floop\fone\fseg\fnorth\fsouth\fmerid\fsurf\fext\fdata\fwhere\fId\fEq\fproj\fsquash\frefl\fType\ftype\ffib\fVec\fnil\fcons\fdim\fapeq\fcoeq}
 
 \let\E\cE
 \let\refl\frefl
@@ -45,6 +45,7 @@
 % Judgments
 \usepackage{mathpartir}
 \newcommand{\type}{\;\ftype}
+\renewcommand{\fib}{\;\ffib}
 \renewcommand{\dim}{\;\fdim}
 \newcommand{\subst}[2]{[#1/#2]}
 \newcommand{\cb}{\,;\,}         % context break
@@ -75,6 +76,11 @@
 \newcommand{\freegroup}[1]{F #1}
 \newcommand{\local}[2]{L_{#1} #2}
 \newcommand{\susp}{\Sigma}
+
+% Strict things
+\renewcommand{\eq}[3][]{\fEq_{#1}(#2,#3)}
+\renewcommand{\cof}[3]{#1 : #2 \rightarrowtail #3}
+\newcommand{\pop}{\Box}         % pushout product
 
 % Categories
 \newcommand{\Alg}[2][]{{#2}\text{-}\mathbf{Alg}_{#1}}
