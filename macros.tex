@@ -12,7 +12,7 @@
 %%%%%%
 % Theorem-style environments
 
-\theoremstyle{theorem}
+\theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
@@ -20,10 +20,14 @@
 %%%%%
 % Text in typefaces
 
-\autodefs{\fap\fcomp\fzero\fsucc\fpair\ftt\fbase\floop\fone\fseg\fnorth\fsouth\fmerid\fsurf\fext\fdata\fwhere\fId\fEq\fproj\fsquash\frefl\fType\ftype\ffib\fVec\fnil\fcons\fdim\fapeq\fcoeq}
+\autodefs{\fap\fcomp\fzero\fsucc\fpair\ftt\fbase\floop\fone\fseg\fnorth\fsouth\fmerid\fsurf\fext\fdata\fwhere\fId\fEq\fproj\fsquash\frefl\fType\ftype\ffib\fVec\fnil\fcons\fdim\fapeq\fcoeq\fapp\fsplit\ftt\fExt}
 
 \let\E\cE
+\let\C\cC
+\let\P\cP
+\let\T\cT
 \let\refl\frefl
+\let\Ext\fExt
 
 %%%%%
 % Inductive definitions
@@ -76,6 +80,7 @@
 \newcommand{\freegroup}[1]{F #1}
 \newcommand{\local}[2]{L_{#1} #2}
 \newcommand{\susp}{\Sigma}
+\newcommand{\pairing}{\langle\blank,\blank\rangle}
 
 % Strict things
 \renewcommand{\eq}[3][]{\fEq_{#1}(#2,#3)}

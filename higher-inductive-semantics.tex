@@ -522,16 +522,15 @@ Nothing prevents us from assuming further axiomatic cofibrations, as long as the
 There is one ``introduction'' rule for constructing cofibrations:
 \[ \inferrule{\Gamma \vdash \cof{i_1}{A_1}{B_1} \\ \Gamma \vdash \cof{i_2}{A_2}{B_2}}{\Gamma \vdash \cof{i_1\pop i_2}{(A_1 \times B_2) +_{A_1\times A_2} (B_1 \times A_2)}{B_1\times B_2}} \]
 Here the pushout is again a non-fibrant one, and $i_1 \pop i_2$ denotes the ``pushout product'' map induced by the universal property of this pushout.
-
-\todo{Hmm\dots I guess we need non-fibrant HITs if we want to say it this way, which makes for an annoying sort of almost-circularity in exposition.  If we want to describe \emph{general} non-fibrant HITs that include this pushout, described in an analogous way to the fibrant ones, then I guess we ought to allow \emph{any} maps in place of cofibrations, so that by using $2\to \unittype$ we could ``glue in an $\fEq$''.  But that seems kind of like cracking nuts with a sledgehammer; maybe we ought to just give the rules for the non-fibrant pushout explicitly, since it is all we need.}
+\msnote{Need to give rules for the non-fibrant pushout.}
 
 The ``elimination'' rule for cofibrations is that exponentiating by a cofibration produces a fibration.
+\todo{Make this its own type former of ``extensions''.}
 \[ \inferrule{\Gamma \vdash \cof{i}{A}{B} \\ \Gamma, y:B \vdash C \fib \\ \Gamma, x:A \vdash c : C\subst{i(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:B} C} \tprd{x:A} \eq{f(i(x))}{c}\Big) \fib} \]
 Here $\fEq$ denotes the strict non-fibrant equality type.
 
 There is a vague sort of ``harmony'' between the ``introduction'' and ``elimination'' rules in that the instances of elimination for $i_1$ and $i_2$ should imply the corresponding instance for $i_1 \pop i_2$.
 In other words, given that the elimination rule is all we know about cofibrations, we might as well have the introduction rule (at least as long as non-fibrant pushouts exist).
-\msnote{Curiously, it seems to me as though the conservativity result for HTS using presheaves ought to also model non-fibrant \emph{colimits}, since the presheaf category is the free cocompletion.  I'm not sure whether that means anything.}
 
 If we replace dimension variables by variables of type $\Delta^1$, then with the axiomatic cofibration $\cof{[0,1]}{2}{\Delta^1}$ this rule enables us to define the cubical identity types.
 Recall that the formation rule for the latter is:
@@ -550,6 +549,179 @@ In this case, the presence of the operation $\pop$ on cofibrations will allow us
 
 \section{Semantic type theory}
 \label{sec:semantic-type-theory}
+
+\subsection{Hybrid comprehension categories}
+\label{sec:hybrid-ccs}
+
+\begin{defn}
+  A \textbf{hybrid comprehension category (HCC)} consists of the following.
+  \begin{itemize}
+  \item A category \E, whose objects are called \emph{contexts}.
+  \item Two (cloven) Grothendieck fibrations $\pi:\P\to\E$ and $\tau:\T\to\E$.
+    The objects of $\P$ are called \emph{pretypes} and those of \T are called \emph{types}.
+  \item A commutative diagram
+    \begin{equation*}
+      \vcenter{\xymatrix{
+          \T \ar[dr]_\pi \ar[r]^\xi &
+          \P \ar[d]^\tau \ar[r]^\chi &
+          \E^\to \ar[dl]^{\mathrm{cod}} \\
+          & \E
+        }}
+    \end{equation*}
+    in which $\xi$ is injective on objects\msnote{Would we ever want to allow $\xi$ not to be injective on objects?}, fully faithful, and preserves cartesian arrows; and $\chi$ is fully faithful and takes cartesian arrows to pullback squares.
+    Both $\chi$ and the composite $\chi\xi$ are called \emph{comprehension}.
+  \item A discrete fibration $\delta : \C \to (\P \times_{\E} \P)_{\mathrm{cart}}$, where the codomain is the subcategory of $\P \times_{\E} \P$ containing all objects but only the morphisms that are cartesian over $\E$.  The objects of \C are called \emph{cofibrations}, and $\delta$ assigns to each cofibration its \emph{source} and \emph{target}.
+  \item A commutative diagram
+    \[ \xymatrix@C=.5pc{ \C \ar[rr]^-\zeta \ar[dr] && (\P^\to_\E)_{\mathrm{cart}} \ar[dl]\\
+      & (\P \times_{\E} \P)\mathrlap{_{\mathrm{cart}}} } \]
+    where $\P^\to_\E$ is the fiberwise arrow category of $\P$ and $(\P^\to_\E)_{\mathrm{cart}}$ is its subcategory containing only the cartesian morphisms.
+    Here both diagonal maps are discrete fibrations, so $\zeta$ is automatically fully faithful and preserves cartesian morphisms; we additionally ask that $\zeta$ be injective on objects.\msnote{Again, might it not be injective?}
+    We call $\zeta$ \emph{cofibrational comprehension}.
+  \end{itemize}
+  A HCC is \textbf{split} if $\pi$ and $\tau$ are split fibrations and $\xi$ preserves their cleavages.
+\end{defn}
+
+Split HCCs are the semantic version of our hybrid type theory.
+As usual in the world of comprehension categories (and categories with attributes), the \emph{terms} belonging to a type or pretype are simply the sections of its comprehension.
+
+For $\Gamma\in\E$, we write $\T(\Gamma)$ and $\P(\Gamma)$ for the fibers of $\tau$ and $\pi$ over $\Gamma$, and call their objects \emph{(pre)types in context $\Gamma$}.
+We generally fail to notate the inclusion $\xi$, regarding types silently as pretypes whenever necessary.
+If $A\in \P(\Gamma)$, we write $\Gamma.A$ for the domain of $\xi(A)$.
+Finally, for a morphism $\sigma : \Delta \to \Gamma$ in \E and $A\in\P(\Gamma)$ or $\T(\Gamma)$, we write $\sigma_A : A[\sigma] \to A$ for a cartesian morphism lying over $\sigma$.
+
+Note that a HCC has two underlying ordinary comprehension categories, namely $\pi$ and $\tau$.
+It additionally has a notion of what it means for a morphism between pretypes in the same context to ``be a cofibration'', which is preserved by pullback.
+In particular, composing a cofibration with an isomorphism yields another cofibration.
+
+
+\subsection{The base type formers}
+\label{sec:base-type-formers}
+
+Recall that our base syntactic type theory has $\Pi$-types, $\Sigma$-types, and a unit type.
+We now describe what these look like semantically.
+Large swaths of the definitions below are taken almost verbatim from~\cite{lw:localuniv}.
+
+\begin{definition}
+  Let \E be a HCC.
+  \begin{itemize}
+  \item Given a pretype $A$ in context $\Gamma$ and a pretype $B$ in context $\Gamma.A$, a \textbf{dependent product} is a pretype $\prod[A,B]$ in context $\Gamma$ and a map $\fapp_{A,B} : \prod[A,B][\chi(A)] \to B$ in context $\Gamma.A$ such that for each section $t:\Gamma.A \to \Gamma.A.B$ there is a chosen section $\lambda(t):\Gamma \to \Gamma.\prod[A,B]$ such that $(\Gamma.A.\fapp_{A,B})\circ (1_{\Gamma.A},\lambda(t)) = t$.\msnote{Should we include $\eta$ here?  And the same question below.}
+  \item \E has \textbf{weakly stable dependent products} if any $A$ and $B$ have a dependent product such that for any $\sigma:\Delta\to\Gamma$, the pair $\prod[A,B][\sigma]$ and $\fapp_{A,B}[\sigma]$ can be extended to a dependent product as well, and moreover if $A$ and $B$ are types then their dependent product can be chosen to be a type as well.
+  \item \E has \textbf{strictly stable dependent products} if we have an operation assigning to each $A$ and $B$ a dependent product, which is a type if $A$ and $B$ are, and such that all the data (including the operation $\lambda$) commutes strictly with pullback.
+  \item \E has \textbf{pseudo-stable dependent products} if we have an operation assigning to each $A$ and $B$ a dependent product which is a type if $A$ and $B$ are, together with for any $\sigma:\Gamma'\to\Gamma$ and cartesian liftings $\sigma_A: A' \to A$ over $\sigma$ and $\sigma_B: B'\to B$ over $\sigma.\sigma_A$, a cartesian arrow $\prod[A',B'] \to \prod[A,B]$ over $\sigma$, that is functorial and commutes with all the structure.
+  \end{itemize}
+\end{definition}
+
+In fact, all of our examples will have at least pseudo-stable dependent products, because they arise from categorical exponentials.
+As remarked in~\cite[3.4.4.9--10]{lw:localuniv}, this simplifies the presentation of further type formers whose rules involve $\prod$-types, so we will henceforth assume it.
+The same is true for $\sum$-types and unit types.
+
+\begin{definition}
+  Let \E be a HCC.
+  \begin{itemize}
+  \item Given a pretype $A$ in context $\Gamma$ and a pretype $B$ in context $\Gamma.A$, a \textbf{dependent sum} is a pretype $\sum_A B$ in context $\Gamma$ together with a pairing map $\pairing : \Gamma.A.B \to \Gamma.\sum_A B$, such that for any pretype $C$ in context $\Gamma.\sum_A B$ and section $d:\Gamma.A.B \to \Gamma.A.B.C[\pairing]$, there is a chosen section $\fsplit_{C,d} : \Gamma.\sum_A B \to \Gamma.\sum_A B.C$ such that $\fsplit_{C,d} \circ \pairing = (\pairing.C)\circ d$.
+  \item \E has \textbf{weakly stable dependent sums} if any $A$ and $B$ have a dependent sum such that for any $\sigma:\Delta\to\Gamma$, the pair $\sum_A B[\sigma]$ and $\pairing[\sigma]$ can be extended to a dependent sum as well, and moreover if $A$ and $B$ are types then their dependent sum can be chosen to be a type as well.
+  \item \E has \textbf{strictly stable dependent sums} if we have an operation assigning to each $A$ and $B$ a dependent sum, which is a type if $A$ and $B$ are, such that all the data commutes strictly with pullback.
+  \item \todo{Should we define pseudo-stable?}
+  \end{itemize}
+\end{definition}
+
+\begin{definition}
+  Let \E be a HCC.
+  \begin{itemize}
+  \item A \textbf{unit type} over context $\Gamma$ is a type $1$ with a section $\ftt : \Gamma \to \Gamma.1$ such that for any type $C$ in context $\Gamma.1$ and section $d$ of $C[\ftt]$, there is a chosen section of $C$ which composes with $\ftt$ to $d$.
+  \item \E has \textbf{weakly stable unit types} if each $\Gamma$ has a unit type such that for any $\sigma:\Delta\to\Gamma$, the pair $1[\sigma]$ and $\ftt[\sigma]$ can be extended to a unit type.
+  \item \E has \textbf{strictly stable unit types} if we have an operation assigning to each context a unit type, such that all the data commutes strictly with pullback.
+  \item \todo{Should we define pseudo-stable?}
+  \end{itemize}
+\end{definition}
+
+\subsection{Pretype colimits}
+\label{sec:pretype-colimits}
+
+To formulate the rules for cofibrations, we need colimits of pretypes.
+Specifically, we need pushouts to be the domains of pushout products, but we also need a coproduct to be the domain of the canonical cofibration $2\to \Delta^1$.
+Unlike in~\cite{vv:hts}, we do \emph{not} assume that coproducts of types are automatically types.
+Indeed, it will follow, as a special case of our construction of HITs, that we can define a coproduct of types that is again a type, but because it requires a fibrant replacement, this coproduct type will no longer be able to eliminate into arbitrary pretypes.
+Colimits of pretypes, however, are fairly easy to obtain in models.
+
+We begin with coproducts.
+
+\begin{definition}
+  Let \E be a HCC.
+  \begin{itemize}
+  \item A \textbf{pretype binary sum} of pretypes $A_1$ and $A_2$ in context $\Gamma$ is a pretype $A_1+A_2$ in context $\Gamma$ with maps $\nu_i : \Gamma.A_i \to \Gamma.(A_1+A_2)$ over $\Gamma$, such that for any pretype $C$ in context $\Gamma.(A_1+A_2)$ with sections $t_i :\Gamma.A_i \to \Gamma.A_i.C[\nu_i]$, there is a chosen section $\Gamma.(A_1+A_2) \to \Gamma.(A_1+A_2).C$ that composes with each $\nu_i$ to $\nu_i.C \circ t_i$.\msnote{$\eta$-rules?}
+  \item \E has \textbf{weakly stable pretype binary sums} if for each $A_1$ and $A_2$ there is a pretype binary sum such that for each $\sigma:\Delta\to\Gamma$, $(A_1+A_2)[\sigma]$ with $\nu_i[\sigma]$ can be extended to a pretype binary sum.
+  \item \E has \textbf{strictly stable pretype binary sums} if we have an operation assigning to each $A_1$ and $A_2$ a pretype binary sum, such that all the data commutes strictly with pullback.
+  \item \todo{Pseudo-stable?}
+  \end{itemize}
+\end{definition}
+
+Note that we do not ask for any interaction of the pretype binary sums with the fibration of types: the pretype sum of two types may no longer be a type.
+
+Next we tackle pretype pushouts.
+These are a sort of ``higher inductive pretype'', but instead of using identity types for the equalities, we use the judgmental equality, which semantically means the equality of morphisms in \E.
+These were not considered in~\cite{lw:localuniv}, so we will be a little more careful.
+
+\begin{definition}
+  Let \E be a HCC.
+  \begin{itemize}
+  \item Given pretypes $A$, $B_1$, and $B_2$ in context $\Gamma$, and maps $\mu_i :\Gamma.A\to \Gamma.B_i$ over $\Gamma$, a \textbf{pretype pushout} of $\mu_1$ and $\mu_2$ consists of
+    \begin{itemize}
+    \item a pretype $B_1 +_A B_2$ in context $\Gamma$, and
+    \item morphisms $\nu_i : \Gamma.B_i \to \Gamma.(B_1+_A B_2)$ over $\Gamma$ such that $\nu_1 \circ \mu_1 = \nu_2 \circ \mu_2$, such that
+    \item for any pretype $C$ in context $\Gamma.(B_1 +_A B_2)$ with sections $t_i : \Gamma.B_i \to \Gamma.B_i.C[\nu_i]$ such that $\nu_1.C \circ t_1 \circ \mu_1 = \nu_2.C \circ t_2\circ \mu_2$, there is a chosen section $p_{t_1,t_2}:\Gamma.(B_1 +_A B_2) \to \Gamma.(B_1 +_A B_2).C$ such that $p \circ \nu_i = \nu_i.C \circ t_i$.\msnote{Could you please check that the composites I wrote down make sense?}
+    \end{itemize}
+  \item \E has \textbf{weakly stable pretype pushouts} if for each $A,B_i,\mu_i$ as above there is a pretype pushout such that for each $\sigma:\Delta\to\Gamma$, the data $(B_1 +_A B_2)[\sigma]$, and $\nu_i[\sigma]$ can be extended to a pretype pushout.
+  \item \E has \textbf{strictly stable pretype pushouts} if we have an operation assigning to each $A,B_i,\mu_i$ a pretype pushout, such that for every $\sigma:\Delta\to\Gamma$,
+    \begin{align*}
+      (B_1 +_A B_2)[\sigma] &= B_1[\sigma] +_{A[\sigma]} B_2[\sigma]\\
+      \nu_i[\sigma] &= \nu_i : B_i[\sigma] \to B_1[\sigma] +_{A[\sigma]} B_2[\sigma]\\
+      p_{t_1,t_2}[\sigma] &= p_{t_1[\sigma],t_2[\sigma]}.
+    \end{align*}
+  \item \E has \textbf{pseudo-stable pretype pushouts} if we have an operation assigning to each $A,B_i,\mu_i$ a pretype pushout, together with for every $\sigma:\Gamma'\to\Gamma$ and cartesian liftings $\sigma_A:A'\to A$ and $\sigma_{B_i} : B_i' \to B_i$ (which induce unique maps $\mu_i' : A' \to B_i'$), a cartesian arrow $\sigma_{B_1} +_{\sigma_A} \sigma_{B_2} : B_1' +_{A'} B_2' \to B_1 +_A B_2$, such that
+    \begin{align*}
+      1_{B_1} +_{1_A} 1_{B_2} &= 1_{B_1 +_A B_2}\\
+      (\tau_{B_1}\circ \sigma_{B_1}) +_{(\tau_A \circ \sigma_A)} (\tau_{B_2}\circ \sigma_{B_2})
+      &= (\tau_{B_1} +_{\tau_A} \tau_{B_2}) \circ (\sigma_{B_1} +_{\sigma_A} \sigma_{B_2})\\
+      (\sigma_{B_1} +_{\sigma_A} \sigma_{B_2}) \circ \nu_i' &= \nu_i' \circ \sigma_{B_i'}\\
+      (\sigma.(\sigma_{B_1} +_{\sigma_A} \sigma_{B_2}))_C \circ p_{t_1',t_2'} &= p_{t_1,t_2} \circ (\sigma_{B_1} +_{\sigma_A} \sigma_{B_2})
+    \end{align*}
+    In the last equality, we have a pretype $C$ in context $\Gamma.(B_1 +_A B_2)$ so that $(\sigma.(\sigma_{B_1} +_{\sigma_A} \sigma_{B_2}))_C$ is a cartesian arrow $C[\sigma.(\sigma_{B_1} +_{\sigma_A} \sigma_{B_2})] \to C$, and the sections $t_1$ and $t_2$ induce unique sections $t_1'$ and $t_2'$.
+  \end{itemize}
+\end{definition}
+
+In our intended examples, pretype pushouts are simply ordinary categorical pushouts, which are stable under pullback since our categories will be locally cartesian closed.
+Thus, they will be pseudo-stable, and so we will henceforth assume their pseudo-stability.
+This is useful because pretype pushouts appear in the rule for pushout products of cofibrations, below.
+
+\subsection{Cofibrations}
+\label{sec:semantic-cofibrations}
+
+Recall that our hybrid comprehension categories come with a discrete fibration of ``cofibrations'' indexed by a ``source'' and ``target'' pretype in the same context.
+
+\begin{definition}
+  Let \E be a HCC with pseudo-stable pretype pushouts.
+  We say that \E \textbf{has pushout products} if for any cofibrations $\cof{i_1}{A_1}{B_1}$ and $\cof{i_2}{A_2}{B_2}$ in context $\Gamma$, the map $i_1\pop i_2 : {(A_1 \times B_2) +_{A_1\times A_2} (B_1 \times A_2)} \to {B_1\times B_2}$ (induced by the elimination property of the pretype pushout) is a cofibration.
+\end{definition}
+
+Note that since cofibrations are closed under composing with isomorphisms, this condition is unchanged if we modify the pseudo-stable pushouts along isomorphisms.
+We now move on to extension types.
+
+\begin{definition}
+  Let \E be a HCC, let $\cof{i}{A}{B}$ be a cofibration in context $\Gamma$, let $C$ be a type in context $\Gamma.B$, and let $c:\Gamma.A \to \Gamma.A.C[i]$ be a section.
+  Note that $A$ and $B$ are only pretypes, but $C$ must be a type.
+  An \textbf{extension type of $c$ along $i$} consists of:
+  \begin{itemize}
+  \item a type (not just a pretype) $\Ext_{C}(c,i)$ in context $\Gamma$,
+  \item a map $\fapp_{i,c} : \Ext_C(c,i)[\chi(B)] \to C$ in context $\Gamma.B$, such that
+  \item $\fapp_{i,c}[i] = c \circ \chi(\Ext_C(c,i)[\chi(A)])$ in context $\Gamma.A$, and
+  \item for any section $t:\Gamma.B \to \Gamma.B.C$ such that $t[i] = c\circ \chi(A)$ there is a chosen section $\lambda(t) : \Gamma \to \Gamma.\Ext_C(c,i)$ such that $(\Gamma.B.\fapp_{i,c}) \circ (1_{\Gamma.B},\lambda(t)) = t$.
+  \end{itemize}
+\end{definition}
+
+\begin{definition}
+  A HCC \E has \textbf{weakly stable extension types} if for any $i$, $C$, and $c$ as above, there exists an extension type, such that for any $\sigma:\Delta\to\Gamma$, \dots
+\end{definition}
 
 
 \section{Model-categorical semantics}
