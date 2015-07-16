@@ -28,6 +28,7 @@
 \let\T\cT
 \let\refl\frefl
 \let\Ext\fExt
+\def\J{\ensuremath{\mathsf{J}}}
 
 %%%%%
 % Inductive definitions
@@ -75,12 +76,15 @@
 \newcommand{\torustype}{\ensuremath{T^2}\xspace}
 \newcommand{\spheretype}[1]{\ensuremath{S^{#1}}\xspace}
 \newcommand{\unittype}{\ensuremath{\mathbf{1}}\xspace}
+\newcommand{\bool}{\ensuremath{\mathbf{2}}\xspace}
+\newcommand{\ivl}{{\Delta^1}}
 \newcommand{\trunc}[2]{\mathopen{}\left\Vert #2\right\Vert_{#1}\mathclose{}}
 \newcommand{\brck}[1]{\trunc{}{#1}}
 \newcommand{\freegroup}[1]{F #1}
 \newcommand{\local}[2]{L_{#1} #2}
 \newcommand{\susp}{\Sigma}
 \newcommand{\pairing}{\langle\blank,\blank\rangle}
+\newcommand{\copair}[2]{\langle #1,#2\rangle}
 
 % Strict things
 \renewcommand{\eq}[3][]{\fEq_{#1}(#2,#3)}

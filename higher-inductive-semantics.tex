@@ -510,12 +510,12 @@ All cofibrations are also functions:
 In particular, when $\Gamma \vdash \cof{i}{A}{B}$ it must be that $\Gamma \vdash A \type$ and $\Gamma \vdash B \type$.
 
 We will have one axiomatic cofibration, whose codomain is an axiomatic type.
-\[ \inferrule{\ }{\Gamma \vdash \Delta^1 \type} \qquad 
-\inferrule{\ }{\Gamma \vdash 0 : \Delta^1} \qquad
-\inferrule{\ }{\Gamma \vdash 1 : \Delta^1} \]
-\[ \inferrule{\ }{\Gamma \vdash \cof{[0,1]}{2}{\Delta^2}} \]
-Here $2$ denotes the non-fibrant coproduct $\unittype+\unittype$, and $[0,1]$ denotes the copairing.
-Note that $\Delta^1$ is also not (assumed to be) fibrant.
+\[ \inferrule{\ }{\Gamma \vdash \ivl \type} \qquad 
+\inferrule{\ }{\Gamma \vdash 0 : \ivl} \qquad
+\inferrule{\ }{\Gamma \vdash 1 : \ivl} \]
+\[ \inferrule{\ }{\Gamma \vdash \cof{\copair{0}{1}}{\bool}{\ivl}} \]
+Here $\bool$ denotes the non-fibrant coproduct $\unittype+\unittype$, and $\copair{0}{1}$ denotes the copairing.
+Note that $\ivl$ is also not (assumed to be) fibrant.
 Nothing prevents us from assuming further axiomatic cofibrations, as long as they exist in our desired models, but this will be the only one we need.
 (Note, though, that semantically, it appears to be important that all cofibrations be defined in the empty context and pulled back to anywhere else from there.)
 
@@ -532,14 +532,14 @@ Here $\fEq$ denotes the strict non-fibrant equality type.
 There is a vague sort of ``harmony'' between the ``introduction'' and ``elimination'' rules in that the instances of elimination for $i_1$ and $i_2$ should imply the corresponding instance for $i_1 \pop i_2$.
 In other words, given that the elimination rule is all we know about cofibrations, we might as well have the introduction rule (at least as long as non-fibrant pushouts exist).
 
-If we replace dimension variables by variables of type $\Delta^1$, then with the axiomatic cofibration $\cof{[0,1]}{2}{\Delta^1}$ this rule enables us to define the cubical identity types.
+If we replace dimension variables by variables of type $\ivl$, then with the axiomatic cofibration $\cof{\copair{0}{1}}{2}{\ivl}$ this rule enables us to define the cubical identity types.
 Recall that the formation rule for the latter is:
 \[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \fib \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\fib}\]
-On the other hand, if we substitute $\cof{[0,1]}{2}{\Delta^1}$ in the eliminator for cofibrations, we get
-\[ \inferrule{\Gamma, y:\Delta^1 \vdash A \fib \\ \Gamma, x:2 \vdash a : A\subst{[0,1](x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:\Delta^1} A} \tprd{x:2} \eq{f(i(x))}{a}\Big) \fib} \]
-To go from one to the other, we are just using the universal property of $2$ to copair up $a_0$ and $a_1$.
-Similarly, the introduction rule for $\fId$ now corresponds to an actual abstraction over $\Delta^1$, paired with the reification of two judgmental equalities as an $\fEq$ between functions of domain $2$.
-The elimination rule corresponds to projecting out the function of domain $\Delta^1$ and applying it, while the ``boundary'' computation rules result from projecting out the $\fEq$ term and applying the reflection rule for strict equality.
+On the other hand, if we substitute $\cof{\copair{0}{1}}{\bool}{\ivl}$ in the eliminator for cofibrations, we get
+\[ \inferrule{\Gamma, y:\ivl \vdash A \fib \\ \Gamma, x:2 \vdash a : A\subst{\copair{0}{1}(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:\ivl} A} \tprd{x:\bool} \eq{f(i(x))}{a}\Big) \fib} \]
+To go from one to the other, we are just using the universal property of $\bool$ to copair up $a_0$ and $a_1$.
+Similarly, the introduction rule for $\fId$ now corresponds to an actual abstraction over $\ivl$, paired with the reification of two judgmental equalities as an $\fEq$ between functions of domain $\bool$.
+The elimination rule corresponds to projecting out the function of domain $\ivl$ and applying it, while the ``boundary'' computation rules result from projecting out the $\fEq$ term and applying the reflection rule for strict equality.
 
 At this point, there may seem little benefit to reformulating the identity types in terms of cofibrations.
 The payoff will come in \cref{sec:hwt} when we introduce path-constructors of arbitrary dimension.
@@ -614,9 +614,9 @@ As in~\cite{lw:localuniv}, we distinguish three types of stability for (pre)type
 \item A (pre)type constructor is \emph{strictly stable} if we can make a coherent choice of such constructors, all of whose data are strictly preserved by the chosen pullbacks.
   This is the sort of structure that is expected to correspond to the type constructors of syntactic type theory.
 \item It is \emph{pseudo-stable} if we can make choices of such constructors that are preserved by pullback up to coherent isomorphism.
-  This is the sort of structure that arises naturally in categorical models when fibrant replacement is not required.
+  This is the sort of structure that arises naturally in categorical models when fibrant replacement or choices of liftings are not required.
 \item It is \emph{weakly stable} if any pullback of it also has the appropriate property of a constructor of the same sort.
-  This is the sort of structure that arises naturally in categorical models when fibrant replacement \emph{is} required.
+  This is the sort of structure that arises naturally in categorical models when fibrant replacement or choices of liftings \emph{are} required.
 \end{itemize}
 The ``local universe'' coherence method of~\cite{lw:localuniv} gives a way to construct strictly stable structure from weakly stable structure, and we will need the full strength of this for higher inductive types.
 However, in \emph{this} section, all the structure we consider will be at least pseudo-stable, for several reasons:
@@ -707,7 +707,7 @@ Now we consider $\sum$-types and the unit type.
 \label{sec:pretype-colimits}
 
 To formulate the rules for cofibrations, we need colimits of pretypes.
-Specifically, we need pushouts, to be the domains of pushout products; but we also need a coproduct to be the domain of the canonical cofibration $2\to \Delta^1$.
+Specifically, we need pushouts, to be the domains of pushout products; but we also need a coproduct to be the domain of the canonical cofibration $\bool\to \ivl$.
 Unlike in~\cite{vv:hts}, we do \emph{not} assume that coproducts of types are automatically types.
 Indeed, it will follow, as a special case of our construction of HITs, that we can define a coproduct of types that is again a type, but because it requires a fibrant replacement, this coproduct type will no longer be able to eliminate into arbitrary pretypes.
 Colimits of pretypes, however, are fairly easy to obtain in models.
@@ -717,7 +717,7 @@ We begin with coproducts.
 \begin{defn}
   Let \E be a HCC.
   \begin{itemize}
-  \item A \textbf{pretype binary sum} of pretypes $A_1$ and $A_2$ in context $\Gamma$ is a pretype $A_1+A_2$ in context $\Gamma$ with maps $\nu_i : \Gamma.A_i \to \Gamma.(A_1+A_2)$ over $\Gamma$, such that for any pretype $C$ in context $\Gamma.(A_1+A_2)$ with sections $t_i :\Gamma.A_i \to \Gamma.A_i.C[\nu_i]$, there is a chosen section $\Gamma.(A_1+A_2) \to \Gamma.(A_1+A_2).C$ that composes with each $\nu_i$ to $\nu_i.C \circ t_i$.
+  \item A \textbf{pretype binary sum} of pretypes $A_1$ and $A_2$ in context $\Gamma$ is a pretype $A_1+A_2$ in context $\Gamma$ with maps $\nu_i : \Gamma.A_i \to \Gamma.(A_1+A_2)$ over $\Gamma$, such that for any pretype $C$ in context $\Gamma.(A_1+A_2)$ with sections $t_i :\Gamma.A_i \to \Gamma.A_i.C[\nu_i]$, there is a chosen section $\copair{t_1}{t_2} : \Gamma.(A_1+A_2) \to \Gamma.(A_1+A_2).C$ that composes with each $\nu_i$ to $\nu_i.C \circ t_i$.
   \item A pretype binary sum is \textbf{strong} if the chosen sections are unique.
   \item \E has \textbf{weakly stable pretype binary sums} if for each $A_1$ and $A_2$ there is a pretype binary sum such that for each $\sigma:\Delta\to\Gamma$, $(A_1+A_2)[\sigma]$ with $\nu_i[\sigma]$ can be extended to a pretype binary sum.
   \item \E has \textbf{strictly stable pretype binary sums} if we have an operation assigning to each $A_1$ and $A_2$ a pretype binary sum, such that all the data commutes strictly with pullback.
@@ -924,10 +924,71 @@ As usual, the introduction and computation rules are formulated first in the spe
   It is easy to show that categorical extension objects are stable under pullback.
 \end{proof}
 
-\subsection{Identity types and acyclics}
+\subsection{Intervals, identity types, and acyclics}
 \label{sec:semantic-id-types}
 
+As remarked in \cref{sec:cofibrations} syntactically, we obtain identity types as a special case of extension types.
+For this we need a ``interval'' cofibration, and to obtain the eliminator for identity types we require this to satisfy an additional ``acyclicity'' condition.
 
+\begin{defn}
+  In a HCC:
+  \begin{itemize}
+  \item A \textbf{predependent projection} is a composite of finitely many comprehension maps $\chi(A) : \Gamma.A \to \Gamma$ of pretypes $A\in \P(\Gamma)$.\msnote{I'm not sure we need predependent projections anywhere.}
+  \item A \textbf{dependent projection} is a composite of finitely many comprehension maps $\chi(A) : \Gamma.A \to \Gamma$ of types $A\in \T(\Gamma)$.
+\end{itemize}
+\end{defn}
+
+Note that all pullbacks of predependent projections exist.
+Extending the notation for comprehension of pretypes, we generally write $\Gamma.\vec{A} \to \Gamma$ for a (pre)dependent projection, and $\Delta.\vec{A}[\sigma] \to \Delta$ for its pullback along $\sigma:\Delta\to\Gamma$.
+
+\begin{defn}
+  Let \E be a HCC.
+  \begin{itemize}
+  \item A morphism $\varrho:\Delta\to\Gamma$ in \E is \textbf{acyclic} if for any type (not pretype!)\ $C$ in context $\Gamma$ and any section $d : \Delta \to \Delta.C[\varrho]$, there is a chosen section $\J(d) : \Gamma \to \Gamma.C$ such that $\J(d) \circ \varrho = \varrho.\varrho_C \circ d$.
+  \item A morphism $\varrho:\Delta\to\Gamma$ is \textbf{Frobenius acyclic} if for any dependent projection $\Gamma.\vec{A}\to \Gamma$, the map $\varrho.\varrho_{\vec{A}} : \Delta.\vec{A}[\varrho] \to \Gamma.\vec{A}$ is acyclic.
+  \item Let $\Gamma.\vec{A} \to \Gamma.\vec{B}$ be a morphism between (pre)dependent projections over $\Gamma$.
+    We say it is \textbf{weakly stably (Frobenius) acyclic} if for any $\sigma:\Delta\to \Gamma$ the map $\Delta.\vec{A}[\sigma] \to \Delta.\vec{B}[\sigma]$ is (Frobenius) acyclic.
+  \item Similarly, $\Gamma.\vec{A} \to \Gamma.\vec{B}$ is \textbf{strictly stably (Frobenius) acyclic} if it is weakly stably so and the chosen sections are chosen to commute strictly with pullbacks.
+  \end{itemize}
+\end{defn}
+
+In homotopy-theoretic language, the acyclics are the maps having the left lifting property against comprehensions of types, or equivalently against dependent projections.
+
+\begin{defn}
+  Let \E be a HCC with unit types, pretype binary sums, and extension types that are all pseudo-stable and strong.
+  We write $\bool$ for the pretype $\unittype+\unittype$.
+  An \textbf{interval} over $\Gamma$ consists of
+  \begin{itemize}
+  \item a pretype $\ivl$ in context $\Gamma$
+  \item two sections $0,1: \Gamma \to \Gamma.\ivl$
+  \item the induced map $\copair{0}{1} : \bool \to \ivl$ is a cofibration
+  \item For any type $A$ in context $\Gamma$, we have two canonical sections $\Gamma.A.A \to \Gamma.A.A.A$.
+    (We omit to notate the necessary substitutions as they are obvious.)
+    These induce a map $\Gamma.A.A.\bool \to \Gamma.A.A.A$, and thereby also $c:\Gamma.A.A.\bool \to \Gamma.A.A.\ivl.A$.
+    Hence we can form $\Ext_A(c,\copair{0}{1}) \in \T(\Gamma.A.A)$.
+
+    Since the two sections $\Gamma.A.A \to \Gamma.A.A.A$ become equal upon pullback along $\Delta_A : \Gamma.A \to \Gamma.A.A$, the analogous pullback of $c$ factors through the projection $\Gamma.A.\bool \to \Gamma.A$.
+    \msnote{I think this requires $\eta$ for the unit types and binary sums?}
+    Therefore, the constant section $\Gamma.A.\ivl \to \Gamma.A.\ivl.A$ is an extension of $c[\Delta_A]$, and hence induces a section $\Gamma.A \to \Gamma.A.\Ext_A(c,\copair{0}{1})[\Delta_A]$, or equivalently a map
+    \begin{equation}
+      \Gamma.A \to \Gamma.A.A.\Ext_A(c,\copair{0}{1})\label{eq:refl-acyclic}
+    \end{equation}
+    over $\Delta_A$.
+    We require that~\eqref{eq:refl-acyclic} be weakly stably Frobenius acyclic.
+  \end{itemize}
+\end{defn}
+
+\begin{defn}
+  Let \E be a HCC with unit types, pretype binary sums, and extension types that are all pseudo-stable and strong.
+  \begin{itemize}
+  \item \E has \textbf{weakly stable intervals} if over every $\Gamma$ there is an interval $\ivl$ such that for any $\sigma:\Delta\to\Gamma$, the pretype $\ivl[\sigma]$ with $0[\sigma]$ and $1[\sigma]$ is an interval over $\Delta$.
+  \item \E has \textbf{partially pseudo-stable intervals} if we have an operation assigning to each $\Gamma$ an interval over it, and to every $\sigma:\Gamma'\to\Gamma$ a cartesian map $\sigma_\ivl : \Gamma'.\ivl' \to \Gamma.\ivl$ over $\sigma$, which commutes with the sections $0$ and $1$ (but \emph{not} necessarily with the acyclicity).
+  \item If the unit types, pretype binary sums, and extension types of \E are strictly stable, then \E has \textbf{strictly stable intervals} if we have an operation assigning an interval over every $\Gamma$ in a way which commutes strictly with pullback, and such that each~\eqref{eq:refl-acyclic} is strictly stably Frobenius acyclic.
+  \end{itemize}
+\end{defn}
+
+Since acyclicity involves a choice of liftings, it (and hence intervals) are not usually fully pseudo-stable even in categorical models.
+Fortunately, we will never need to use the acyclicity in the premises of other type constructors, so this is not a problem.
 
 
 \section{Model-categorical semantics}
