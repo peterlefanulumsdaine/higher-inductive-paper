@@ -588,6 +588,16 @@ For $\Gamma\in\E$, we write $\T(\Gamma)$ and $\P(\Gamma)$ for the fibers of $\ta
 We generally fail to notate the inclusion $\xi$, regarding types silently as pretypes whenever necessary.
 If $A\in \P(\Gamma)$, we write $\Gamma.A$ for the domain of $\chi(A): \Gamma.A \to \Gamma$.
 Finally, for a morphism $\sigma : \Delta \to \Gamma$ in \E and $A\in\P(\Gamma)$ or $\T(\Gamma)$, we write $\sigma_A : A[\sigma] \to A$ for a cartesian morphism lying over $\sigma$, and therefore $\sigma.\sigma_A : \Delta.A[\sigma] \to \Gamma.A$ for its comprehension.
+Thus we have a pullback diagram:
+\begin{equation}
+  \vcenter{\xymatrix{
+      \Delta.A[\sigma]\ar[r]^-{\sigma.\sigma_A} \ar[d]_{\chi(A[\sigma])} &
+      \Gamma.A\ar[d]^{\chi(A)}\\
+      \Delta \ar[r]_\sigma &
+      \Gamma.
+      }}
+\end{equation}
+In particular, while \E need not have all pullbacks, it does necessarily have all pullbacks along maps of the form $\chi(A) : \Gamma.A \to \Gamma$.
 
 Note that a HCC has two underlying ordinary comprehension categories, namely $\pi$ and $\tau$.
 It additionally has a notion of what it means for a morphism between pretypes in the same context to ``be a cofibration'', which is preserved by pullback.
@@ -599,26 +609,76 @@ In particular, composing a cofibration with an isomorphism yields another cofibr
 
 Recall that our base syntactic type theory has $\Pi$-types, $\Sigma$-types, and a unit type.
 We now describe what these look like semantically.
-Large swaths of the definitions below are taken almost verbatim from~\cite{lw:localuniv}.
+As in~\cite{lw:localuniv}, we distinguish three types of stability for (pre)type constructors:
+\begin{itemize}
+\item A (pre)type constructor is \emph{strictly stable} if we can make a coherent choice of such constructors, all of whose data are strictly preserved by the chosen pullbacks.
+  This is the sort of structure that is expected to correspond to the type constructors of syntactic type theory.
+\item It is \emph{pseudo-stable} if we can make choices of such constructors that are preserved by pullback up to coherent isomorphism.
+  This is the sort of structure that arises naturally in categorical models when fibrant replacement is not required.
+\item It is \emph{weakly stable} if any pullback of it also has the appropriate property of a constructor of the same sort.
+  This is the sort of structure that arises naturally in categorical models when fibrant replacement \emph{is} required.
+\end{itemize}
+The ``local universe'' coherence method of~\cite{lw:localuniv} gives a way to construct strictly stable structure from weakly stable structure, and we will need the full strength of this for higher inductive types.
+However, in \emph{this} section, all the structure we consider will be at least pseudo-stable, for several reasons:
+\begin{itemize}
+\item Nothing in this section will require fibrant replacement, so in categorical models it is generally automatically pseudo-stable.
+\item Moreover, if we assume uniqueness principles, corresponding to syntactic $\eta$-rules, weakly stable structure generally becomes automatically pseudo-stable.
+\item Finally, pseudo-stability of some of the base structure will be important when constructing weakly stable HITs, for reasons similary to those remarked in~\cite[3.4.4.9--10]{lw:localuniv}.
+\end{itemize}
+We begin with dependent products.
 
-\begin{definition}
+\begin{defn}
   Let \E be a HCC.
   \begin{itemize}
-  \item Given a pretype $A$ in context $\Gamma$ and a pretype $B$ in context $\Gamma.A$, a \textbf{dependent product} is a pretype $\prod[A,B]$ in context $\Gamma$ and a map $\fapp_{A,B} : \prod[A,B][\chi(A)] \to B$ in context $\Gamma.A$ such that for each section $t:\Gamma.A \to \Gamma.A.B$ there is a chosen section $\lambda(t):\Gamma \to \Gamma.\prod[A,B]$ such that $(\Gamma.A.\fapp_{A,B})\circ (1_{\Gamma.A},\lambda(t)) = t$.\msnote{Should we include $\eta$ here?  And the same question below.}
-  \item \E has \textbf{weakly stable dependent products} if any $A$ and $B$ have a dependent product such that for any $\sigma:\Delta\to\Gamma$, the pair $\prod[A,B][\sigma]$ and $\fapp_{A,B}[\sigma]$ can be extended to a dependent product as well, and moreover if $A$ and $B$ are types then their dependent product can be chosen to be a type as well.
-  \item \E has \textbf{strictly stable dependent products} if we have an operation assigning to each $A$ and $B$ a dependent product, which is a type if $A$ and $B$ are, and such that all the data (including the operation $\lambda$) commutes strictly with pullback.
-  \item \E has \textbf{pseudo-stable dependent products} if we have an operation assigning to each $A$ and $B$ a dependent product which is a type if $A$ and $B$ are, together with for any $\sigma:\Gamma'\to\Gamma$ and cartesian liftings $\sigma_A: A' \to A$ over $\sigma$ and $\sigma_B: B'\to B$ over $\sigma.\sigma_A$, a cartesian arrow $\prod[A',B'] \to \prod[A,B]$ over $\sigma$, that is functorial and commutes with all the structure.
+  \item Let $A$ be a pretype in context $\Gamma$ and $B$ a pretype in context $\Gamma.A$.
+    A \textbf{dependent product} of $B$ along $A$ is a pretype $\prod[A,B]$ in context $\Gamma$ and a map $\fapp_{A,B} : \prod[A,B][\chi(A)] \to B$ in context $\Gamma.A$ such that for each section $t:\Gamma.A \to \Gamma.A.B$ there is a chosen section $\lambda(t):\Gamma \to \Gamma.\prod[A,B]$ such that
+    \[(\Gamma.A.\fapp_{A,B})\circ (1_{\Gamma.A},\lambda(t)) = t.\]
+  \item A dependent product is \textbf{strong}\msnote{Is there a better name for ``strong''?} if for any $t$ there is a \emph{unique} $\lambda(t)$.
+  \item A dependent product is \textbf{weakly stable} if for any $\sigma:\Delta\to\Gamma$, the pair $\prod[A,B][\sigma]$ and $\fapp_{A,B}[\sigma.\sigma_A]$ can be extended to a dependent product of $B[\sigma.\sigma_A]$ along $A[\sigma]$.
+  \item \E \textbf{has weakly stable dependent products} if any $A$ and $B$ have a weakly stable dependent product, which can be chosen to be a type if $A$ and $B$ are types.
+  \item \E has \textbf{strictly stable dependent products} if we have an operation assigning to each $A$ and $B$ a dependent product, which is a type if $A$ and $B$ are, and such that all the data commutes strictly with pullback.
+    This includes the operation $\lambda$, although of course that is preserved automatically if the dependent products are strong.
+  \item \E has \textbf{pseudo-stable dependent products} if we have an operation assigning to each $A$ and $B$ a dependent product which is a type if $A$ and $B$ are, together with for any $\sigma:\Gamma'\to\Gamma$ and any cartesian liftings $\sigma_A: A' \to A$ over $\sigma$ and $\sigma_B: B'\to B$ over $\sigma.\sigma_A$, a cartesian arrow $\prod[A',B'] \to \prod[A,B]$ over $\sigma$, that is functorial and commutes with all the structure.
   \end{itemize}
-\end{definition}
+\end{defn}
 
-In fact, all of our examples will have at least pseudo-stable dependent products, because they arise from categorical exponentials.
-As remarked in~\cite[3.4.4.9--10]{lw:localuniv}, this simplifies the presentation of further type formers whose rules involve $\prod$-types, so we will henceforth assume it.
-The same is true for $\sum$-types and unit types.
+\begin{lem}
+  If \E has weakly stable strong dependent products, then it has pseudo-stable strong dependent products.
+\end{lem}
+\begin{proof}
+  If we unravel the definition of a weakly stable strong dependent product, we see that it says that for any $\sigma:\Delta\to\Gamma$, and any section $t:\Delta.A[\sigma] \to \Delta.A[\sigma].B[\sigma.\sigma_A]$, there is a unique section $\lambda(t) : \Delta \to \Delta.\prod[A,B][\sigma]$ such that
+  \[ (\Delta.A[\sigma].\fapp_{A,B}[\sigma.\sigma_A]) \circ (1_{\Delta.A[\sigma]},\lambda(t) \circ \chi(A[\sigma])) = t. \]
+  Now, by the universal property of pullbacks, such a $t$ is equivalent to a map $t':\Delta.A[\sigma] \to \Gamma.A.B$ such that $\chi(B) \circ t' = \sigma.\sigma_A$, and likewise $\lambda(t)$ is equivalent to a map $\lambda'(t'):\Delta \to \Gamma.\prod[A,B]$ such that
+  \begin{equation}
+    \Gamma.A.\fapp_{A,B} \circ {(\sigma.\sigma_A, \lambda'(t')\circ \chi(A[\sigma]))} = t'.\label{eq:wssdp}
+  \end{equation}
+  See below, where the left-hand side of~\eqref{eq:wssdp} is labeled $\bullet$.
+  \begin{equation}
+    \vcenter{\xymatrix{
+        & \Gamma.A.B \ar[d]  &&
+        \Gamma.A.\prod[A,B] \ar[dll] \ar[ll]_-{\Gamma.A.\fapp_{A,B}} \ar[d]^{\chi(A)_{\prod[A,B]}} \\
+        \Delta.A[\sigma]\ar[r]_-{\sigma.\sigma_A}
+        \ar@{.>}[urrr]^(.6){\bullet}
+        \ar[d]_{\chi(A[\sigma])} \ar@{-->}[ur]^{t'} &
+        \Gamma.A\ar[d] &&
+        \Gamma.\prod[A,B] \ar[dll]^{\chi(\prod[A,B])} \\
+        \Delta \ar[r]_\sigma \ar@{.>}[urrr]^(.6){\lambda'(t')} &
+        \Gamma.
+      }}
+  \end{equation}
+  However, noting that $\sigma$ is an arbitrary object of the slice category $\E/\Gamma$, and $\sigma.\sigma_A$ is its pullback along $\chi(A)$, we see that this says exactly that $\chi(\prod[A,B])$ is a \emph{categorical} dependent product of $\chi(B)$ along $\chi(A)$, i.e.\ the value at $\chi(B)$ of a partially defined right adjoint to the pullback functor $\chi(A)^* : \E/\Gamma \to \E/\Gamma.A$.
+
+  Now it is a standard category-theoretic fact that categorical dependent products are preserved by pullback, up to canonical isomorphism.
+  Thus, we can choose any family of weakly stable strong dependent products (choosing a type if $A$ and $B$ are types), and they will automatically be pseudo-stable.
+\end{proof}
+
+Now we consider $\sum$-types and the unit type.
 
 \begin{definition}
   Let \E be a HCC.
   \begin{itemize}
   \item Given a pretype $A$ in context $\Gamma$ and a pretype $B$ in context $\Gamma.A$, a \textbf{dependent sum} is a pretype $\sum_A B$ in context $\Gamma$ together with a pairing map $\pairing : \Gamma.A.B \to \Gamma.\sum_A B$, such that for any pretype $C$ in context $\Gamma.\sum_A B$ and section $d:\Gamma.A.B \to \Gamma.A.B.C[\pairing]$, there is a chosen section $\fsplit_{C,d} : \Gamma.\sum_A B \to \Gamma.\sum_A B.C$ such that $\fsplit_{C,d} \circ \pairing = (\pairing.C)\circ d$.
+  \item A dependent sum is \textbf{strong} if the chosen sections are unique.
   \item \E has \textbf{weakly stable dependent sums} if any $A$ and $B$ have a dependent sum such that for any $\sigma:\Delta\to\Gamma$, the pair $\sum_A B[\sigma]$ and $\pairing[\sigma]$ can be extended to a dependent sum as well, and moreover if $A$ and $B$ are types then their dependent sum can be chosen to be a type as well.
   \item \E has \textbf{strictly stable dependent sums} if we have an operation assigning to each $A$ and $B$ a dependent sum, which is a type if $A$ and $B$ are, such that all the data commutes strictly with pullback.
   \item \todo{Should we define pseudo-stable?}
