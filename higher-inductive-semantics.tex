@@ -707,44 +707,80 @@ Now we consider $\sum$-types and the unit type.
 \label{sec:pretype-colimits}
 
 To formulate the rules for cofibrations, we need colimits of pretypes.
-Specifically, we need pushouts to be the domains of pushout products, but we also need a coproduct to be the domain of the canonical cofibration $2\to \Delta^1$.
+Specifically, we need pushouts, to be the domains of pushout products; but we also need a coproduct to be the domain of the canonical cofibration $2\to \Delta^1$.
 Unlike in~\cite{vv:hts}, we do \emph{not} assume that coproducts of types are automatically types.
 Indeed, it will follow, as a special case of our construction of HITs, that we can define a coproduct of types that is again a type, but because it requires a fibrant replacement, this coproduct type will no longer be able to eliminate into arbitrary pretypes.
 Colimits of pretypes, however, are fairly easy to obtain in models.
 
 We begin with coproducts.
 
-\begin{definition}
+\begin{defn}
   Let \E be a HCC.
   \begin{itemize}
-  \item A \textbf{pretype binary sum} of pretypes $A_1$ and $A_2$ in context $\Gamma$ is a pretype $A_1+A_2$ in context $\Gamma$ with maps $\nu_i : \Gamma.A_i \to \Gamma.(A_1+A_2)$ over $\Gamma$, such that for any pretype $C$ in context $\Gamma.(A_1+A_2)$ with sections $t_i :\Gamma.A_i \to \Gamma.A_i.C[\nu_i]$, there is a chosen section $\Gamma.(A_1+A_2) \to \Gamma.(A_1+A_2).C$ that composes with each $\nu_i$ to $\nu_i.C \circ t_i$.\msnote{$\eta$-rules?}
+  \item A \textbf{pretype binary sum} of pretypes $A_1$ and $A_2$ in context $\Gamma$ is a pretype $A_1+A_2$ in context $\Gamma$ with maps $\nu_i : \Gamma.A_i \to \Gamma.(A_1+A_2)$ over $\Gamma$, such that for any pretype $C$ in context $\Gamma.(A_1+A_2)$ with sections $t_i :\Gamma.A_i \to \Gamma.A_i.C[\nu_i]$, there is a chosen section $\Gamma.(A_1+A_2) \to \Gamma.(A_1+A_2).C$ that composes with each $\nu_i$ to $\nu_i.C \circ t_i$.
+  \item A pretype binary sum is \textbf{strong} if the chosen sections are unique.
   \item \E has \textbf{weakly stable pretype binary sums} if for each $A_1$ and $A_2$ there is a pretype binary sum such that for each $\sigma:\Delta\to\Gamma$, $(A_1+A_2)[\sigma]$ with $\nu_i[\sigma]$ can be extended to a pretype binary sum.
   \item \E has \textbf{strictly stable pretype binary sums} if we have an operation assigning to each $A_1$ and $A_2$ a pretype binary sum, such that all the data commutes strictly with pullback.
-  \item \todo{Pseudo-stable?}
+  \item \E has \textbf{pseudo-stable pretype binary sums} if we have an operation assigning to each $A_1$ and $A_2$ a pretype binary sum, and to any $\sigma:\Delta\to \Gamma$ and any cartesian lifts $\sigma_{A_1}:A_1'\to A_1$ and $\sigma_{A_2}:A_2'\to A_2$, a cartesian arrow $A_1' + A_2' \to A_1+A_2$ over $\sigma$, commuting with the $\nu_i$ and the chosen sections.
   \end{itemize}
-\end{definition}
+\end{defn}
 
 Note that we do not ask for any interaction of the pretype binary sums with the fibration of types: the pretype sum of two types may no longer be a type.
+
+\begin{lem}\label{thm:categorical-pretype-sums}
+  Let \E be a HCC.
+  \begin{enumerate}
+  \item A strong pretype binary sum is a categorical coproduct in $\P(\Gamma)$.
+  \item Conversely, any pretype in $\P(\Gamma)$ whose comprehension is a categorical coproduct in $\E$ yields a strong pretype binary sum.
+  \item Any pretype in $\P(\Gamma)$ whose comprehension is a pullback-stable categorical coproduct in $\E$ yields a weakly stable pretype binary sum.
+  \item If \E has weakly stable strong pretype binary sums, then it has pseudo-stable strong pretype binary sums.
+  \end{enumerate}
+\end{lem}
+\begin{proof}
+  For the first statement, any $B\in \P(\Gamma)$ can be reindexed to $B[\sigma_{A_1+A_2}] \in P(\Gamma.(A_1+A_2)$, so that maps $A_i \to B$ in $\P(\Gamma)$ correspond bijectively to sections $\Gamma.A_i \to \Gamma.A_i.B[\sigma_{A_1+A_2}][\nu_i]$, and similarly for maps out of $A_1+A_2$.
+  Thus, the strong pretype binary sum property implies that any two maps $A_1\to B$ and $A_2\to B$ factor uniquely through $A_1+A_2$.
+
+  Conversely, if we have a pretype $A_1+A_2 \in \P(\Gamma)$ such that $\Gamma.(A_1+A_2)$ is a categorical coproduct of $\Gamma.A_1$ and $\Gamma.A_2$, then since sections $t_i :\Gamma.A_i \to \Gamma.A_i.C[\nu_i]$ correspond bijectively to maps $\Gamma.A_i \to \Gamma.(A_1+A_2).C$ over $\Gamma.\nu_i$, they induce a unique section $\Gamma.(A_1+A_2) \to \Gamma.A_1+A_2.C$.
+
+  The third and fourth statements follows immediately.
+\end{proof}
 
 Next we tackle pretype pushouts.
 These are a sort of ``higher inductive pretype'', but instead of using identity types for the equalities, we use the judgmental equality, which semantically means the equality of morphisms in \E.
 These were not considered in~\cite{lw:localuniv}, so we will be a little more careful.
 
-\begin{definition}
+\begin{defn}
   Let \E be a HCC.
   \begin{itemize}
   \item Given pretypes $A$, $B_1$, and $B_2$ in context $\Gamma$, and maps $\mu_i :\Gamma.A\to \Gamma.B_i$ over $\Gamma$, a \textbf{pretype pushout} of $\mu_1$ and $\mu_2$ consists of
     \begin{itemize}
     \item a pretype $B_1 +_A B_2$ in context $\Gamma$, and
     \item morphisms $\nu_i : \Gamma.B_i \to \Gamma.(B_1+_A B_2)$ over $\Gamma$ such that $\nu_1 \circ \mu_1 = \nu_2 \circ \mu_2$, such that
-    \item for any pretype $C$ in context $\Gamma.(B_1 +_A B_2)$ with sections $t_i : \Gamma.B_i \to \Gamma.B_i.C[\nu_i]$ such that $\nu_1.C \circ t_1 \circ \mu_1 = \nu_2.C \circ t_2\circ \mu_2$, there is a chosen section $p_{t_1,t_2}:\Gamma.(B_1 +_A B_2) \to \Gamma.(B_1 +_A B_2).C$ such that $p \circ \nu_i = \nu_i.C \circ t_i$.\msnote{Could you please check that the composites I wrote down make sense?}
+    \item for any pretype $C$ in context $\Gamma.(B_1 +_A B_2)$ with sections $t_i : \Gamma.B_i \to \Gamma.B_i.C[\nu_i]$ such that
+      % \[\nu_1.(nu_1)_C \circ t_1 \circ \mu_1 = \nu_2.(\nu_2)_C \circ t_2\circ \mu_2,\]
+      \[ (1_{\Gamma.A}, t_1\circ \mu_1) = (1_{\Gamma.A}, t_2\circ \mu_2) \]
+      there is a chosen section $\fpush_{t_1,t_2}:\Gamma.(B_1 +_A B_2) \to \Gamma.(B_1 +_A B_2).C$ such that
+      $(1_{\Gamma.B_i} , \fpush_{t_1,t_2} \circ \nu_i) = t_i$.
+      % $\fpush_{t_1,t_2} \circ \nu_i = \nu_i.(\nu_i)_C \circ t_i$.
+      \[ \xymatrix@-.5pc{
+        \Gamma.A.C[\nu_i\mu_i] \ar[rr]^{\mu_2.(\mu_2)_C} \ar[dd] \ar[dr]_{\mu_1.(\mu_1)_C}  &&
+        \Gamma.B_2.C[\nu_2] \ar'[d][dd] \ar[dr]^{\nu_2.(\nu_2)_C}\\
+        & \Gamma.B_1.C[\nu_1] \ar[dd] \ar[rr]_(.6){\nu_1.(\nu_1)_C} &&
+        \Gamma.(B_1+_A B_2).C\ar[dd]\\
+        \Gamma.A \ar[dr]_{\mu_1} \ar'[r][rr]_{\mu_2} \ar@{-->}@(ul,dl)[uu]^{(1_{\Gamma.A}, t_i\circ \mu_i)} & &
+        \Gamma.B_2 \ar[dr]^{\nu_2} \ar@{-->}@(ul,dl)[uu]^(.7){t_2}\\
+        & \Gamma.B_1 \ar[rr]_{\nu_1} \ar@{-->}@(ul,dl)[uu]^(.7){t_1} &&
+        \Gamma.(B_1+_A B_2) \ar@{.>}@(ur,dr)[uu]_{\fpush_{t_1,t_2}}
+      }\]
+
     \end{itemize}
+  \item A pretype pushout is \textbf{strong} if the chosen sections are unique.
   \item \E has \textbf{weakly stable pretype pushouts} if for each $A,B_i,\mu_i$ as above there is a pretype pushout such that for each $\sigma:\Delta\to\Gamma$, the data $(B_1 +_A B_2)[\sigma]$, and $\nu_i[\sigma]$ can be extended to a pretype pushout.
   \item \E has \textbf{strictly stable pretype pushouts} if we have an operation assigning to each $A,B_i,\mu_i$ a pretype pushout, such that for every $\sigma:\Delta\to\Gamma$,
     \begin{align*}
       (B_1 +_A B_2)[\sigma] &= B_1[\sigma] +_{A[\sigma]} B_2[\sigma]\\
       \nu_i[\sigma] &= \nu_i : B_i[\sigma] \to B_1[\sigma] +_{A[\sigma]} B_2[\sigma]\\
-      p_{t_1,t_2}[\sigma] &= p_{t_1[\sigma],t_2[\sigma]}.
+      \fpush_{t_1,t_2}[\sigma] &= \fpush_{t_1[\sigma],t_2[\sigma]}.
     \end{align*}
   \item \E has \textbf{pseudo-stable pretype pushouts} if we have an operation assigning to each $A,B_i,\mu_i$ a pretype pushout, together with for every $\sigma:\Gamma'\to\Gamma$ and cartesian liftings $\sigma_A:A'\to A$ and $\sigma_{B_i} : B_i' \to B_i$ (which induce unique maps $\mu_i' : A' \to B_i'$), a cartesian arrow $\sigma_{B_1} +_{\sigma_A} \sigma_{B_2} : B_1' +_{A'} B_2' \to B_1 +_A B_2$, such that
     \begin{align*}
@@ -752,15 +788,25 @@ These were not considered in~\cite{lw:localuniv}, so we will be a little more ca
       (\tau_{B_1}\circ \sigma_{B_1}) +_{(\tau_A \circ \sigma_A)} (\tau_{B_2}\circ \sigma_{B_2})
       &= (\tau_{B_1} +_{\tau_A} \tau_{B_2}) \circ (\sigma_{B_1} +_{\sigma_A} \sigma_{B_2})\\
       (\sigma_{B_1} +_{\sigma_A} \sigma_{B_2}) \circ \nu_i' &= \nu_i' \circ \sigma_{B_i'}\\
-      (\sigma.(\sigma_{B_1} +_{\sigma_A} \sigma_{B_2}))_C \circ p_{t_1',t_2'} &= p_{t_1,t_2} \circ (\sigma_{B_1} +_{\sigma_A} \sigma_{B_2})
+      (\sigma.(\sigma_{B_1} +_{\sigma_A} \sigma_{B_2}))_C \circ \fpush_{t_1',t_2'} &= \fpush_{t_1,t_2} \circ (\sigma_{B_1} +_{\sigma_A} \sigma_{B_2})
     \end{align*}
-    In the last equality, we have a pretype $C$ in context $\Gamma.(B_1 +_A B_2)$ so that $(\sigma.(\sigma_{B_1} +_{\sigma_A} \sigma_{B_2}))_C$ is a cartesian arrow $C[\sigma.(\sigma_{B_1} +_{\sigma_A} \sigma_{B_2})] \to C$, and the sections $t_1$ and $t_2$ induce unique sections $t_1'$ and $t_2'$.
+    In the last equality, we have a pretype $C$ in context $\Gamma.(B_1 +_A B_2)$ so that $(\sigma.(\sigma_{B_1} +_{\sigma_A} \sigma_{B_2}))_C$ is a cartesian arrow $\Delta.C[\sigma.(\sigma_{B_1} +_{\sigma_A} \sigma_{B_2})] \to \Gamma.C$, and the sections $t_1$ and $t_2$ induce unique sections $t_1'$ and $t_2'$.
   \end{itemize}
-\end{definition}
+\end{defn}
 
-In our intended examples, pretype pushouts are simply ordinary categorical pushouts, which are stable under pullback since our categories will be locally cartesian closed.
-Thus, they will be pseudo-stable, and so we will henceforth assume their pseudo-stability.
-This is useful because pretype pushouts appear in the rule for pushout products of cofibrations, below.
+\begin{lem}\label{thm:categorical-pretype-pushouts}
+  Let \E be a HCC.
+  \begin{enumerate}
+  \item A strong pretype pushout is a categorical pushout in $\P(\Gamma)$.
+  \item Conversely, any pretype in $\P(\Gamma)$ whose comprehension is a categorical pushout in $\E$ yields a strong pretype pushout.
+  \item Any pretype in $\P(\Gamma)$ whose comprehension is a pullback-stable categorical pushout in $\E$ yields a weakly stable pretype pushout.
+  \item If \E has weakly stable strong pretype pushouts, then it has pseudo-stable strong pretype pushouts.
+  \end{enumerate}
+\end{lem}
+\begin{proof}
+  Just like \cref{thm:categorical-pretype-sums}.
+\end{proof}
+
 
 \subsection{Cofibrations}
 \label{sec:semantic-cofibrations}
