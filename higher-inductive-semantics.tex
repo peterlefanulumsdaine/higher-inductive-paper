@@ -632,7 +632,7 @@ We begin with dependent products.
   \begin{itemize}
   \item Let $A$ be a pretype in context $\Gamma$ and $B$ a pretype in context $\Gamma.A$.
     A \textbf{dependent product} of $B$ along $A$ is a pretype $\prod[A,B]$ in context $\Gamma$ and a map $\fapp_{A,B} : \prod[A,B][\chi(A)] \to B$ in context $\Gamma.A$ such that for each section $t:\Gamma.A \to \Gamma.A.B$ there is a chosen section $\lambda(t):\Gamma \to \Gamma.\prod[A,B]$ such that
-    \[(\Gamma.A.\fapp_{A,B})\circ (1_{\Gamma.A},\lambda(t)) = t.\]
+    \[(\Gamma.A.\fapp_{A,B})\circ (1_{\Gamma.A},\lambda(t) \circ \chi(A)) = t.\]
   \item A dependent product is \textbf{strong}\msnote{Is there a better name for ``strong''?} if for any $t$ there is a \emph{unique} $\lambda(t)$.
   \item A dependent product is \textbf{weakly stable} if for any $\sigma:\Delta\to\Gamma$, the pair $\prod[A,B][\sigma]$ and $\fapp_{A,B}[\sigma.\sigma_A]$ can be extended to a dependent product of $B[\sigma.\sigma_A]$ along $A[\sigma]$.
   \item \E \textbf{has weakly stable dependent products} if any $A$ and $B$ have a weakly stable dependent product, which can be chosen to be a type if $A$ and $B$ are types.
@@ -642,7 +642,7 @@ We begin with dependent products.
   \end{itemize}
 \end{defn}
 
-\begin{lem}
+\begin{lem}\label{thm:categorical-pi}
   A weakly stable strong dependent product of $B$ along $A$ is precisely a pretype $\prod[A,B]$ such that $\chi(\prod[A,B]):\Gamma.\prod[A,B] \to \Gamma$ is a \emph{categorical} dependent product of $\chi(B)$ along $\chi(A)$, i.e.\ the value at $\chi(B)$ of a partially defined right adjoint to the pullback functor $\chi(A)^* : \E/\Gamma \to \E/\Gamma.A$.
 \end{lem}
 \begin{proof}
@@ -808,7 +808,7 @@ These were not considered in~\cite{lw:localuniv}, so we will be a little more ca
 \end{proof}
 
 
-\subsection{Cofibrations}
+\subsection{Cofibrations and extensions}
 \label{sec:semantic-cofibrations}
 
 Recall that our hybrid comprehension categories come with a discrete fibration of ``cofibrations'' indexed by a ``source'' and ``target'' pretype in the same context.
@@ -816,26 +816,118 @@ Recall that our hybrid comprehension categories come with a discrete fibration o
 \begin{definition}
   Let \E be a HCC with pseudo-stable pretype pushouts.
   We say that \E \textbf{has pushout products} if for any cofibrations $\cof{i_1}{A_1}{B_1}$ and $\cof{i_2}{A_2}{B_2}$ in context $\Gamma$, the map $i_1\pop i_2 : {(A_1 \times B_2) +_{A_1\times A_2} (B_1 \times A_2)} \to {B_1\times B_2}$ (induced by the elimination property of the pretype pushout) is a cofibration.
+  \todo{If being a cofibration is structure (i.e.\ $\zeta$ is not injective), then this becomes an operation and needs stability.}
 \end{definition}
 
 Note that since cofibrations are closed under composing with isomorphisms, this condition is unchanged if we modify the pseudo-stable pushouts along isomorphisms.
 We now move on to extension types.
+To build familiarity, we start with a corresponding category-theoretic notion.
 
-\begin{definition}
-  Let \E be a HCC, let $\cof{i}{A}{B}$ be a cofibration in context $\Gamma$, let $C$ be a type in context $\Gamma.B$, and let $c:\Gamma.A \to \Gamma.A.C[i]$ be a section.
-  Note that $A$ and $B$ are only pretypes, but $C$ must be a type.
+\begin{defn}\label{defn:extension-object}
+  Let $A\xto{i} B \xto{p} \Gamma$ and $A\xto{c} C\xto{q} B$ be morphisms in a category with $q c = i$, and suppose that all pullbacks along $p$ and $pi$ exist.
+  An \textbf{extension object} of $c$ along $i$ over $\Gamma$ is a morphism $\Ext(c,i)_\Gamma \to \Gamma$ such that for any morphism $x:X\to \Gamma$, lifts of $x$ to $\Ext(c,i)_\Gamma$ are in natural bijection with lifts of $p^*X \to B$ to $C$ whose composite with $(pi)^*X \to p^*X$ is equal to the composite $(pi)^*X \to A \xto{c} C$, i.e.\ dashed arrows as below that make the whole diagram commute:
+  \[ \xymatrix{
+    (pi)^*X \ar[r] \ar[d] & A \ar[d]_(.3)i \ar[r]^c & C \ar[dl]^q\\
+    p^*X \ar[d] \ar[r] \ar@{-->}[urr] & B \ar[d]_(.3)p & \Ext(c,i)_\Gamma \ar[dl] \\
+    X \ar[r]_x \ar@{.>}[urr] & \Gamma
+    } \]
+\end{defn}
+
+\begin{lem}
+  In the situation of \cref{defn:extension-object}, suppose the categorical dependent products $\Pi_p C$ and $\Pi_{pi} C$ exist.
+  Then $\Ext(c,i)_\Gamma$ is the pullback
+  \begin{equation}
+    \vcenter{\xymatrix{
+        \Ext(c,i)_\Gamma \ar[r]\ar[d] &
+        \Pi_p C\ar[d]\\
+        \Gamma \ar[r]_{\lambda(c)} &
+        \Pi_{pi} C
+      }}
+  \end{equation}
+  in the strong sense that if either exists, so does the other, and they are isomorphic.
+\end{lem}
+\begin{proof}
+  Simply compare universal properties.
+\end{proof}
+
+\begin{cor}
+  In a locally cartesian closed category, all extension objects exist.\qed
+\end{cor}
+
+We now move back to type theory.
+Note that given an extension object as above, the Yoneda lemma furnishes us with a universal map $p^*\Ext(c,i)_\Gamma \to C$ over $B$, whose restriction to $(pi)^*\Ext(c,i)_\Gamma$ coincides with the composite $(pi)^*\Ext(c,i)_\Gamma \to A \xto{c} C$.
+This corresponds closely to the type-theoretic formation and elimination.
+As usual, the introduction and computation rules are formulated first in the special case when $X=\Gamma$, and then obtained over all $X$ by requiring stability.
+
+\begin{defn}
+  Let \E be a HCC, let $\cof{i}{A}{B}$ be a cofibration in context $\Gamma$, let $C$ be a type in context $\Gamma.B$, and let $c:\Gamma.A \to \Gamma.A.C[\Gamma.i]$ be a section.
+  Note that $A$ and $B$ are only pretypes, but $C$ must be a type.\msnote{Should the fibrancy of $C$ and $\Ext$ be included in the definition, or should we allow extension pretypes as well and just assert separately that they preserve types?}
   An \textbf{extension type of $c$ along $i$} consists of:
   \begin{itemize}
   \item a type (not just a pretype) $\Ext_{C}(c,i)$ in context $\Gamma$,
   \item a map $\fapp_{i,c} : \Ext_C(c,i)[\chi(B)] \to C$ in context $\Gamma.B$, such that
-  \item $\fapp_{i,c}[i] = c \circ \chi(\Ext_C(c,i)[\chi(A)])$ in context $\Gamma.A$, and
-  \item for any section $t:\Gamma.B \to \Gamma.B.C$ such that $t[i] = c\circ \chi(A)$ there is a chosen section $\lambda(t) : \Gamma \to \Gamma.\Ext_C(c,i)$ such that $(\Gamma.B.\fapp_{i,c}) \circ (1_{\Gamma.B},\lambda(t)) = t$.
+  \item $\Gamma.A.\fapp_{i,c}[\Gamma.i] = c \circ \chi(\Ext_C(c,i)[\chi(B)][\Gamma.i])$ in context $\Gamma.A$, and
+  \item for any section $t:\Gamma.B \to \Gamma.B.C$ such that
+    \[(1_{\Gamma.A},t \circ \Gamma.i) = c\]
+    (this is an equality of sections $\Gamma.A \to \Gamma.A.C[\Gamma.i]$) there is a chosen section $\lambda(t) : \Gamma \to \Gamma.\Ext_C(c,i)$ such that
+    \[(\Gamma.B.\fapp_{i,c}) \circ (1_{\Gamma.B},\lambda(t) \circ \chi(B)) = t.\]
+    (thish is an equality of sections $\Gamma.B \to \Gamma.B.C$).
   \end{itemize}
-\end{definition}
+  An extension type is \textbf{strong} if the sections $\lambda(t)$ are unique.
+\end{defn}
 
-\begin{definition}
-  A HCC \E has \textbf{weakly stable extension types} if for any $i$, $C$, and $c$ as above, there exists an extension type, such that for any $\sigma:\Delta\to\Gamma$, \dots
-\end{definition}
+\begin{defn}
+  Let \E be a HCC.
+  \begin{itemize}
+  \item An extension type $\Ext_C(c,i)$ as above is \textbf{weakly stable} for any $\sigma:\Delta\to\Gamma$, the type $\Ext_C(c,i)[\sigma]$ with $\fapp_{i,c}[\sigma]$ can be extended to an extension type of $c[\sigma]$ along $i[\sigma]$.
+  \item \E has \textbf{strictly stable extension types} if we have an operation assigning to each $i$ and $c$ an extension type, such that all the data commutes strictly with pullback.
+    In other words, we have
+    \begin{align*}
+      \Ext_C(c,i) &= \Ext_{C[\sigma]}(c[\sigma],i[\sigma])\\
+      \fapp_{i,c}[\sigma] &= \fapp_{i[\sigma],c[\sigma]}\\
+      \lambda(t)[\sigma] &= \lambda(t[\sigma])
+    \end{align*}
+  \item \E has \textbf{pseudo-stable extension types} if we have an operation assigning to each $i$ and $c$ an extension type, and to any $\sigma:\Gamma'\to\Gamma$ and any cartesian lifts $\sigma_A : A' \to A$ and $\sigma_B : B'\to B$ over $\sigma$, and $\sigma_C : C' \to C$ over $\sigma.\sigma_B$, a cartesian arrow $\Ext(\sigma_A,\sigma_B,\sigma_C) : \Ext_{C'}(c',i') \to \Ext_C(c,i)$ over $\sigma$, that is functorial and commutes with all the structure.
+    Here $i':A'\to B'$ and $c':\Gamma'.A' \to \Gamma'.A'.C'[\Gamma'.i']$ are uniquely induced by the cartesian arrows $\sigma_A$ and $\sigma_B$, and $i'$ is a cofibration since cofibrations form a discrete fibration.
+    Functoriality means
+    \begin{align*}
+      \Ext(1_A,1_B,1_C) &= 1_{\Ext(c,i)}\\
+      \Ext(\tau_A \circ \sigma_A,\tau_B \circ \sigma_B,\tau_C \circ \sigma_C) &= \Ext(\tau_A,\tau_B,\tau_C) \circ \Ext(\sigma_A,\sigma_B,\sigma_C)
+    \end{align*}
+    and commuting with the structure means\msnote{I think $\Ext(\sigma_A,\sigma_B,\sigma_C)$ on the RHS of the $\fapp$ equation should be ``pulled back'' along $\chi(B)$ and $\chi(B')$.}
+    \begin{align*}
+      \sigma.\sigma_B.\sigma_C \circ \Gamma.B'.\fapp_{i',c'} &= \Gamma.B.\fapp_{i,c} \circ \sigma.\sigma_B.\Ext(\sigma_A,\sigma_B,\sigma_C)\\
+      \sigma.\Ext(\sigma_A,\sigma_B,\sigma_C) \circ \lambda(t') &= \lambda(t) \circ \sigma
+    \end{align*}
+    where $t'$ is induced from $t$ in the obvious way.
+  \end{itemize}
+\end{defn}
+
+\begin{lem}\label{thm:categorical-ext}
+  A weakly stable strong extension type of $c$ along $i$ is precisely a type $\Ext_C(c,i)$ such that $\chi(\Ext_C(c,i)) : \Ext_C(c,i)\to \Gamma$ is a categorical extension object of $c$ along $\Gamma.i$ over $\Gamma$.
+\end{lem}
+\begin{proof}
+  This is essentially just like \cref{thm:categorical-pi}.
+  We rewrite the diagram in \cref{defn:extension-object} in semantic type theory language:
+  \[ \xymatrix{
+    \Delta.A[\sigma] \ar[r] \ar[d] & \Gamma.A \ar[d]_(.3)i \ar[r]^c & \Gamma.B.C \ar[dl]^q\\
+    \Delta.B[\sigma] \ar[d] \ar[r] \ar@{-->}[urr] & \Gamma.B \ar[d]_(.3)p & \Gamma.\Ext(c,i)_\Gamma \ar[dl] \\
+    \Delta \ar[r]_\sigma \ar@{.>}[urr] & \Gamma
+  } \]
+  and observe that this says precisely that $\Ext(c,i)[\sigma]$ is an extension type.
+\end{proof}
+
+\begin{lem}
+  If \E has weakly stable strong extension types, then it has pseudo-stable strong extension types.
+\end{lem}
+\begin{proof}
+  It is easy to show that categorical extension objects are stable under pullback.
+\end{proof}
+
+\subsection{Identity types and acyclics}
+\label{sec:semantic-id-types}
+
+
 
 
 \section{Model-categorical semantics}
