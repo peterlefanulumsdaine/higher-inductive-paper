@@ -643,7 +643,7 @@ We begin with dependent products.
 \end{defn}
 
 \begin{lem}
-  If \E has weakly stable strong dependent products, then it has pseudo-stable strong dependent products.
+  A weakly stable strong dependent product of $B$ along $A$ is precisely a pretype $\prod[A,B]$ such that $\chi(\prod[A,B]):\Gamma.\prod[A,B] \to \Gamma$ is a \emph{categorical} dependent product of $\chi(B)$ along $\chi(A)$, i.e.\ the value at $\chi(B)$ of a partially defined right adjoint to the pullback functor $\chi(A)^* : \E/\Gamma \to \E/\Gamma.A$.
 \end{lem}
 \begin{proof}
   If we unravel the definition of a weakly stable strong dependent product, we see that it says that for any $\sigma:\Delta\to\Gamma$, and any section $t:\Delta.A[\sigma] \to \Delta.A[\sigma].B[\sigma.\sigma_A]$, there is a unique section $\lambda(t) : \Delta \to \Delta.\prod[A,B][\sigma]$ such that
@@ -666,22 +666,28 @@ We begin with dependent products.
         \Gamma.
       }}
   \end{equation}
-  However, noting that $\sigma$ is an arbitrary object of the slice category $\E/\Gamma$, and $\sigma.\sigma_A$ is its pullback along $\chi(A)$, we see that this says exactly that $\chi(\prod[A,B])$ is a \emph{categorical} dependent product of $\chi(B)$ along $\chi(A)$, i.e.\ the value at $\chi(B)$ of a partially defined right adjoint to the pullback functor $\chi(A)^* : \E/\Gamma \to \E/\Gamma.A$.
+  Now noting that $\sigma$ is an arbitrary object of the slice category $\E/\Gamma$, and $\sigma.\sigma_A$ is its pullback along $\chi(A)$, this gives the desired conclusion.
+\end{proof}
 
-  Now it is a standard category-theoretic fact that categorical dependent products are preserved by pullback, up to canonical isomorphism.
+\begin{lem}
+  If \E has weakly stable strong dependent products, then it has pseudo-stable strong dependent products.
+\end{lem}
+\begin{proof}
+  It is a standard category-theoretic fact that categorical dependent products are preserved by pullback, up to canonical isomorphism.
   Thus, we can choose any family of weakly stable strong dependent products (choosing a type if $A$ and $B$ are types), and they will automatically be pseudo-stable.
 \end{proof}
 
 Now we consider $\sum$-types and the unit type.
+\todo{If we do assume $\eta$, then I am tempted to formulate these negatively as well, in terms of projections.}
 
 \begin{definition}
   Let \E be a HCC.
   \begin{itemize}
   \item Given a pretype $A$ in context $\Gamma$ and a pretype $B$ in context $\Gamma.A$, a \textbf{dependent sum} is a pretype $\sum_A B$ in context $\Gamma$ together with a pairing map $\pairing : \Gamma.A.B \to \Gamma.\sum_A B$, such that for any pretype $C$ in context $\Gamma.\sum_A B$ and section $d:\Gamma.A.B \to \Gamma.A.B.C[\pairing]$, there is a chosen section $\fsplit_{C,d} : \Gamma.\sum_A B \to \Gamma.\sum_A B.C$ such that $\fsplit_{C,d} \circ \pairing = (\pairing.C)\circ d$.
   \item A dependent sum is \textbf{strong} if the chosen sections are unique.
-  \item \E has \textbf{weakly stable dependent sums} if any $A$ and $B$ have a dependent sum such that for any $\sigma:\Delta\to\Gamma$, the pair $\sum_A B[\sigma]$ and $\pairing[\sigma]$ can be extended to a dependent sum as well, and moreover if $A$ and $B$ are types then their dependent sum can be chosen to be a type as well.
+  % \item \E has \textbf{weakly stable dependent sums} if any $A$ and $B$ have a dependent sum such that for any $\sigma:\Delta\to\Gamma$, the pair $\sum_A B[\sigma]$ and $\pairing[\sigma]$ can be extended to a dependent sum as well, and moreover if $A$ and $B$ are types then their dependent sum can be chosen to be a type as well.
   \item \E has \textbf{strictly stable dependent sums} if we have an operation assigning to each $A$ and $B$ a dependent sum, which is a type if $A$ and $B$ are, such that all the data commutes strictly with pullback.
-  \item \todo{Should we define pseudo-stable?}
+  \item \E has \textbf{pseudo-stable dependent sums} if \dots
   \end{itemize}
 \end{definition}
 
@@ -689,11 +695,13 @@ Now we consider $\sum$-types and the unit type.
   Let \E be a HCC.
   \begin{itemize}
   \item A \textbf{unit type} over context $\Gamma$ is a type $1$ with a section $\ftt : \Gamma \to \Gamma.1$ such that for any type $C$ in context $\Gamma.1$ and section $d$ of $C[\ftt]$, there is a chosen section of $C$ which composes with $\ftt$ to $d$.
-  \item \E has \textbf{weakly stable unit types} if each $\Gamma$ has a unit type such that for any $\sigma:\Delta\to\Gamma$, the pair $1[\sigma]$ and $\ftt[\sigma]$ can be extended to a unit type.
+  \item A unit type is \textbf{strong} if the chosen sections are unique.
+  % \item \E has \textbf{weakly stable unit types} if each $\Gamma$ has a unit type such that for any $\sigma:\Delta\to\Gamma$, the pair $1[\sigma]$ and $\ftt[\sigma]$ can be extended to a unit type.
   \item \E has \textbf{strictly stable unit types} if we have an operation assigning to each context a unit type, such that all the data commutes strictly with pullback.
-  \item \todo{Should we define pseudo-stable?}
+  \item \E has \textbf{pseudo-stable unit types} if \dots
   \end{itemize}
 \end{definition}
+
 
 \subsection{Pretype colimits}
 \label{sec:pretype-colimits}
