@@ -20,7 +20,7 @@
 %%%%%
 % Text in typefaces
 
-\autodefs{\fap\fcomp\fzero\fsucc\fpair\ftt\fbase\floop\fone\fseg\fnorth\fsouth\fmerid\fsurf\fext\fdata\fwhere\fId\fEq\fproj\fsquash\frefl\fType\ftype\ffib\fVec\fnil\fcons\fdim\fapeq\fcoeq\fapp\fsplit\ftt\fExt\fpush}
+\autodefs{\fap\fcomp\fzero\fsucc\fpair\ftt\fbase\floop\fone\fseg\fnorth\fsouth\fmerid\fsurf\fext\fdata\fwhere\fId\fEq\fproj\fsquash\frefl\fType\fcxt\fpretype\ftype\fVec\fnil\fcons\fdim\fapeq\fcoeq\fapp\fsplit\ftt\fExt\fpush\fExtn}
 
 \let\E\cE
 \let\C\cC
@@ -49,8 +49,10 @@
 
 % Judgments
 \usepackage{mathpartir}
-\newcommand{\type}{\;\ftype}
-\renewcommand{\fib}{\;\ffib}
+\newcommand{\types}{\vdash}
+\newcommand{\cxt}{\;\fcxt}
+\newcommand{\pretype}{\;\fpretype}
+\newcommand{\fibtype}{\;\ftype}
 \renewcommand{\dim}{\;\fdim}
 \newcommand{\subst}[2]{[#1/#2]}
 \newcommand{\cb}{\,;\,}         % context break
@@ -69,6 +71,8 @@
 % Categorical/logical constructions
 \renewcommand{\id}[3][]{\fId_{#1}(#2,#3)}
 \newcommand{\idover}[4][]{\fId_{#1}(#2,#3)_{#4}}
+\newcommand{\extn}[3]{\fExtn_{{#1},{#2}}({#3})}
+  % Call as \extn{i}{y.C}{x.t}
 \newcommand{\paths}[2][]{\cP_{#1}(#2)}
 \newcommand{\pathsover}[3][]{\cP_{#1}(#3;#2)}
 \let\ap\fap
@@ -88,7 +92,8 @@
 
 % Strict things
 \renewcommand{\eq}[3][]{\fEq_{#1}(#2,#3)}
-\renewcommand{\cof}[3]{#1 : #2 \rightarrowtail #3}
+\renewcommand{\cof}[3]{#1 : #2 \cofto #3}
+\newcommand{\cofapp}[2]{#1 \cdot #2 }
 \newcommand{\pop}{\Box}         % pushout product
 
 % Categories
@@ -100,6 +105,7 @@
 
 % Arrows
 \newcommand{\fibto}{\to}
+\newcommand{\cofto}{\rightarrowtail}
 
 %%%%%
 % Borrowed from the HoTT Book

@@ -261,28 +261,34 @@ There are also further levels of complexity that one may imagine incorporating, 
 
 To deal with all these technical problems, we have found it convenient to work in a slightly bizarre type theory, which is a three-way hybrid between classical Martin-L\"of type theory, the ``cubical type theories'' of~\cite{bch:tt-cubical,ak:cubical,lb:cubical-tt}, and the ``homotopy type system'' of~\cite{vv:hts}.
 Our primary interest is in constructing HITs in models of ordinary MLTT.
-However, by incorporating some features of these other two theories (which are valid in all the homotopical models we consider), we are able to deal more cleanly with some of the technical problems.
-We can then translate the results back into ordinary MLTT.
-We do not have a fully general algorithm for this translation,\msnote{Anything better we can say here?} but we will describe how it works for several examples.
+However, by incorporating some features of these other two theories (which are valid in all the homotopical models we consider), we are able to deal more cleanly with some of the technical problems in defining and modelling a reasonably wide class of HITs.
+We then give a translation of ordinary MLTT into our hybrid theory, under which the standard presentations of various individual HITs are derivable from instances of our scheme.  
+It follows that the model of hybrid type theory with general HITs restricts to a model of MLTT with those various individual HITs.
 
 Here are the distinguishing features of our hybrid type theory:
 \begin{itemize}
-\item There are no universe types.
-  Instead, ``being a type'' is a separate judgment form.
+\item As in~\cite{vv:hts}, we include two different type-like judgment forms: ``types'' and ``pre-types''.
+  Types should be thought of as depending ``fibrantly'' on their contexts; pre-types, not necessarily so.
+  The embedding of ordinary MLTT in our hybrid theory sees only the (fibrant) types; the non-fibrant pre-types enable us to give a clean treatment of issue~\ref{item:issue:naturality} above without running into the failure of pullback to preserve fibrant replacement.
+\item We include the ``standard'' type constructors of $\Pi$, $\Sigma$, and the unit type \unittype. \plnote{Say something about fibrancy assumptions for these?}
+\item Identity types are not defined as inductive families.
+  Instead, we take a generalisation of the approach from ``cubical type theory'' \cite{lb:cubical-tt}.
+  There, one has an additional context of ``dimension variables'', with identity types defined by a sort of ``dependent abstraction'' over a dimension variable.
+  Homotopically, this corresponds to identifying ``paths from $a_0$ to $a_1$ in $A$'' with ``maps from an interval object $I$ into $A$, equal to $a_0$ and $a_1$ at the endpoints''.
+  This results in a much-better-behaved notion of ``applying a function to a path'', which makes it much easier to specify the elimination and computation rules for HITs (issue~\ref{item:issue:ap} above).
+
+  We generalise this, with a judgement form for ``cofibrations $\cof{i}{A}{B}$'', where $A$, $B$ are pre-types, and for such $i$ and type $C$, a type $\extn{i}{C}{f}$ of ``maps from $B$ into $C$, extending a specified map $f$ on $A$''.
+  The first cofibration assumed is the boundary inclusion $\cof{\del}{2}{I}$, with $\extn{\del}{A}{\copair{a_0}{a_1}}$ recovering the cubical-style identity types.
+  We also assume a ``pushout-product'' operation on cofibrations.
+  Applying this repeatedly to $\del$ yields the boundary inclusions of higher-dimensional ``cubes'', which we use for issue~\ref{item:issue:pathops} above. \plnote{Maybe refer to the issues in words, not just by numbers?}
+\item Unlike in~\cite{lb:cubical-tt} and other cubical type theories, however, we do not assert any ``Kan operations'' on the identity types, nor do we ``define'' the identity types by recursion over the structure of types.
+  Instead, we assert that they satisfy the usual elimination and computation rules as if they were an inductive family.
+  Of course, type-theoretically this is horrible because we are giving one type two different elimination rules; but it is valid in the models we consider, and it enables us to see ordinary MLTT as a fragment of our hybrid type theory.
+\item \todo{Say something about universes!  Old scrap (needs updating):}  
   We make this choice for two reasons: firstly, in many homotopical models it is not known how to construct universes; and secondly, we do not know how to deal with issue~\ref{item:issue:size} above.
   (It should be noted, however, that all the \emph{homotopy-theoretic} results about HITs mentioned in \cref{sec:hit-apps} require the presence of a universe satisfying the univalence axiom.
   Such a universe does exist in some models, such as those of~\cite{klv:ssetmodel,shulman:invdia,shulman:elreedy}; while other models of interest, such as those arising from $(\infty,1)$-toposes, have instead a ``weakly Tarski'' universe, which is conjecturally sufficient for these proofs.)
-\item In fact, as in~\cite{vv:hts}, we include two different judgment forms for types: one for ``fibrant'' types and one for non-fibrant (i.e.\ not-necessarily-fibrant) ones.
-  The embedding of ordinary MLTT in our hybrid theory sees only the fibrant types; the non-fibrant ones enable us to give a clean treatment of issue~\ref{item:issue:naturality} above without running into the failure of pullback to preserve fibrant replacement.
-\item We include the ``standard'' type constructors of $\Pi$, $\Sigma$, and the unit type \unittype.
-\item Identity types are not defined as inductive families.
-  Instead, as in~\cite{lb:cubical-tt}, there is an additional context of ``dimension variables'', with identity types defined by a sort of ``dependent abstraction'' over a dimension variable.
-  Homotopically, this corresponds to identifying ``paths'' with ``maps out of an interval object''.
-  This results in a much-better-behaved notion of ``applying a function to a path'', which makes it much easier to specify the elimination and computation rules for HITs (issue~\ref{item:issue:ap} above).
-  The ``cubes'' resulting from multiple dimension contexts also figure into our workaround for issue~\ref{item:issue:pathops} above.
-\item Unlike in~\cite{lb:cubical-tt} and other cubical type theories, however, we do not assert any ``Kan operations'' on the identity types, nor do we ``define'' the identity types by recursion over the structure of types.
-  Instead, we assert that they satisfy the usual elimination and computation rules as if they were an inductive family.
-  Of course, type-theoretically this is horrible because we are giving one type two different elimination rules, but it is valid in the models we consider, and it enables us to see ordinary MLTT as a fragment of our hybrid type theory.
+
 \end{itemize}
 
 \subsection{An outline of the paper}
@@ -329,39 +335,73 @@ In this section we describe our base hybrid type theory.
 \subsection{Contexts and judgments}
 \label{sec:cxt-jdg}
 
-The absence of universes means that we need a separate judgment ``$A \type$'' indicating that $A$ is a type.
-A type family (or dependent type) indexed by $A$ is then described by a hypothetical judgment $\jd{x:A |- B(x) \type}$.
+Our basic judgement forms are \emph{contexts}, \emph{context maps}, \emph{types}, \emph{pre-types}, \emph{terms}, \emph{cofibrations}, and equalities of context maps, pre-types, and cofibrations.
+\begin{mathpar}
+  \types \Gamma \cxt
+\and
+  \types \sigma : \Gamma \to \Delta
+\and
+  \types \sigma \jdeq \sigma' : \Gamma \to \Delta
+\and
+  \Gamma \types A \fibtype
+\and
+  \Gamma \types A \pretype
+\and
+  \Gamma \types A \jdeq A' \pretype
+\and
+  \Gamma \types a : A
+\and
+  \Gamma \types a \jdeq a' : A
+\and
+  \Gamma \types \cof{i}{A'}{A}
+\and
+  \Gamma \types \cof{i \jdeq i'}{A'}{A}
+\end{mathpar}
 
-We also include a judgment ``$A \fib$'' for ``fibrancy'' of the type (family) $A$.
-Every fibrant type is also a type:
-\[ \inferrule{\Gamma \vdash A\fib}{\Gamma \vdash A\type} \]
+The term and cofibration judgements presuppose just that $A$, $A'$ are pre-types, not necessarily types.
+
+Most structural rules are as in traditional Martin-Löf type theory, extended slightly to cover these extra judgements: 
+\begin{itemize}
+\item contexts may be extended by variables (of pre-types), and context maps by terms;
+\item variables are terms;
+\item all later judgements are stable under weakening and substitution along context maps;
+\item term and cofibration judgements respect pre-type equality;
+\item all equality judgements are equivalence relations.
+\end{itemize}
+
+There are just two essentially new structural rules:
+\begin{itemize}
+\item Every type is also a pretype:
+\[ \inferrule{\Gamma \types A\fibtype}{\Gamma \types A\pretype} \]
+\item A cofibration may be applied to a term: \plnote{Notation needed?}
+\[ \inferrule{\Gamma \types \cof{i}{A}{B} \\ \Gamma \types a : A}{\Gamma \types \cofapp{i}{a} : B } \]
+\end{itemize}
 
 \subsection{Dependent products}
 \label{sec:pi-syntax}
 
-Any type family $\jd{x:A |- B(x) \type}$ has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
+Any pre-type family $\jd{x:A |- B(x) \pretype}$ has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
 As usual, if $B(x)$ is independent of $x$, we write $A\to B$ for $\prd{x:A} B(x)$.
 Notationally, the scope of $\prd{x:A}$ extends as far to the right as possible, so that $\prd{x:A} B(x) \to \sm{x:A} B(x)$ means $\prd{x:A} \big(B(x) \to \sm{x:A} B(x)\big)$.
 
-If both inputs to a dependent product are fibrant, then so is the result:
-\[ \inferrule{\Gamma \vdash A \fib \\ \Gamma, x:A \vdash B \fib}{\Gamma \vdash \tprd{x:A} B \fib} \]
+If both inputs to a dependent product are types, then so is the result:
+\[ \inferrule{\Gamma \vdash A \fibtype \\ \Gamma, x:A \vdash B \fibtype}{\Gamma \vdash \tprd{x:A} B \fibtype} \]
 
 
 \subsection{Dependent sums}
 \label{sec:sigma-syntax}
 
-Any type family $\jd{x:A |- B(x) \type}$ also has a dependent sum $\sm{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule.
+Any type family $\jd{x:A |- B(x) \pretype}$ also has a dependent sum $\sm{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule.
 As usual, if $B(x)$ is independent of $x$, we write $A\times B$ for $\sm{x:A} B(x)$.
 
 If both inputs to a dependent sum are fibrant, then so is the result:
-\[ \inferrule{\Gamma \vdash A \fib \\ \Gamma, x:A \vdash B \fib}{\Gamma \vdash \tsm{x:A} B \fib} \]
-
+\[ \inferrule{\Gamma \vdash A \fibtype \\ \Gamma, x:A \vdash B \fibtype}{\Gamma \vdash \tsm{x:A} B \fibtype} \]
 
 
 \subsection{Cubical identity types}
 \label{sec:cubic-ident-types}
 
-In ordinary MLTT, one defines the \emph{identity type} as an inductive family $\jd{x:A,y:A |- \id[A]{x}{y} \type}$ generated by reflexivity $\jd{x:A |- \refl_x : \id[A]xx}$.
+In ordinary MLTT, one defines the \emph{identity type} as an inductive family $\jd{x:A,y:A |- \id[A]{x}{y} \pretype}$ generated by reflexivity $\jd{x:A |- \refl_x : \id[A]xx}$.
 Although its only introduction rule is reflexivity, the distinguishing feature of \emph{homotopy} type theory is that identity types can contain paths \emph{other} than $\refl$, corresponding to loops in $A$ viewed as a ``space''.
 For this reason we will sometimes refer to elements of an identity type as \emph{paths}.
 
@@ -388,7 +428,7 @@ Relative to an ordinary function abstraction, the main wrinkle is that we indica
 
 Specifically, the rule for forming identity types looks just like the one in MLTT, except for the presence of an extra dimension context $\Psi$:
 \begin{equation}
-\inferrule{\Psi;\Gamma \vdash A \type \\ \Psi;\Gamma \vdash a_0 :A \\ \Psi;\Gamma \vdash a_1:A}{\Psi;\Gamma\vdash \id[A]{a_0}{a_1}\type}\label{eq:cubical-idform-nondep}
+\inferrule{\Psi;\Gamma \vdash A \pretype \\ \Psi;\Gamma \vdash a_0 :A \\ \Psi;\Gamma \vdash a_1:A}{\Psi;\Gamma\vdash \id[A]{a_0}{a_1}\pretype}\label{eq:cubical-idform-nondep}
 \end{equation}
 (Actually, there is a further enhancement to this which we postpone discussing until later.)
 But the rule for introducing terms in an identity type looks like $\lambda$-abstraction:
@@ -448,13 +488,13 @@ There are various ways to define this type in ordinary type theory, such as:
 \end{enumerate}
 
 In cubical type theory, we instead obtain dependent paths by using a simple extension of the formation rule for identity types, in which the type $A$ can depend on the dimension variable:
-\[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \type \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\type}\]
-Compared to~\eqref{eq:cubical-idform-nondep}, the main difference is the presence of $s\dim$ in the hypothesis $\Psi,s\dim \cb \Gamma \pr A \type$.
+\[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \pretype \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\pretype}\]
+Compared to~\eqref{eq:cubical-idform-nondep}, the main difference is the presence of $s\dim$ in the hypothesis $\Psi,s\dim \cb \Gamma \pr A \pretype$.
 If we view identity types as ``function types'' out of the interval, then this corresponds to allowing dependent functions, like the generalization from $A\to B$ to $\prd{x:A} B(x)$.
 To record this dependency of $A$ on $s$, we modify the notation for the identity type to write $\id[s.A]{a_0}{a_1}$ rather than $\id[A]{a_0}{a_1}$, indicating that the dimension variable $s$ may occur free in $A$ but is bound in $\id[s.A]{a_0}{a_1}$.
 
 Now given the setup for dependent paths, i.e. $e:\id[A]xy$ and $u:B(x)$ and $v:B(y)$, we can form
-\[ s\dim \vdash B(e\dapp s) \type \]
+\[ s\dim \vdash B(e\dapp s) \pretype \]
 and therefore
 \[ \vdash \id[s.B(e\dapp s)]{u}{v} \]
 This is well-typed because
@@ -480,7 +520,7 @@ In cubical type theory, all of these data are essentially \emph{postulated} in a
 We do not want to take the latter route, because the form of the cubical Kan operations appears very specialized to the cubical set model of type theory, whereas we want our type theory to admit semantics in all the standard simplicial models as well (so that we can prove that HITs exist there).
 Thus, we instead postulate the inductive eliminator for $\fId$ and its usual computation rule:
 \[
-\inferrule{\Psi;\Gamma,x,y:A,p:\id[A]xy \vdash C \type \\ \Psi;\Gamma,x:A \vdash c_\refl : C\subst{x,x,\refl_x}{x,y,p}}{\Psi;\Gamma,x,y:A,p:\id[A]xy \vdash J(\dots) : C \\ \Psi;\Gamma,x:A \vdash J(\dots) \jdeq c_\refl} \]
+\inferrule{\Psi;\Gamma,x,y:A,p:\id[A]xy \vdash C \pretype \\ \Psi;\Gamma,x:A \vdash c_\refl : C\subst{x,x,\refl_x}{x,y,p}}{\Psi;\Gamma,x,y:A,p:\id[A]xy \vdash J(\dots) : C \\ \Psi;\Gamma,x:A \vdash J(\dots) \jdeq c_\refl} \]
 The resulting type theory is not, of course, computationally well-behaved, but that is not our concern here.
 
 It is worth emphasizing that in our \emph{construction} of HITs we do not use this eliminator at all.
@@ -504,13 +544,14 @@ However, as mentioned in \cref{sec:layers-complexity}, we do not know how to mod
 \todo{Experimental!}
 
 We extend the syntax with one further judgment, denoted $\cof{i}{A}{B}$ and read as ``$c$ is a cofibration from $A$ to $B$''.
-All cofibrations are also functions:
+It presupposes that $A$ and $B$ are pretypes.
+
 \[ \inferrule{\Gamma \vdash \cof{i}{A}{B}}{\Gamma \vdash i : A \to B} \]
 (Perhaps this should be only an admissible rule?)
-In particular, when $\Gamma \vdash \cof{i}{A}{B}$ it must be that $\Gamma \vdash A \type$ and $\Gamma \vdash B \type$.
+In particular, when $\Gamma \vdash \cof{i}{A}{B}$ it must be that $\Gamma \vdash A \pretype$ and $\Gamma \vdash B \pretype$.
 
 We will have one axiomatic cofibration, whose codomain is an axiomatic type.
-\[ \inferrule{\ }{\Gamma \vdash \ivl \type} \qquad 
+\[ \inferrule{\ }{\Gamma \vdash \ivl \pretype} \qquad 
 \inferrule{\ }{\Gamma \vdash 0 : \ivl} \qquad
 \inferrule{\ }{\Gamma \vdash 1 : \ivl} \]
 \[ \inferrule{\ }{\Gamma \vdash \cof{\copair{0}{1}}{\bool}{\ivl}} \]
@@ -518,6 +559,7 @@ Here $\bool$ denotes the non-fibrant coproduct $\unittype+\unittype$, and $\copa
 Note that $\ivl$ is also not (assumed to be) fibrant.
 Nothing prevents us from assuming further axiomatic cofibrations, as long as they exist in our desired models, but this will be the only one we need.
 (Note, though, that semantically, it appears to be important that all cofibrations be defined in the empty context and pulled back to anywhere else from there.)
+\plnote{Not necessarily?  Can’t take \emph{all} cofibs, but seems like could often take eg cofibs between sharp objects.}
 
 There is one ``introduction'' rule for constructing cofibrations:
 \[ \inferrule{\Gamma \vdash \cof{i_1}{A_1}{B_1} \\ \Gamma \vdash \cof{i_2}{A_2}{B_2}}{\Gamma \vdash \cof{i_1\pop i_2}{(A_1 \times B_2) +_{A_1\times A_2} (B_1 \times A_2)}{B_1\times B_2}} \]
@@ -526,7 +568,7 @@ Here the pushout is again a non-fibrant one, and $i_1 \pop i_2$ denotes the ``pu
 
 The ``elimination'' rule for cofibrations is that exponentiating by a cofibration produces a fibration.
 \todo{Make this its own type former of ``extensions''.}
-\[ \inferrule{\Gamma \vdash \cof{i}{A}{B} \\ \Gamma, y:B \vdash C \fib \\ \Gamma, x:A \vdash c : C\subst{i(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:B} C} \tprd{x:A} \eq{f(i(x))}{c}\Big) \fib} \]
+\[ \inferrule{\Gamma \vdash \cof{i}{A}{B} \\ \Gamma, y:B \vdash C \fibtype \\ \Gamma, x:A \vdash c : C\subst{i(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:B} C} \tprd{x:A} \eq{f(i(x))}{c}\Big) \fibtype} \]
 Here $\fEq$ denotes the strict non-fibrant equality type.
 
 There is a vague sort of ``harmony'' between the ``introduction'' and ``elimination'' rules in that the instances of elimination for $i_1$ and $i_2$ should imply the corresponding instance for $i_1 \pop i_2$.
@@ -534,9 +576,9 @@ In other words, given that the elimination rule is all we know about cofibration
 
 If we replace dimension variables by variables of type $\ivl$, then with the axiomatic cofibration $\cof{\copair{0}{1}}{2}{\ivl}$ this rule enables us to define the cubical identity types.
 Recall that the formation rule for the latter is:
-\[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \fib \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\fib}\]
+\[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \fibtype \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\fibtype}\]
 On the other hand, if we substitute $\cof{\copair{0}{1}}{\bool}{\ivl}$ in the eliminator for cofibrations, we get
-\[ \inferrule{\Gamma, y:\ivl \vdash A \fib \\ \Gamma, x:2 \vdash a : A\subst{\copair{0}{1}(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:\ivl} A} \tprd{x:\bool} \eq{f(i(x))}{a}\Big) \fib} \]
+\[ \inferrule{\Gamma, y:\ivl \vdash A \fibtype \\ \Gamma, x:2 \vdash a : A\subst{\copair{0}{1}(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:\ivl} A} \tprd{x:\bool} \eq{f(i(x))}{a}\Big) \fibtype} \]
 To go from one to the other, we are just using the universal property of $\bool$ to copair up $a_0$ and $a_1$.
 Similarly, the introduction rule for $\fId$ now corresponds to an actual abstraction over $\ivl$, paired with the reification of two judgmental equalities as an $\fEq$ between functions of domain $\bool$.
 The elimination rule corresponds to projecting out the function of domain $\ivl$ and applying it, while the ``boundary'' computation rules result from projecting out the $\fEq$ term and applying the reflection rule for strict equality.
@@ -1039,15 +1081,15 @@ These terms will often refer to other point- and perhaps path-constructors, such
 
 In general, every type forming operation in type theory comes with \emph{formation}, \emph{introduction}, \emph{elimination}, and \emph{computation} rules.
 The above specifications of HITs give us the \textbf{formation} rules easily; in these simple cases, the formation rule is just ``such-and-such type exists'', e.g.
-\[ \inferrule{ }{\circtype\type} \]
+\[ \inferrule{ }{\circtype\pretype} \]
 Formation rules become slighty more complicated when we allow parameters and indices.
 For instance, the type $A$ in $\brck{A}$ is best treated as a parameter:
-\indef{\brck{\blank} \; (A \type)}{
+\indef{\brck{\blank} \; (A \pretype)}{
   \fproj : A \to \brck{A} \OR
   \fsquash : \prd{x,y:\brck{A}} \id[\brck{A}]{x}{y}
 }
 so that the formation rule becomes
-\[ \inferrule{A\type}{\brck{A}\type} \]
+\[ \inferrule{A\pretype}{\brck{A}\pretype} \]
 However, no new ideas are introduced here by HITs as compared with ordinary inductive types.
 
 The \textbf{introduction rules} for a HIT are also easy: they are just the specified constructors.
@@ -1077,11 +1119,11 @@ Consider, for example, the interval:
 We expect the premises of its induction principle to include $f_\fzero : B(\fzero)$ and $f_\fone : B(\fone)$; but then corresponding to \fseg, we would expect some sort of path relating $f_\fzero$ to $f_\fone$.
 We cannot even form a type ``$\id{f_\fzero}{f_\fone}$'' since $f_\fzero$ to $f_\fone$ have different types, but we \emph{can} ask for a dependent path $f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}$.
 Thus, the entire elimination rule for $I$ is
-\[\inferrule{\jd{x:I |- B(x) \type} \\ f_\fzero : B(\fzero) \\ f_\fone : B(\fone) \\ f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}}{\jd{x:I |- \ind{I}(B,f_\fzero,f_\fone,f_\fseg)(x) : B(x)}} \]
+\[\inferrule{\jd{x:I |- B(x) \pretype} \\ f_\fzero : B(\fzero) \\ f_\fone : B(\fone) \\ f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}}{\jd{x:I |- \ind{I}(B,f_\fzero,f_\fone,f_\fseg)(x) : B(x)}} \]
 
 The general principle is thus that path-constructors in a HIT correspond to dependent path premises in its induction principle.
 For instance, the circle $\circtype$ has the following elimination rule:
-\[\inferrule{\jd{x:\circtype |- B(x) \type} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\jd{x:\circtype |- \ind{\circtype}(B,f_\fbase,f_\floop)(x) : B(x)}} \]
+\[\inferrule{\jd{x:\circtype |- B(x) \pretype} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\jd{x:\circtype |- \ind{\circtype}(B,f_\fbase,f_\floop)(x) : B(x)}} \]
 Note that in this case it would be possible to \emph{write} the non-dependent path type ``$\id[B(\fbase)]{f_\fbase}{f_\fbase}$'', but that this is \emph{not} the correct type for $f_\floop$.
 
 Path-constructors with nontrivial domain are handled in the expected way, by dependent functions outputting dependent paths.
@@ -1092,15 +1134,15 @@ For instance, the \textbf{suspension} of a type $A$ is defined by
   \fmerid : \prd{x:A} \id[\susp A]{\fnorth}{\fsouth}
 }
 Its induction principle is
-\[\inferrule{\jd{x:\susp A |- B(x) \type} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
+\[\inferrule{\jd{x:\susp A |- B(x) \pretype} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
 {\jd{x:\susp A |- \ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(x):B(x)}} \]
 Similarly, path-constructors with recursive inputs correspond to inductive premises that take inputs from the induction motive.
 For instance, the induction principle for the $(-1)$-truncation $\brck{A}$ is
-\[\inferrule{\jd{x:\brck A |- B(x) \type} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
+\[\inferrule{\jd{x:\brck A |- B(x) \pretype} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
 {\jd{x:\brck A |- \ind{\brck A}(B,f_\fproj,f_\fsquash)(x) : B(x)}}
 \]
 This should be compared with the familiar induction principle for the natural numbers:
-\[ \inferrule{\jd{x:\lN |- B(x) \type} \\ f_\fzero : B(\fzero) \\ f_\fsucc : \tprd{x:\lN}{u:B(x)} B(\fsucc(x))}
+\[ \inferrule{\jd{x:\lN |- B(x) \pretype} \\ f_\fzero : B(\fzero) \\ f_\fsucc : \tprd{x:\lN}{u:B(x)} B(\fsucc(x))}
 {\jd{x:\lN |- \ind{\lN}(B,f_\fzero,f_\fsucc)(x) : B(x)}}
 \]
 In both cases, each recursive argument to a constructor ($\fsucc$ or $\fsquash$) bifurcates into two arguments to the corresponding induction premise, one from the inductive type being defined and one from the induction motive.
@@ -1116,15 +1158,15 @@ For instance, the if $f:\circtype \to B$ is defined from $f_\fbase:B$ and $f_\fl
 Note that $\ap_{f}(\floop)$ and $f_\floop$ are both elements of $\id[B]{f_\fbase}{f_\fbase}$, the latter by definition and the former because of the first computation rule.
 When $B$ depends on $\circtype$, we need the dependent extension of $\ap_f$ which was discussed in \cref{sec:cubic-ident-types}.
 The precise rules are
-\[ \inferrule{\jd{x:\circtype |- B(x) \type} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\ind{\circtype}(B,f_\fbase,f_\floop)(\fbase)\jdeq f_\fbase \\ \ap_{\ind{\circtype}(B,f_\fbase,f_\floop)}(\floop) \jdeq f_\floop} \]
+\[ \inferrule{\jd{x:\circtype |- B(x) \pretype} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\ind{\circtype}(B,f_\fbase,f_\floop)(\fbase)\jdeq f_\fbase \\ \ap_{\ind{\circtype}(B,f_\fbase,f_\floop)}(\floop) \jdeq f_\floop} \]
 Similarly, for the suspension we have
-\[\inferrule{\jd{x:\susp A |- B(x) \type} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
+\[\inferrule{\jd{x:\susp A |- B(x) \pretype} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
 {\ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(\fnorth) \jdeq f_\fnorth \\
   \ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(\fsouth) \jdeq f_\fsouth \\
   \jd{x:A |- \ap_{\ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)}(\fmerid(x)) \jdeq f_\fmerid(x)}} \]
 As for ordinary inductive types, in the computation rules for path-constructors with recursive inputs, the right-hand side involves a recursive call to the function defined by induction.
 For instance, the computation rules for $\brck{A}$ are
-\[\inferrule{\jd{x:\brck A |- B(x) \type} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
+\[\inferrule{\jd{x:\brck A |- B(x) \pretype} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
 {\jd{a:A |- \ind{\brck A}(B,f_\fproj,f_\fsquash)(\fproj(a)) \jdeq f_\fproj(a)}\\
 \jd{x:\brck A , y:\brck A |- \ap_f(\fsquash(x,y)) \jdeq f_\fsquash(x,y,f(x),f(y))}}
 \]
@@ -1248,7 +1290,7 @@ With this setting, a fibrant circle algebra over $\Gamma$, as originally defined
 
 When we move on to higher-dimensional HITs, the elimination and computation rules start to involve the requirement of \emph{naturality} that we briefly mentioned before.
 Consider the torus type $\torustype$, whose induction principle looks like this:
-\[ \inferrule{\jd{x:\torustype |- B(x)\type}\\f_\fbase : B(\fbase) \\
+\[ \inferrule{\jd{x:\torustype |- B(x)\pretype}\\f_\fbase : B(\fbase) \\
   f_{\fmerid_1} : \idover[B]{f_\fbase}{f_\fbase}{\fmerid_1} \\
   f_{\fmerid_2} : \idover[B]{f_\fbase}{f_\fbase}{\fmerid_2} \\
   f_\fsurf : \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{f_{\fmerid_1} \ct f_{\fmerid_2}}{f_{\fmerid_2} \ct f_{\fmerid_1}}{\fsurf}}
@@ -1256,7 +1298,7 @@ Consider the torus type $\torustype$, whose induction principle looks like this:
 \]
 Note the type of $f_\fsurf$.
 It is a dependent path relative to the type family
-\[\jd{p:\id[\torustype]{\fbase}{\fbase} |- {\idover[B]{f_\fbase}{f_\fbase}{p}}\type}\]
+\[\jd{p:\id[\torustype]{\fbase}{\fbase} |- {\idover[B]{f_\fbase}{f_\fbase}{p}}\pretype}\]
 between
 \begin{align}
   {f_{\fmerid_1} \ct f_{\fmerid_2}} &: \idover[B]{f_\fbase}{f_\fbase}{\fmerid_1\ct\fmerid_2} \qquad\text{and}\\
