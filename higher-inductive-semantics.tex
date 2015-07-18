@@ -391,15 +391,92 @@ If both inputs to a dependent product are types, then so is the result:
 \subsection{Dependent sums}
 \label{sec:sigma-syntax}
 
-Any type family $\jd{x:A |- B(x) \pretype}$ also has a dependent sum $\sm{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule.
+Any pre-type family $\jd{ \Gamma, x:A |- B(x) \pretype}$ also has a dependent sum $\sm{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $x \jdeq \pair{\projone x}{\projtwo x}$.
 As usual, if $B(x)$ is independent of $x$, we write $A\times B$ for $\sm{x:A} B(x)$.
 
 If both inputs to a dependent sum are fibrant, then so is the result:
 \[ \inferrule{\Gamma \vdash A \fibtype \\ \Gamma, x:A \vdash B \fibtype}{\Gamma \vdash \tsm{x:A} B \fibtype} \]
 
+We also assume their nullary analogue: a unit type $\jd{ Gamma |- \unittype \fibtype }$, with the usual rules, including elimination into arbitrary pre-types, and the $\eta$-rule $x \jdeq \nulltuple$.
+\plnote{Is it OK to include the unit type in this section?}
+ 
+\subsection{Coproducts and pushouts}
+\label{sec:coproducts-syntax}
+
+In setting up our axiomatic cofibrations, we will make specific reference to (strong) coproduct and pushout pre-types, so we set those up explicitly.
+
+Any pair of pre-types $\jd{ \Gamma |- A, B \pretype}$ has a coproduct pretype $A+B$, satisfying the usual rules for elimination into pre-types, including the judgemental uniqueness rule: whenever $\jd{ \Gamma, w : A + B |- c(w) : C(w)}$, we have $c(w) \jdeq \copair{x . c( \injone x) }{y . c ( \injtwo y)}(w)$.  \plnote{Maybe it’s more natural to take the empty type, and then recover coprods as pushouts over that?  “Pushouts and an initial object” is a classic combo.}
+
+Moreover, given a span of pre-types $\jd{ \Gamma |- A, B, C \pretype}$, $\jd {\Gamma, z:C |- f(z) : A }$, $\jd{ \Gamma, z:C |- g(z) : B }$, there is a pushout pretype $A +_C B$, with constructors $\injone$, $\injtwo$, such that $\injone (f(z)) \jdeq \injtwo (g(z))$, the elimination rule
+
+\[ \inferrule{
+  \Gamma, w : A +_C B \types D(w) \pretype \\
+  \Gamma, x:A \types d_1(x) : D(\injone x) \\
+  \Gamma, y:B \types d_2(y) : D(\injtwo x) \\
+  \Gamma, z:C \types d_1(f(z)) \jdeq d_2(g(z)) : D(\injone (f(z)))
+  }{
+  \Gamma, w : A +_C B \types \copair[w.D(w)]{x.d_1(x)}{y.d_2(y)}(w) : D(w)
+} \]
+
+the evident computation rules, and the strong $\eta$-rule $d(w) \jdeq \copair{x . d( \injone x) }{y . d ( \injtwo y)}(w)$, whenever $\jd{ \Gamma, w : A + B |- d(w) : D(w)}$.
+
+\subsection{Cofibrations}
+\label{sec:cofibrations}
+
+We will have one axiomatic cofibration, whose codomain is an axiomatic type.
+\begin{mathpar}
+  \inferrule{\ }{\Gamma \vdash \ivl \pretype}
+\and
+  \inferrule{\ }{\Gamma \vdash 0 : \ivl}
+\and
+  \inferrule{\ }{\Gamma \vdash 1 : \ivl}
+\and
+ \inferrule{\ }{\Gamma \vdash \cof{\copair{0}{1}}{\bool}{\ivl}}
+\end{mathpar}
+Here $\bool$ denotes the non-fibrant coproduct $\unittype+\unittype$, and $\copair{0}{1}$ denotes the copairing.
+Note that $\ivl$ is also not (assumed to be) fibrant.
+Nothing prevents us from assuming further axiomatic cofibrations, as long as they exist in our desired models, but this will be the only one we need.
+(Note, though, that semantically, it appears to be important that all cofibrations be defined in the empty context and pulled back to anywhere else from there.)
+\plnote{Not necessarily?  Can’t take \emph{all} cofibs, but seems like could often take eg cofibs between sharp objects.}
+
+There is one ``introduction'' rule for constructing cofibrations:
+\[ \inferrule{\Gamma \vdash \cof{i_1}{A_1}{B_1} \\ \Gamma \vdash \cof{i_2}{A_2}{B_2}}{\Gamma \vdash \cof{i_1\pop i_2}{(A_1 \times B_2) +_{A_1\times A_2} (B_1 \times A_2)}{B_1\times B_2}} \]
+Here the pushout is again a non-fibrant one, and $i_1 \pop i_2$ denotes the ``pushout product'' map induced by the universal property of this pushout.
+\msnote{Need to give rules for the non-fibrant pushout.}
+
+The ``elimination'' rule for cofibrations is that exponentiating by a cofibration produces a fibration.
+\todo{Make this its own type former of ``extensions''.}
+\[ \inferrule{\Gamma \vdash \cof{i}{A}{B} \\ \Gamma, y:B \vdash C \fibtype \\ \Gamma, x:A \vdash c : C\subst{i(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:B} C} \tprd{x:A} \eq{f(i(x))}{c}\Big) \fibtype} \]
+Here $\fEq$ denotes the strict non-fibrant equality type.
+
+There is a vague sort of ``harmony'' between the ``introduction'' and ``elimination'' rules in that the instances of elimination for $i_1$ and $i_2$ should imply the corresponding instance for $i_1 \pop i_2$.
+In other words, given that the elimination rule is all we know about cofibrations, we might as well have the introduction rule (at least as long as non-fibrant pushouts exist).
+
+If we replace dimension variables by variables of type $\ivl$, then with the axiomatic cofibration $\cof{\copair{0}{1}}{2}{\ivl}$ this rule enables us to define the cubical identity types.
+Recall that the formation rule for the latter is:
+\[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \fibtype \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\fibtype}\]
+On the other hand, if we substitute $\cof{\copair{0}{1}}{\bool}{\ivl}$ in the eliminator for cofibrations, we get
+\[ \inferrule{\Gamma, y:\ivl \vdash A \fibtype \\ \Gamma, x:2 \vdash a : A\subst{\copair{0}{1}(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:\ivl} A} \tprd{x:\bool} \eq{f(i(x))}{a}\Big) \fibtype} \]
+To go from one to the other, we are just using the universal property of $\bool$ to copair up $a_0$ and $a_1$.
+Similarly, the introduction rule for $\fId$ now corresponds to an actual abstraction over $\ivl$, paired with the reification of two judgmental equalities as an $\fEq$ between functions of domain $\bool$.
+The elimination rule corresponds to projecting out the function of domain $\ivl$ and applying it, while the ``boundary'' computation rules result from projecting out the $\fEq$ term and applying the reflection rule for strict equality.
+
+At this point, there may seem little benefit to reformulating the identity types in terms of cofibrations.
+The payoff will come in \cref{sec:hwt} when we introduce path-constructors of arbitrary dimension.
+In this case, the presence of the operation $\pop$ on cofibrations will allow us to formulate ``a constructor of arbitrary dimension'' as a \emph{single} rule, one of whose premises is a cofibration.
+(It also makes the theory more general, in that we could also define ``HITs'' using any other cofibrations instead.)
+
+
+\subsection{Extension types}
+\label{sec:etn-types}
+
+We introduce one type former which, to our knowledge, is novel: 
+
 
 \subsection{Cubical identity types}
 \label{sec:cubic-ident-types}
+
+\todo{Section out of date.  New version should contain just the definition of Id as an instence of Extn, and then the assumption of J for it.}
 
 In ordinary MLTT, one defines the \emph{identity type} as an inductive family $\jd{x:A,y:A |- \id[A]{x}{y} \pretype}$ generated by reflexivity $\jd{x:A |- \refl_x : \id[A]xx}$.
 Although its only introduction rule is reflexivity, the distinguishing feature of \emph{homotopy} type theory is that identity types can contain paths \emph{other} than $\refl$, corresponding to loops in $A$ viewed as a ``space''.
@@ -536,57 +613,6 @@ In this way, the use of cubical type theory can be entirely eliminated from our 
 
 Returning to the (non-)uses of the eliminator, it is true that some HITs appear to incorporate the $\infty$-groupoid operations in their definition, such as the composites of paths appearing in the boundary of the 2-path constructor of $\torustype$.
 However, as mentioned in \cref{sec:layers-complexity}, we do not know how to model these directly; instead we use a cubical workaround that does not actually require the eliminator.
-
-
-\subsection{Cofibrations}
-\label{sec:cofibrations}
-
-\todo{Experimental!}
-
-We extend the syntax with one further judgment, denoted $\cof{i}{A}{B}$ and read as ``$c$ is a cofibration from $A$ to $B$''.
-It presupposes that $A$ and $B$ are pretypes.
-
-\[ \inferrule{\Gamma \vdash \cof{i}{A}{B}}{\Gamma \vdash i : A \to B} \]
-(Perhaps this should be only an admissible rule?)
-In particular, when $\Gamma \vdash \cof{i}{A}{B}$ it must be that $\Gamma \vdash A \pretype$ and $\Gamma \vdash B \pretype$.
-
-We will have one axiomatic cofibration, whose codomain is an axiomatic type.
-\[ \inferrule{\ }{\Gamma \vdash \ivl \pretype} \qquad 
-\inferrule{\ }{\Gamma \vdash 0 : \ivl} \qquad
-\inferrule{\ }{\Gamma \vdash 1 : \ivl} \]
-\[ \inferrule{\ }{\Gamma \vdash \cof{\copair{0}{1}}{\bool}{\ivl}} \]
-Here $\bool$ denotes the non-fibrant coproduct $\unittype+\unittype$, and $\copair{0}{1}$ denotes the copairing.
-Note that $\ivl$ is also not (assumed to be) fibrant.
-Nothing prevents us from assuming further axiomatic cofibrations, as long as they exist in our desired models, but this will be the only one we need.
-(Note, though, that semantically, it appears to be important that all cofibrations be defined in the empty context and pulled back to anywhere else from there.)
-\plnote{Not necessarily?  Can’t take \emph{all} cofibs, but seems like could often take eg cofibs between sharp objects.}
-
-There is one ``introduction'' rule for constructing cofibrations:
-\[ \inferrule{\Gamma \vdash \cof{i_1}{A_1}{B_1} \\ \Gamma \vdash \cof{i_2}{A_2}{B_2}}{\Gamma \vdash \cof{i_1\pop i_2}{(A_1 \times B_2) +_{A_1\times A_2} (B_1 \times A_2)}{B_1\times B_2}} \]
-Here the pushout is again a non-fibrant one, and $i_1 \pop i_2$ denotes the ``pushout product'' map induced by the universal property of this pushout.
-\msnote{Need to give rules for the non-fibrant pushout.}
-
-The ``elimination'' rule for cofibrations is that exponentiating by a cofibration produces a fibration.
-\todo{Make this its own type former of ``extensions''.}
-\[ \inferrule{\Gamma \vdash \cof{i}{A}{B} \\ \Gamma, y:B \vdash C \fibtype \\ \Gamma, x:A \vdash c : C\subst{i(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:B} C} \tprd{x:A} \eq{f(i(x))}{c}\Big) \fibtype} \]
-Here $\fEq$ denotes the strict non-fibrant equality type.
-
-There is a vague sort of ``harmony'' between the ``introduction'' and ``elimination'' rules in that the instances of elimination for $i_1$ and $i_2$ should imply the corresponding instance for $i_1 \pop i_2$.
-In other words, given that the elimination rule is all we know about cofibrations, we might as well have the introduction rule (at least as long as non-fibrant pushouts exist).
-
-If we replace dimension variables by variables of type $\ivl$, then with the axiomatic cofibration $\cof{\copair{0}{1}}{2}{\ivl}$ this rule enables us to define the cubical identity types.
-Recall that the formation rule for the latter is:
-\[ \inferrule{\Psi,s\dim \cb \Gamma \pr A \fibtype \\ \Psi;\Gamma \vdash a_0 :A\dsubst0s \\ \Psi;\Gamma \vdash a_1:A\dsubst1s}{\Psi;\Gamma\vdash \id[s.A]{a_0}{a_1}\fibtype}\]
-On the other hand, if we substitute $\cof{\copair{0}{1}}{\bool}{\ivl}$ in the eliminator for cofibrations, we get
-\[ \inferrule{\Gamma, y:\ivl \vdash A \fibtype \\ \Gamma, x:2 \vdash a : A\subst{\copair{0}{1}(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:\ivl} A} \tprd{x:\bool} \eq{f(i(x))}{a}\Big) \fibtype} \]
-To go from one to the other, we are just using the universal property of $\bool$ to copair up $a_0$ and $a_1$.
-Similarly, the introduction rule for $\fId$ now corresponds to an actual abstraction over $\ivl$, paired with the reification of two judgmental equalities as an $\fEq$ between functions of domain $\bool$.
-The elimination rule corresponds to projecting out the function of domain $\ivl$ and applying it, while the ``boundary'' computation rules result from projecting out the $\fEq$ term and applying the reflection rule for strict equality.
-
-At this point, there may seem little benefit to reformulating the identity types in terms of cofibrations.
-The payoff will come in \cref{sec:hwt} when we introduce path-constructors of arbitrary dimension.
-In this case, the presence of the operation $\pop$ on cofibrations will allow us to formulate ``a constructor of arbitrary dimension'' as a \emph{single} rule, one of whose premises is a cofibration.
-(It also makes the theory more general, in that we could also define ``HITs'' using any other cofibrations instead.)
 
 
 \section{Semantic type theory}

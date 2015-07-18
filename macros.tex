@@ -20,7 +20,7 @@
 %%%%%
 % Text in typefaces
 
-\autodefs{\fap\fcomp\fzero\fsucc\fpair\ftt\fbase\floop\fone\fseg\fnorth\fsouth\fmerid\fsurf\fext\fdata\fwhere\fId\fEq\fproj\fsquash\frefl\fType\fcxt\fpretype\ftype\fVec\fnil\fcons\fdim\fapeq\fcoeq\fapp\fsplit\ftt\fExt\fpush\fExtn}
+\autodefs{\fap\fcomp\fzero\fsucc\fpair\ftt\fbase\floop\fone\fseg\fnorth\fsouth\fmerid\fsurf\fext\fdata\fwhere\fId\fEq\fproj\fsquash\frefl\fType\fcxt\fpretype\ftype\fVec\fnil\fcons\fdim\fapeq\fcoeq\fapp\fsplit\ftt\fExt\fpush\fExtn\ffst\fsnd\finl\finr}
 
 \let\E\cE
 \let\C\cC
@@ -87,8 +87,14 @@
 \newcommand{\freegroup}[1]{F #1}
 \newcommand{\local}[2]{L_{#1} #2}
 \newcommand{\susp}{\Sigma}
-\newcommand{\pairing}{\langle\blank,\blank\rangle}
-\newcommand{\copair}[2]{\langle #1,#2\rangle}
+\newcommand{\pair}[2]{\langle #1 , #2 \rangle}
+\newcommand{\pairing}{\pair{\blank}{\blank}}
+\newcommand{\nulltuple}{\langle \rangle}
+\newcommand{\projone}{\ffst} % product/sigma-type projections
+\newcommand{\projtwo}{\fsnd}
+\newcommand{\copair}[3][]{\left[ #2,#3\right]_{#1}}
+\newcommand{\injone}{\finl}
+\newcommand{\injtwo}{\finr}
 
 % Strict things
 \renewcommand{\eq}[3][]{\fEq_{#1}(#2,#3)}
