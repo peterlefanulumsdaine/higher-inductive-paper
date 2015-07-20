@@ -55,11 +55,16 @@
 \newcommand{\fibtype}{\;\ftype}
 \renewcommand{\dim}{\;\fdim}
 \newcommand{\subst}[2]{[#1/#2]}
-\newcommand{\cb}{\,;\,}         % context break
+\newcommand{\cb}{\,;\,}         % context break  %% TODO: obsolete?
 \newcommand{\pr}{\,\vdash\,}
 \newcommand{\emptycxt}{\diamond}
 
-% Dimension variables
+% Dimension variables %% TODO: copied directly from dimension variables; reconsider?
+\newcommand{\extlamsym}{\mathring{\lambda}}
+\newcommand{\extlam}[1]{\dlamsym#1.\,}
+\newcommand{\extapp}[2]{ #1 @ #2}
+
+% Dimension variables %% TODO: obsolete?
 \newcommand{\dsubst}[2]{\langle #1/#2\rangle}
 \newcommand{\dlamsym}{\mathring{\lambda}}
 \newcommand{\dlam}[1]{\dlamsym#1.\,}
@@ -79,6 +84,8 @@
 \newcommand{\circtype}{\ensuremath{S^1}\xspace}
 \newcommand{\torustype}{\ensuremath{T^2}\xspace}
 \newcommand{\spheretype}[1]{\ensuremath{S^{#1}}\xspace}
+\newcommand{\zerotype}{\ensuremath{\mathbf{0}}\xspace}
+\newcommand{\zeroelim}[1][]{!_{#1}}
 \newcommand{\unittype}{\ensuremath{\mathbf{1}}\xspace}
 \newcommand{\bool}{\ensuremath{\mathbf{2}}\xspace}
 \newcommand{\ivl}{{\Delta^1}}
