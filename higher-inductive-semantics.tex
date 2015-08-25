@@ -337,25 +337,25 @@ In this section we describe our base hybrid type theory.
 
 Our basic judgement forms are \emph{contexts}, \emph{context maps}, \emph{types}, \emph{pre-types}, \emph{terms}, \emph{cofibrations}, and equalities of context maps, pre-types, and cofibrations.
 \begin{mathpar}
-  \types \Gamma \cxt
+  \jd{}{\Gamma \cxt}
 \and
-  \types \sigma : \Gamma \to \Delta
+  \jd{}{\sigma : \Gamma \to \Delta}
 \and
-  \types \sigma \jdeq \sigma' : \Gamma \to \Delta
+  \jd{}{\sigma \jdeq \sigma' : \Gamma \to \Delta}
 \and
-  \Gamma \types A \fibtype
+  \jd{\Gamma}{A \fibtype}
 \and
-  \Gamma \types A \pretype
+  \jd{\Gamma}{ A \pretype}
 \and
-  \Gamma \types A \jdeq A' \pretype
+  \jd{\Gamma}{ A \jdeq A' \pretype}
 \and
-  \Gamma \types a : A
+  \jd{\Gamma}{ a : A}
 \and
-  \Gamma \types a \jdeq a' : A
+  \jd{\Gamma}{ a \jdeq a' : A}
 \and
-  \Gamma \types \cof{i}{A'}{A}
+  \jd{\Gamma}{ \cof{i}{A'}{A}}
 \and
-  \Gamma \types \cof{i \jdeq i'}{A'}{A}
+  \jd{\Gamma}{ \cof{i \jdeq i'}{A'}{A}}
 \end{mathpar}
 
 The term and cofibration judgements presuppose just that $A$, $A'$ are pre-types, not necessarily types.
@@ -383,7 +383,7 @@ For all further logical constructors we later add, we also tacitly assume rules 
 \subsection{Dependent products}
 \label{sec:pi-syntax}
 
-Any pre-type family $\jd{x:A}{B(x) \pretype}$ has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
+Any pre-type family $\jd{\Gamma,x:A}{B(x) \pretype}$ has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
 As usual, if $B(x)$ is independent of $x$, we write $A\to B$ for $\prd{x:A} B(x)$.
 Notationally, the scope of $\prd{x:A}$ extends as far to the right as possible, so that $\prd{x:A} B(x) \to \sm{x:A} B(x)$ means $\prd{x:A} \big(B(x) \to \sm{x:A} B(x)\big)$.
 
@@ -409,24 +409,32 @@ We also assume the nullary counterpart of these: a unit type $\jd{ \Gamma}{\unit
 
 In our axiomatic cofibrations below, we will make specific reference to (strong) coproduct and pushout pre-types, so we set those up explicitly.
 
-Given a span of pre-types $\jd{ \Gamma}{A, B, C \pretype}$, $\jd {\Gamma, z:C}{f(z) : A }$, $\jd{ \Gamma, z:C}{g(z) : B }$, there is a pushout pretype $A +_C B$\plnote{We should probably give a more explicit notation, and then introduce this apologetically}, with constructors $\injone$, $\injtwo$, such that $\injone (f(z)) \jdeq \injtwo (g(z))$, the elimination rule
+Given a span of pre-types $\jd{ \Gamma}{A, B, C \pretype}$, $\jd {\Gamma, z:C}{f(z) : A }$, $\jd{ \Gamma, z:C}{g(z) : B }$, there is a pushout pretype $\mathsf{pushout}(A,B,C,f,g)$, which we generally denote abusively by the more common $A +_C B$.
+It has constructors $\injone:A\to A+_C B$ and $\injtwo:B\to A+_C B$ such that $\injone (f(z)) \jdeq \injtwo (g(z))$, the elimination rule
 \[ \inferrule{
-  \Gamma, w : A +_C B \types D(w) \pretype \\
-  \Gamma, x:A \types d_1(x) : D(\injone(x)) \\
-  \Gamma, y:B \types d_2(y) : D(\injtwo(x)) \\
-  \Gamma, z:C \types d_1(f(z)) \jdeq d_2(g(z)) : D(\injone (f(z)))
+  \Gamma, w : A +_C B \types D \pretype \\
+  \Gamma, x:A \types d_1 : D\subst{\injone(x)}{w} \\
+  \Gamma, y:B \types d_2 : D\subst{\injtwo(x)}{w} \\
+  \Gamma, z:C \types d_1\subst{f(z)}{x} \jdeq d_2\subst{g(z)}{y} : D\subst{\injone (f(z))}{w}
   }{
-  \Gamma, w : A +_C B \types \copair[w.D(w)]{x.d_1(x)}{y.d_2(y)}(w) : D(w),
+  \Gamma, w : A +_C B \types \copair[w.D]{x.d_1}{y.d_2}(w) : D,
 } \]
-the evident computation rules, and the strong $\eta$-rule $d(w) \jdeq \copair{x . d( \injone(x)) }{y . d ( \injtwo(y))}(w)$, whenever $\jd{ \Gamma, w : A + B}{d(w) : D(w)}$.
+the evident computation rules, and the strong $\eta$-rule
+\[d \jdeq \copair{x . d\subst{\injone(x)}{w} }{y . d\subst{\injtwo(y)}{w}}(w),\]
+whenever $\jd{ \Gamma, w : A + B}{d : D}$.
 
-Moreover, there is a pre-type $\zerotype$, with eliminator $\jd{ \Gamma, x:\zerotype}{\zeroelim[x.C](x) : C}$ whenever $\Gamma, x:\zerotype \types C(x) \pretype$, and the strong $\eta$-rule $\jd { \Gamma, x:\zerotype}{c(x) \jdeq \zeroelim[x.C] : C(x) }$.
+Moreover, there is a pre-type $\zerotype$, with eliminator $\jd{ \Gamma, x:\zerotype}{\zeroelim[x.C](x) : C}$ whenever $\Gamma, x:\zerotype \types C \pretype$, and the strong $\eta$-rule $\jd { \Gamma, x:\zerotype}{c \jdeq \zeroelim[x.C] : C }$.
 
-Putting these together, we can derive for any pair of pre-types $\jd{ \Gamma}{A, B \pretype}$ a binary coproduct pre-type $A+B \defeq A +_{\zerotype} B$, satisfying the usual rules for elimination into pre-types, and moreover the strong $\eta$-rule, that whenever $\jd{ \Gamma, w : A + B}{c(w) : C(w)}$, we have $c(w) \jdeq \copair{x . c( \injone(x)) }{y . c ( \injtwo(y))}(w)$.
+Putting these together, we can derive for any pair of pre-types $\jd{ \Gamma}{A, B \pretype}$ a binary coproduct pre-type $A+B \defeq A +_{\zerotype} B$, satisfying the usual rules for elimination into pre-types, and moreover the strong $\eta$-rule, that whenever $\jd{ \Gamma, w : A + B}{c : C}$, we have $c \jdeq \copair{x . c\subst{\injone(x)}{w} }{y . c \subst{\injtwo(y)}{w}}(w)$.
 
 Not that we do \emph{not} assume that coproducts of types are types.
 The inductive types discussed later will allow the construction of binary sum types, but they will not necessarily coincide with coproduct pretypes.\plnote{Check later that we fulfil this, or alternatively, assume sum types separately!}
-This corresponds to the fact that in models, coproduct copairing may not preserve fibrations.\plnote{Maybe say specifically which models.}
+This corresponds to the fact that in models, coproduct copairing may not preserve fibrations; e.g.\ the coproduct of two sheaves in a category of presheaves may no longer be a sheaf.
+Even $\zerotype$ may not be fibrant, e.g.\ if a site has objects covered by the empty family, then the empty presheaf is not a sheaf.
+
+Note also that the commutativity conditions for the pushout pretype are \emph{judgmental} equalities, unlike those for a higher inductive pushout which will be propositional.
+If we included an ``identity pretype'' satisfying the reflection rule, then we could express our pushout pretypes as ``higher inductive pretypes'', but it is simpler to just assert and assume judgmental equalities.
+
 
 \subsection{Extension types}
 \label{sec:etn-types}
@@ -437,10 +445,10 @@ The formation rule is:
 \begin{equation} \label{eq:extnform}
 \inferrule{ 
   \Gamma \types \cof{i}{A}{B} \\ 
-  \Gamma, y:B \types C(y) \fibtype \\ 
-  \Gamma, x:A \types d(x) : C(\cofapp{i}{x})
+  \Gamma, y:B \types C \fibtype \\ 
+  \Gamma, x:A \types d : C\subst{\cofapp{i}{x}}{y}
 }{
-  \Gamma \types \extn{i}{y.C(y)}{x.d(x)} \fibtype
+  \Gamma \types \extn{i}{y.C)}{x.d)} \fibtype
 } \end{equation}
 
 This is intended to be read as the type of “extensions of $d$ along $i$ (into $C$)”.
@@ -450,10 +458,10 @@ The effect of the present rules is to axiomatise this type directly, along with 
 Terms are therefore introduced by a generalisation of $\lambda$-abstraction:
 \[ \inferrule{
   \text{($\Gamma$, $A$, $B$, $i$, $C$, $d$ as before)} \\
-  \Gamma, y:B \types c(y) : C(y)  \\
-  \Gamma, x:A \types c(\cofapp{i}{x}) \jdeq d(x)
+  \Gamma, y:B \types c : C  \\
+  \Gamma, x:A \types c\subst{\cofapp{i}{x}}{y} \jdeq d
 }{
-  \Gamma \types \extlam{y:B} c(y) : \extn{i}{y.C(y)}{x.d(x)}} \]
+  \Gamma \types \extlam{y:B} c : \extn{i}{y.C}{x.d}} \]
 and used via a generalisation of application:
 \[ \inferrule{
   \text{($\Gamma$, $A$, $B$, $i$, $C$, $d$ as before)} \\
@@ -463,18 +471,18 @@ and used via a generalisation of application:
   \Gamma \types \extapp{f}{b} : C(b)} \]
 
 We also have corresponding equality rules:
-\plnote{I’ve said “equality” not “computation” since we haven’t thought any about operational semantics; maybe that’s too scrupulous, and the more familiar “computation” is better.}
-\msnote{Meh, I don't think it matters.}
 \begin{mathpar}
   \inferrule{
     \text{($\Gamma$, $A$, $B$, $i$, $C$, $d$, $f$ as in app rule)} \\
     \Gamma \types a : A
-  }{ \Gamma \types \extapp{f}{(\cofapp{i}{a})} \jdeq d(a) : C(\cofapp{i}{a}),}
+  }{ \Gamma \types \extapp{f}{(\cofapp{i}{a})} \jdeq d\subst{a}{x} : C\subst{\cofapp{i}{a}}{y},}
 \and
   \inferrule{
     \text{($\Gamma$, $A$, $B$, $i$, $C$, $d$, $c$, $f$ as in abstr and app rules)} \\
     \Gamma \types b : B
-  }{ \Gamma \types \extapp{ (\extlam{y:B} c(y)) }{b} \jdeq c(b) : C(b). }
+  }{ \Gamma \types \extapp{ (\extlam{y:B} c) }{b} \jdeq c\subst{b}{y} : C\subst{b}{y}. }
+\and
+  \text{\todo{TODO: an $\eta$-rule}}
 \end{mathpar}
 
 \subsection{Cofibrations}
@@ -523,9 +531,9 @@ From this, together with extension types, we can derive the traditional formatio
 
 Over this, we postulate the Martin-Löf inductive eliminator for $\fId$ and its usual computation rule:
 \begin{mathpar}
-\inferrule{\Gamma, x,y:A, u:\id[A]{x}{y} \fibtype C \pretype
-             \\ \Gamma, x:A \types d_\refl : C\subst{x,x,\refl_x}{x,y,u}}
-    {\Gamma, a,b:A, p:\id[A]{a}{b} \vdash J_(\dot) : C\subset{a,b,p}{x,y,u}}
+  \inferrule{ \jd{\Gamma, x,y:A, u:\id[A]{x}{y}}{C \pretype}
+    \\ \jd{\Gamma, x:A }{ d_\refl : C\subst{x,x,\refl_x}{x,y,u}}}
+  { \jd{\Gamma, a,b:A, p:\id[A]{a}{b} }{ J(\dots,p) : C\subst{a,b,p}{x,y,u}}  }
 \and
    J(\dots, \refl(x)) \jdeq d_\refl(x)
 \end{mathpar}
