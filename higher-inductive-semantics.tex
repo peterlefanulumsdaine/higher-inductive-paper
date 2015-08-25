@@ -394,7 +394,7 @@ If both inputs to a dependent product are types, then so is the result:
 \subsection{Dependent sums}
 \label{sec:sigma-syntax}
 
-Any pre-type family $\jd{ \Gamma, x:A}{B(x) \pretype}$ also has a dependent sum $\sm{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $x \jdeq \pair{\projone x}{\projtwo x}$.
+Any pre-type family $\jd{ \Gamma, x:A}{B(x) \pretype}$ also has a dependent sum $\sm{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $x \jdeq \pair{\projone(x)}{\projtwo(x)}$.
 As usual, if $B(x)$ is independent of $x$, we write $A\times B$ for $\sm{x:A} B(x)$.
 
 If both inputs to a dependent sum are types, then so is the result:
@@ -412,17 +412,17 @@ In our axiomatic cofibrations below, we will make specific reference to (strong)
 Given a span of pre-types $\jd{ \Gamma}{A, B, C \pretype}$, $\jd {\Gamma, z:C}{f(z) : A }$, $\jd{ \Gamma, z:C}{g(z) : B }$, there is a pushout pretype $A +_C B$\plnote{We should probably give a more explicit notation, and then introduce this apologetically}, with constructors $\injone$, $\injtwo$, such that $\injone (f(z)) \jdeq \injtwo (g(z))$, the elimination rule
 \[ \inferrule{
   \Gamma, w : A +_C B \types D(w) \pretype \\
-  \Gamma, x:A \types d_1(x) : D(\injone x) \\
-  \Gamma, y:B \types d_2(y) : D(\injtwo x) \\
+  \Gamma, x:A \types d_1(x) : D(\injone(x)) \\
+  \Gamma, y:B \types d_2(y) : D(\injtwo(x)) \\
   \Gamma, z:C \types d_1(f(z)) \jdeq d_2(g(z)) : D(\injone (f(z)))
   }{
   \Gamma, w : A +_C B \types \copair[w.D(w)]{x.d_1(x)}{y.d_2(y)}(w) : D(w),
 } \]
-the evident computation rules, and the strong $\eta$-rule $d(w) \jdeq \copair{x . d( \injone x) }{y . d ( \injtwo y)}(w)$, whenever $\jd{ \Gamma, w : A + B}{d(w) : D(w)}$.
+the evident computation rules, and the strong $\eta$-rule $d(w) \jdeq \copair{x . d( \injone(x)) }{y . d ( \injtwo(y))}(w)$, whenever $\jd{ \Gamma, w : A + B}{d(w) : D(w)}$.
 
 Moreover, there is a pre-type $\zerotype$, with eliminator $\jd{ \Gamma, x:\zerotype}{\zeroelim[x.C](x) : C}$ whenever $\Gamma, x:\zerotype \types C(x) \pretype$, and the strong $\eta$-rule $\jd { \Gamma, x:\zerotype}{c(x) \jdeq \zeroelim[x.C] : C(x) }$.
 
-Putting these together, we can derive for any pair of pre-types $\jd{ \Gamma}{A, B \pretype}$ a binary coproduct pre-type $A+B \defeq A +_{\zerotype} B$, satisfying the usual rules for elimination into pre-types, and moreover the strong $\eta$-rule, that whenever $\jd{ \Gamma, w : A + B}{c(w) : C(w)}$, we have $c(w) \jdeq \copair{x . c( \injone x) }{y . c ( \injtwo y)}(w)$.
+Putting these together, we can derive for any pair of pre-types $\jd{ \Gamma}{A, B \pretype}$ a binary coproduct pre-type $A+B \defeq A +_{\zerotype} B$, satisfying the usual rules for elimination into pre-types, and moreover the strong $\eta$-rule, that whenever $\jd{ \Gamma, w : A + B}{c(w) : C(w)}$, we have $c(w) \jdeq \copair{x . c( \injone(x)) }{y . c ( \injtwo(y))}(w)$.
 
 Not that we do \emph{not} assume that coproducts of types are types.
 The inductive types discussed later will allow the construction of binary sum types, but they will not necessarily coincide with coproduct pretypes.\plnote{Check later that we fulfil this, or alternatively, assume sum types separately!}
@@ -464,6 +464,7 @@ and used via a generalisation of application:
 
 We also have corresponding equality rules:
 \plnote{I’ve said “equality” not “computation” since we haven’t thought any about operational semantics; maybe that’s too scrupulous, and the more familiar “computation” is better.}
+\msnote{Meh, I don't think it matters.}
 \begin{mathpar}
   \inferrule{
     \text{($\Gamma$, $A$, $B$, $i$, $C$, $d$, $f$ as in app rule)} \\
