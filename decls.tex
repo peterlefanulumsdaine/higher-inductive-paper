@@ -366,18 +366,18 @@
 \def\biggsh{\shvar{\bigg}}
 \def\Biggsh{\shvar{\Bigg}}
 
-% TYPING JUDGMENTS
-% Call this macro as \jd{x:A, y:B |- c:C}.  It adds (what I think is)
-% appropriate spacing, plus auto-sized parentheses around each typing judgment.
-\def\jd#1{\@jd#1\ej}
-\def\@jd#1|-#2\ej{\@@jd#1,,\;\vdash\;#2}
-\def\@@jd#1,{\@ifmtarg{#1}{\let\next=\relax}{\left(#1\right)\let\next=\@@@jd}\next}
-\def\@@@jd#1,{\@ifmtarg{#1}{\let\next=\relax}{,\,\left(#1\right)\let\next=\@@@jd}\next}
-% Here's a version which puts a line break before the turnstyle.
-\def\jdm#1{\@jdm#1\ej}
-\def\@jdm#1|-#2\ej{\@@jd#1,,\\\vdash\;\left(#2\right)}
-% Make an actual comma that doesn't separate typing judgments (e.g. A,B,C : Type).
-\def\cm{,}
+% % TYPING JUDGMENTS
+% % Call this macro as \jd{x:A, y:B |- c:C}.  It adds (what I think is)
+% % appropriate spacing, plus auto-sized parentheses around each typing judgment.
+% \def\jd#1{\@jd#1\ej}
+% \def\@jd#1|-#2\ej{\@@jd#1,,\;\vdash\;#2}
+% \def\@@jd#1,{\@ifmtarg{#1}{\let\next=\relax}{\left(#1\right)\let\next=\@@@jd}\next}
+% \def\@@@jd#1,{\@ifmtarg{#1}{\let\next=\relax}{,\,\left(#1\right)\let\next=\@@@jd}\next}
+% % Here's a version which puts a line break before the turnstyle.
+% \def\jdm#1{\@jdm#1\ej}
+% \def\@jdm#1|-#2\ej{\@@jd#1,,\\\vdash\;\left(#2\right)}
+% % Make an actual comma that doesn't separate typing judgments (e.g. A,B,C : Type).
+% \def\cm{,}
 
 %% SKIPIT in TikZ
 % See http://tex.stackexchange.com/questions/3513/draw-only-some-segments-of-a-path-in-tikz

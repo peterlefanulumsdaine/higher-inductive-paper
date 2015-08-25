@@ -383,7 +383,7 @@ For all further logical constructors we later add, we also tacitly assume rules 
 \subsection{Dependent products}
 \label{sec:pi-syntax}
 
-Any pre-type family $\jd{x:A |- B(x) \pretype}$ has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
+Any pre-type family $\jd{x:A}{B(x) \pretype}$ has a dependent product $\prd{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $f \jdeq \lam{x}f(x)$.
 As usual, if $B(x)$ is independent of $x$, we write $A\to B$ for $\prd{x:A} B(x)$.
 Notationally, the scope of $\prd{x:A}$ extends as far to the right as possible, so that $\prd{x:A} B(x) \to \sm{x:A} B(x)$ means $\prd{x:A} \big(B(x) \to \sm{x:A} B(x)\big)$.
 
@@ -394,7 +394,7 @@ If both inputs to a dependent product are types, then so is the result:
 \subsection{Dependent sums}
 \label{sec:sigma-syntax}
 
-Any pre-type family $\jd{ \Gamma, x:A |- B(x) \pretype}$ also has a dependent sum $\sm{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $x \jdeq \pair{\projone x}{\projtwo x}$.
+Any pre-type family $\jd{ \Gamma, x:A}{B(x) \pretype}$ also has a dependent sum $\sm{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $x \jdeq \pair{\projone x}{\projtwo x}$.
 As usual, if $B(x)$ is independent of $x$, we write $A\times B$ for $\sm{x:A} B(x)$.
 
 If both inputs to a dependent sum are types, then so is the result:
@@ -409,7 +409,7 @@ We also assume the nullary counterpart of these: a unit type $\jd{ \Gamma}{\unit
 
 In our axiomatic cofibrations below, we will make specific reference to (strong) coproduct and pushout pre-types, so we set those up explicitly.
 
-Given a span of pre-types $\jd{ \Gamma |- A, B, C \pretype}$, $\jd {\Gamma, z:C |- f(z) : A }$, $\jd{ \Gamma, z:C |- g(z) : B }$, there is a pushout pretype $A +_C B$\plnote{We should probably give a more explicit notation, and then introduce this apologetically}, with constructors $\injone$, $\injtwo$, such that $\injone (f(z)) \jdeq \injtwo (g(z))$, the elimination rule
+Given a span of pre-types $\jd{ \Gamma}{A, B, C \pretype}$, $\jd {\Gamma, z:C}{f(z) : A }$, $\jd{ \Gamma, z:C}{g(z) : B }$, there is a pushout pretype $A +_C B$\plnote{We should probably give a more explicit notation, and then introduce this apologetically}, with constructors $\injone$, $\injtwo$, such that $\injone (f(z)) \jdeq \injtwo (g(z))$, the elimination rule
 \[ \inferrule{
   \Gamma, w : A +_C B \types D(w) \pretype \\
   \Gamma, x:A \types d_1(x) : D(\injone x) \\
@@ -418,11 +418,11 @@ Given a span of pre-types $\jd{ \Gamma |- A, B, C \pretype}$, $\jd {\Gamma, z:C 
   }{
   \Gamma, w : A +_C B \types \copair[w.D(w)]{x.d_1(x)}{y.d_2(y)}(w) : D(w),
 } \]
-the evident computation rules, and the strong $\eta$-rule $d(w) \jdeq \copair{x . d( \injone x) }{y . d ( \injtwo y)}(w)$, whenever $\jd{ \Gamma, w : A + B |- d(w) : D(w)}$.
+the evident computation rules, and the strong $\eta$-rule $d(w) \jdeq \copair{x . d( \injone x) }{y . d ( \injtwo y)}(w)$, whenever $\jd{ \Gamma, w : A + B}{d(w) : D(w)}$.
 
-Moreover, there is a pre-type $\zerotype$, with eliminator $\jd{ \Gamma, x:\zerotype |- \zeroelim[x.C](x) : C}$ whenever $\Gamma, x:\zerotype \types C(x) \pretype$, and the strong $\eta$-rule $\jd { \Gamma, x:\zerotype |- c(x) \jdeq \zeroelim[x.C] : C(x) }$.
+Moreover, there is a pre-type $\zerotype$, with eliminator $\jd{ \Gamma, x:\zerotype}{\zeroelim[x.C](x) : C}$ whenever $\Gamma, x:\zerotype \types C(x) \pretype$, and the strong $\eta$-rule $\jd { \Gamma, x:\zerotype}{c(x) \jdeq \zeroelim[x.C] : C(x) }$.
 
-Putting these together, we can derive for any pair of pre-types $\jd{ \Gamma |- A, B \pretype}$ a binary coproduct pre-type $A+B := A +_{\zerotype} B$, satisfying the usual rules for elimination into pre-types, and moreover the strong $\eta$-rule, that whenever $\jd{ \Gamma, w : A + B |- c(w) : C(w)}$, we have $c(w) \jdeq \copair{x . c( \injone x) }{y . c ( \injtwo y)}(w)$.
+Putting these together, we can derive for any pair of pre-types $\jd{ \Gamma}{A, B \pretype}$ a binary coproduct pre-type $A+B \defeq A +_{\zerotype} B$, satisfying the usual rules for elimination into pre-types, and moreover the strong $\eta$-rule, that whenever $\jd{ \Gamma, w : A + B}{c(w) : C(w)}$, we have $c(w) \jdeq \copair{x . c( \injone x) }{y . c ( \injtwo y)}(w)$.
 
 Not that we do \emph{not} assume that coproducts of types are types.
 The inductive types discussed later will allow the construction of binary sum types, but they will not necessarily coincide with coproduct pretypes.\plnote{Check later that we fulfil this, or alternatively, assume sum types separately!}
@@ -565,7 +565,7 @@ In this case, the presence of the operation $\pop$ on cofibrations will allow us
 
 \todo{Section out of date.  New version should contain just the definition of Id as an instance of Extn, and then the assumption of J for it.}
 
-In ordinary MLTT, one defines the \emph{identity type} as an inductive family $\jd{x:A,y:A |- \id[A]{x}{y} \pretype}$ generated by reflexivity $\jd{x:A |- \refl_x : \id[A]xx}$.
+In ordinary MLTT, one defines the \emph{identity type} as an inductive family $\jd{x:A,y:A}{\id[A]{x}{y} \pretype}$ generated by reflexivity $\jd{x:A}{\refl_x : \id[A]xx}$.
 Although its only introduction rule is reflexivity, the distinguishing feature of \emph{homotopy} type theory is that identity types can contain paths \emph{other} than $\refl$, corresponding to loops in $A$ viewed as a ``space''.
 For this reason we will sometimes refer to elements of an identity type as \emph{paths}.
 
@@ -692,7 +692,7 @@ Instead the eliminator serves an auxiliary purpose.
 For one thing, our verification in \cref{sec:model-categories} that the identity types in our models support this rule can be regarded as a consistency check that our ``identity types'' really deserve that name.
 More importantly, the presence of the eliminator allows us to compare our well-behaved $\ap_f$ with the traditional ill-behaved one, which we denote $\ap'_f$.
 Since both $\ap_f(\refl_a)$ and $\ap'_f(\refl_a)$ are equal to $\refl_{f(a)}$, we can use the eliminator again to show that they are propositionally equal; that is, we have a term
-\[ \jd{a_0:A , a_1:A, p:\id[A]{a_0}{a_1} |- \fapeq(p) : \id[{\id[B]{f(a_0)}{f(a_1)}}]{\ap'_f(p)}{\ap_f(p)}} \]
+\[ \jd{a_0:A , a_1:A, p:\id[A]{a_0}{a_1}}{\fapeq(p) : \id[{\id[B]{f(a_0)}{f(a_1)}}]{\ap'_f(p)}{\ap_f(p)}} \]
 This, in turn, enables us to translate the rules for our HITs, which involve $\ap_f$, into rules involving $\ap'_f$ instead.
 (We will discuss this further in later sections.)
 These translated rules are more complicated, but they can be stated in plain MLTT.
@@ -1232,11 +1232,11 @@ Consider, for example, the interval:
 We expect the premises of its induction principle to include $f_\fzero : B(\fzero)$ and $f_\fone : B(\fone)$; but then corresponding to \fseg, we would expect some sort of path relating $f_\fzero$ to $f_\fone$.
 We cannot even form a type ``$\id{f_\fzero}{f_\fone}$'' since $f_\fzero$ to $f_\fone$ have different types, but we \emph{can} ask for a dependent path $f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}$.
 Thus, the entire elimination rule for $I$ is
-\[\inferrule{\jd{x:I |- B(x) \pretype} \\ f_\fzero : B(\fzero) \\ f_\fone : B(\fone) \\ f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}}{\jd{x:I |- \ind{I}(B,f_\fzero,f_\fone,f_\fseg)(x) : B(x)}} \]
+\[\inferrule{\jd{x:I}{B(x) \pretype} \\ f_\fzero : B(\fzero) \\ f_\fone : B(\fone) \\ f_\fseg : \idover[B]{f_\fzero}{f_\fone}{\fseg}}{\jd{x:I}{\ind{I}(B,f_\fzero,f_\fone,f_\fseg)(x) : B(x)}} \]
 
 The general principle is thus that path-constructors in a HIT correspond to dependent path premises in its induction principle.
 For instance, the circle $\circtype$ has the following elimination rule:
-\[\inferrule{\jd{x:\circtype |- B(x) \pretype} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\jd{x:\circtype |- \ind{\circtype}(B,f_\fbase,f_\floop)(x) : B(x)}} \]
+\[\inferrule{\jd{x:\circtype}{B(x) \pretype} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\jd{x:\circtype}{\ind{\circtype}(B,f_\fbase,f_\floop)(x) : B(x)}} \]
 Note that in this case it would be possible to \emph{write} the non-dependent path type ``$\id[B(\fbase)]{f_\fbase}{f_\fbase}$'', but that this is \emph{not} the correct type for $f_\floop$.
 
 Path-constructors with nontrivial domain are handled in the expected way, by dependent functions outputting dependent paths.
@@ -1247,16 +1247,16 @@ For instance, the \textbf{suspension} of a type $A$ is defined by
   \fmerid : \prd{x:A} \id[\susp A]{\fnorth}{\fsouth}
 }
 Its induction principle is
-\[\inferrule{\jd{x:\susp A |- B(x) \pretype} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
-{\jd{x:\susp A |- \ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(x):B(x)}} \]
+\[\inferrule{\jd{x:\susp A}{B(x) \pretype} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
+{\jd{x:\susp A}{\ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(x):B(x)}} \]
 Similarly, path-constructors with recursive inputs correspond to inductive premises that take inputs from the induction motive.
 For instance, the induction principle for the $(-1)$-truncation $\brck{A}$ is
-\[\inferrule{\jd{x:\brck A |- B(x) \pretype} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
-{\jd{x:\brck A |- \ind{\brck A}(B,f_\fproj,f_\fsquash)(x) : B(x)}}
+\[\inferrule{\jd{x:\brck A}{B(x) \pretype} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
+{\jd{x:\brck A}{\ind{\brck A}(B,f_\fproj,f_\fsquash)(x) : B(x)}}
 \]
 This should be compared with the familiar induction principle for the natural numbers:
-\[ \inferrule{\jd{x:\lN |- B(x) \pretype} \\ f_\fzero : B(\fzero) \\ f_\fsucc : \tprd{x:\lN}{u:B(x)} B(\fsucc(x))}
-{\jd{x:\lN |- \ind{\lN}(B,f_\fzero,f_\fsucc)(x) : B(x)}}
+\[ \inferrule{\jd{x:\lN}{B(x) \pretype} \\ f_\fzero : B(\fzero) \\ f_\fsucc : \tprd{x:\lN}{u:B(x)} B(\fsucc(x))}
+{\jd{x:\lN}{\ind{\lN}(B,f_\fzero,f_\fsucc)(x) : B(x)}}
 \]
 In both cases, each recursive argument to a constructor ($\fsucc$ or $\fsquash$) bifurcates into two arguments to the corresponding induction premise, one from the inductive type being defined and one from the induction motive.
 
@@ -1271,17 +1271,17 @@ For instance, the if $f:\circtype \to B$ is defined from $f_\fbase:B$ and $f_\fl
 Note that $\ap_{f}(\floop)$ and $f_\floop$ are both elements of $\id[B]{f_\fbase}{f_\fbase}$, the latter by definition and the former because of the first computation rule.
 When $B$ depends on $\circtype$, we need the dependent extension of $\ap_f$ which was discussed in \cref{sec:cubic-ident-types}.
 The precise rules are
-\[ \inferrule{\jd{x:\circtype |- B(x) \pretype} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\ind{\circtype}(B,f_\fbase,f_\floop)(\fbase)\jdeq f_\fbase \\ \ap_{\ind{\circtype}(B,f_\fbase,f_\floop)}(\floop) \jdeq f_\floop} \]
+\[ \inferrule{\jd{x:\circtype}{B(x) \pretype} \\ f_\fbase : B(\fbase) \\ f_\floop : \idover[B]{f_\fbase}{f_\fbase}{\floop}}{\ind{\circtype}(B,f_\fbase,f_\floop)(\fbase)\jdeq f_\fbase \\ \ap_{\ind{\circtype}(B,f_\fbase,f_\floop)}(\floop) \jdeq f_\floop} \]
 Similarly, for the suspension we have
-\[\inferrule{\jd{x:\susp A |- B(x) \pretype} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
+\[\inferrule{\jd{x:\susp A}{B(x) \pretype} \\ f_\fnorth : B(\fnorth) \\ f_\fsouth : B(\fsouth) \\ f_\fmerid : \tprd{x:A} \idover[B]{f_\fnorth}{f_\fsouth}{\fmerid(x)}}
 {\ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(\fnorth) \jdeq f_\fnorth \\
   \ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)(\fsouth) \jdeq f_\fsouth \\
-  \jd{x:A |- \ap_{\ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)}(\fmerid(x)) \jdeq f_\fmerid(x)}} \]
+  \jd{x:A}{\ap_{\ind{\susp A}(B,f_\fnorth,f_\fsouth,f_\fmerid)}(\fmerid(x)) \jdeq f_\fmerid(x)}} \]
 As for ordinary inductive types, in the computation rules for path-constructors with recursive inputs, the right-hand side involves a recursive call to the function defined by induction.
 For instance, the computation rules for $\brck{A}$ are
-\[\inferrule{\jd{x:\brck A |- B(x) \pretype} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
-{\jd{a:A |- \ind{\brck A}(B,f_\fproj,f_\fsquash)(\fproj(a)) \jdeq f_\fproj(a)}\\
-\jd{x:\brck A , y:\brck A |- \ap_f(\fsquash(x,y)) \jdeq f_\fsquash(x,y,f(x),f(y))}}
+\[\inferrule{\jd{x:\brck A}{B(x) \pretype} \\ f_\fproj : \tprd{a:A} B(\fproj(a)) \\ f_\fsquash : \tprd{x,y:\brck A}{u:B(x)}{v:B(y)} \idover[B]{u}{v}{\fsquash(x,y)}}
+{\jd{a:A}{\ind{\brck A}(B,f_\fproj,f_\fsquash)(\fproj(a)) \jdeq f_\fproj(a)}\\
+\jd{x:\brck A , y:\brck A}{\ap_f(\fsquash(x,y)) \jdeq f_\fsquash(x,y,f(x),f(y))}}
 \]
 (In the last rule we have abbreviated $\ind{\brck A}(B,f_\fproj,f_\fsquash)$ by $f$ for readability.)
 
@@ -1294,7 +1294,7 @@ Note that all of our computation rules are judgmental, even those involving path
 This is very convenient for applications, and it is what we will get from our semantic construction as well.
 It does depend crucially on the fact that we state these rules using the cubical $\ap$ defined by abstraction over lines, rather than the version $\ap'$ defined using the eliminator for identity types: as far as we know the computation rules do \emph{not} hold judgmentally in our models for $\ap'$.
 However, as remarked in \cref{sec:cubic-ident-types}, we do have a propositional equality
-\[ \jd{a_0:A , a_1:A, p:\id[A]{a_0}{a_1} |- \fapeq(p) : \id[{\id[B]{f(a_0)}{f(a_1)}}]{\ap'_f(p)}{\ap_f(p)}}. \]
+\[ \jd{a_0:A , a_1:A, p:\id[A]{a_0}{a_1}}{\fapeq(p) : \id[{\id[B]{f(a_0)}{f(a_1)}}]{\ap'_f(p)}{\ap_f(p)}}. \]
 Together with our judgmental computation rules for $\ap$, this implies that \emph{propositional} computation rules hold for $\ap'$.
 For instance, given a type $B$ with $f_\fbase$ and $f_\floop : \id[B]{f_\fbase}{f_\fbase}$, if we write $f$ for ${\ind{\circtype}(B,f_\fbase,f_\floop)}$, then we have as above 
 \[ \ap_f(\floop) \jdeq f_\floop \]
@@ -1403,15 +1403,15 @@ With this setting, a fibrant circle algebra over $\Gamma$, as originally defined
 
 When we move on to higher-dimensional HITs, the elimination and computation rules start to involve the requirement of \emph{naturality} that we briefly mentioned before.
 Consider the torus type $\torustype$, whose induction principle looks like this:
-\[ \inferrule{\jd{x:\torustype |- B(x)\pretype}\\f_\fbase : B(\fbase) \\
+\[ \inferrule{\jd{x:\torustype}{B(x)\pretype}\\f_\fbase : B(\fbase) \\
   f_{\fmerid_1} : \idover[B]{f_\fbase}{f_\fbase}{\fmerid_1} \\
   f_{\fmerid_2} : \idover[B]{f_\fbase}{f_\fbase}{\fmerid_2} \\
   f_\fsurf : \idover[{\idover[B]{f_\fbase}{f_\fbase}{\blank}}]{f_{\fmerid_1} \ct f_{\fmerid_2}}{f_{\fmerid_2} \ct f_{\fmerid_1}}{\fsurf}}
-{\jd{x:\torustype |- \ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf,x):B(x)}}
+{\jd{x:\torustype}{\ind{\torustype}(f_\fbase,f_{\fmerid_1},f_{\fmerid_2},f_\fsurf,x):B(x)}}
 \]
 Note the type of $f_\fsurf$.
 It is a dependent path relative to the type family
-\[\jd{p:\id[\torustype]{\fbase}{\fbase} |- {\idover[B]{f_\fbase}{f_\fbase}{p}}\pretype}\]
+\[\jd{p:\id[\torustype]{\fbase}{\fbase}}{{\idover[B]{f_\fbase}{f_\fbase}{p}}\pretype}\]
 between
 \begin{align}
   {f_{\fmerid_1} \ct f_{\fmerid_2}} &: \idover[B]{f_\fbase}{f_\fbase}{\fmerid_1\ct\fmerid_2} \qquad\text{and}\\

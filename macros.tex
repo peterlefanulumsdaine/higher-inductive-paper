@@ -49,7 +49,6 @@
 
 % Judgments
 \usepackage{mathpartir}
-\newcommand{\types}{\vdash}
 \newcommand{\cxt}{\;\fcxt}
 \newcommand{\pretype}{\;\fpretype}
 \newcommand{\fibtype}{\;\ftype}
@@ -58,6 +57,9 @@
 \newcommand{\cb}{\,;\,}         % context break  %% TODO: obsolete?
 \newcommand{\pr}{\,\vdash\,}
 \newcommand{\emptycxt}{\diamond}
+
+\newcommand{\types}{\vdash}
+\newcommand{\jd}[2]{#1 \types #2}
 
 % Dimension variables %% TODO: copied directly from dimension variables; reconsider?
 \newcommand{\extlamsym}{\mathring{\lambda}}
