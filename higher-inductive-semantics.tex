@@ -369,13 +369,14 @@ Most structural rules are as in traditional Martin-Löf type theory, extended sl
 \item all equality judgements are equivalence relations.
 \end{itemize}
 
-There are just two essentially new structural rules:
+We also include the following rules:
 \begin{itemize}
 \item Every type is also a pretype:
 \[ \inferrule{\Gamma \types A\fibtype}{\Gamma \types A\pretype} \]
 \item A cofibration may be applied to a term: \plnote{Notation needed?}
 \[ \inferrule{\Gamma \types \cof{i}{A}{B} \\ \Gamma \types a : A}{\Gamma \types \cofapp{i}{a} : B } \]
 \end{itemize}
+These may be considered to be additional structural rules; e.g.\ in the semantic version we will introduce in \cref{sec:semantic-type-theory} they will be part of the base category-theoretic structure, rather than associated to any particular type-forming operation that is added as algebraic structure.
 
 For all further logical constructors we later add, we also tacitly assume rules stating that these constructors respect judgemental equality in all their inputs, including for inputs in which variables become bound (i.e.\ $\xi$-rules).
 
@@ -396,13 +397,12 @@ If both inputs to a dependent product are types, then so is the result:
 Any pre-type family $\jd{ \Gamma, x:A |- B(x) \pretype}$ also has a dependent sum $\sm{x:A} B(x)$ satisfying the usual rules, including the $\eta$-rule $x \jdeq \pair{\projone x}{\projtwo x}$.
 As usual, if $B(x)$ is independent of $x$, we write $A\times B$ for $\sm{x:A} B(x)$.
 
-If both inputs to a dependent sum are fibrant, then so is the result:
+If both inputs to a dependent sum are types, then so is the result:
 \[ \inferrule{\Gamma \vdash A \fibtype \\ \Gamma, x:A \vdash B \fibtype}{\Gamma \vdash \tsm{x:A} B \fibtype} \]
 
 As usual, in the non-dependent case where $\Gamma \types A, B \pretype$, we write $A \times B$ for $\tsm{x:A} B$.
 
-\plnote{Is it good to include the unit type under dependent sums?}
- We also assume the nullary counterpart of these: a unit type $\jd{ \Gamma |- \unittype \fibtype }$, with the usual rules, including elimination into arbitrary pre-types, and the $\eta$-rule $x \jdeq \nulltuple : \unittype$.
+We also assume the nullary counterpart of these: a unit type $\jd{ \Gamma}{\unittype \fibtype }$, with the usual rules, including elimination into arbitrary pre-types, and the $\eta$-rule $x \jdeq \nulltuple : \unittype$.
  
 \subsection{Coproducts and pushouts}
 \label{sec:coproducts-syntax}
