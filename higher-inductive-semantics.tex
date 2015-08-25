@@ -399,8 +399,10 @@ As usual, if $B(x)$ is independent of $x$, we write $A\times B$ for $\sm{x:A} B(
 If both inputs to a dependent sum are fibrant, then so is the result:
 \[ \inferrule{\Gamma \vdash A \fibtype \\ \Gamma, x:A \vdash B \fibtype}{\Gamma \vdash \tsm{x:A} B \fibtype} \]
 
+As usual, in the non-dependent case where $\Gamma \types A, B \pretype$, we write $A \times B$ for $\tsm{x:A} B$.
+
 \plnote{Is it good to include the unit type under dependent sums?}
- We also assume their nullary analogue: a unit type $\jd{ \Gamma |- \unittype \fibtype }$, with the usual rules, including elimination into arbitrary pre-types, and the $\eta$-rule $x \jdeq \nulltuple : \unittype$.
+ We also assume the nullary counterpart of these: a unit type $\jd{ \Gamma |- \unittype \fibtype }$, with the usual rules, including elimination into arbitrary pre-types, and the $\eta$-rule $x \jdeq \nulltuple : \unittype$.
  
 \subsection{Coproducts and pushouts}
 \label{sec:coproducts-syntax}
@@ -477,36 +479,70 @@ We also have corresponding equality rules:
 \subsection{Cofibrations}
 \label{sec:cofibrations}
 
-\todo{Section out of date, needs new pass.}
+We will have two general rules for cofibrations: a pushout-product operation; the inclusion $\zerotype \to \unittype$.
 
-We will have one axiomatic cofibration, whose codomain is an axiomatic pre-type.
+The pushout-product operation mirrors the standard categorical one: 
+\[ \inferrule{\Gamma \types \cof{i_1}{A_1}{B_1} \\ \Gamma \types \cof{i_2}{A_2}{B_2}}
+    {\Gamma \types \cof{i_1\pop i_2}{(A_1 \times B_2) +_{A_1\times A_2} (B_1 \times A_2)}{B_1\times B_2}} \]
+(where $+$ is the \emph{non-fibrant} pushout pretype introduced above), along with equality rules enforcing that it is the map we expect it to be:
 \begin{mathpar}
-  \inferrule{\ }{\Gamma \vdash \ivl \pretype}
+\cofapp{i_1 \pop i_2}{\injone{\pair{a_1}{b_2}}} \jdeq \pair{\cofapp{i_1}{a_1}}{b_2}
 \and
-  \inferrule{\ }{\Gamma \vdash 0 : \ivl}
-\and
-  \inferrule{\ }{\Gamma \vdash 1 : \ivl}
-\and
- \inferrule{\ }{\Gamma \vdash \cof{\copair{0}{1}}{\bool}{\ivl}}
+\cofapp{i_1 \pop i_2}{\injtwo{\pair{b_1}{a_2}}} \jdeq \pair{b_1}{\cofapp{i_2}{a_2}}
 \end{mathpar}
-Here $\bool$ denotes the non-fibrant coproduct $\unittype+\unittype$, and $\copair{0}{1}$ denotes the copairing.
-Note that $\ivl$ is also not (assumed to be) fibrant.
+
+This binary operation again has a nullary counterpart (not requiring any equality rules):
+\plnote{Notation for this??}
+\[ \inferrule{\ }{\Gamma \types \cof{\bdry{0}}{\zerotype}{\unittype}} \]
+
+As far as extension types are concerned, these two operations add nothing new: extensions along $\bdry{0}$ are just ordinary functions, while extensions along $i_1 \pop i_2$ can be curried into two-step extensions, along first $i_1$ and then $i_2$.
+
+\subsection{The interval, and identity types}
+
+With this machinery set up, we can now introduce identity types, in a slightly unconventional way: as an axiomatic cofibration, representing the boundary inclusion of an interval, together with an elimination principle for its extension type.
+
+\begin{mathpar}
+  \inferrule{\ }{\Gamma \types \ivl \pretype}
+\and
+  \inferrule{\ }{\Gamma \types \cof{\bdry{1}}{\unittype + \unittype}{\ivl}}
+\end{mathpar}
+
+(Note that $\ivl$ is \emph{not} assumed to be fibrant.)
+
+From this, together with extension types, we can derive the traditional formation and introduction rules for propositional identity types:
+
+\begin{mathpar}
+  \inferrule{\Gamma \types A \fibtype}
+    {\Gamma, x,y:A \types \id[A]{x}{y} \defeq \extn{\bdry{1}}{t.A}{s.\copair{x}{y}(s)} \fibtype  }
+\and
+  \inferrule{\Gamma \types A \fibtype}
+    {\Gamma, x:A \types \refl_x \defeq (\extlam{t:\ivl} x) : \id[A]{x}{x} }
+
+\end{mathpar}
+
+Over this, we postulate the Martin-Löf inductive eliminator for $\fId$ and its usual computation rule:
+\begin{mathpar}
+\inferrule{\Gamma, x,y:A, u:\id[A]{x}{y} \fibtype C \pretype
+             \\ \Gamma, x:A \types d_\refl : C\subst{x,x,\refl_x}{x,y,u}}
+    {\Gamma, a,b:A, p:\id[A]{a}{b} \vdash J_(\dot) : C\subset{a,b,p}{x,y,u}}
+\and
+   J(\dots, \refl(x)) \jdeq d_\refl(x)
+\end{mathpar}
+\plnote{Two abuses of notation in rules to disclaim somewhere: all operations in principle include all premises in the output term (e.g.\ $\extlam{}$ should mention the types and the cofib); and equality rules are indended as rules with premises, not as reduction rules on raw syntax.}
+
+The resulting type theory is not, of course, computationally well-behaved; but for the goals of the present paper, this is not a problem.
+
+\todo{Give (here or above?) comparison with cubical identity types.}
+
+\subsection{Old material}
+
+\todo{Old material.  Re-read and cannibalise or cut.}
+
 Nothing prevents us from assuming further axiomatic cofibrations, as long as they exist in our desired models, but this will be the only one we need.
 (Note, though, that semantically, it appears to be important that all cofibrations be defined in the empty context and pulled back to anywhere else from there.)
 \plnote{Not necessarily?  Can’t take \emph{all} cofibs, but seems like could often take eg cofibs between sharp objects.}
 
-There is one ``introduction'' rule for constructing cofibrations:
-\[ \inferrule{\Gamma \vdash \cof{i_1}{A_1}{B_1} \\ \Gamma \vdash \cof{i_2}{A_2}{B_2}}{\Gamma \vdash \cof{i_1\pop i_2}{(A_1 \times B_2) +_{A_1\times A_2} (B_1 \times A_2)}{B_1\times B_2}} \]
-Here the pushout is again a non-fibrant one, and $i_1 \pop i_2$ denotes the ``pushout product'' map induced by the universal property of this pushout.
-\msnote{Need to give rules for the non-fibrant pushout.}
 
-The ``elimination'' rule for cofibrations is that exponentiating by a cofibration produces a fibration.
-\todo{Make this its own type former of ``extensions''.}
-\[ \inferrule{\Gamma \vdash \cof{i}{A}{B} \\ \Gamma, y:B \vdash C \fibtype \\ \Gamma, x:A \vdash c : C\subst{i(x)}{y}}{\Gamma \vdash \Big(\tsm{f : \tprd{y:B} C} \tprd{x:A} \eq{f(i(x))}{c}\Big) \fibtype} \]
-Here $\fEq$ denotes the strict non-fibrant equality type.
-
-There is a vague sort of ``harmony'' between the ``introduction'' and ``elimination'' rules in that the instances of elimination for $i_1$ and $i_2$ should imply the corresponding instance for $i_1 \pop i_2$.
-In other words, given that the elimination rule is all we know about cofibrations, we might as well have the introduction rule (at least as long as non-fibrant pushouts exist).
 
 If we replace dimension variables by variables of type $\ivl$, then with the axiomatic cofibration $\cof{\copair{0}{1}}{2}{\ivl}$ this rule enables us to define the cubical identity types.
 Recall that the formation rule for the latter is:
