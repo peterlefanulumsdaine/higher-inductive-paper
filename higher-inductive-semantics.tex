@@ -506,6 +506,14 @@ This binary operation again has a nullary counterpart (not requiring any equalit
 
 As far as extension types are concerned, these two operations add nothing new: extensions along $\bdry{0}$ are just ordinary functions, while extensions along $i_1 \pop i_2$ can be curried into two-step extensions, along first $i_1$ and then $i_2$.
 
+\begin{rmk}
+  Another possible way to represent cofibrations judgmentally is as a special sort of ``dependent pretype'' over their codomain.
+  Since cofibrations are usually monomorphisms, it is reasonable to think of these dependent pretypes as a special sort of ``proposition'' in context (a subobject of their codomain).
+  In this case, pushout products can be obtained as ``unions'' of reindexed cofibrations, and one can also include other logical operations.
+  This is the route taken by~\cite{coquand:ctt0915}, with the restriction that the codomains of cofibrations are always cubes.
+  We could probably formulate our results using such an approach, but we prefer to be more flexible in allowing arbitrary pretypes as the codomains of cofibrations, and not demanding that cofibrations necessarily be monomorphisms.
+\end{rmk}
+
 \subsection{The interval, and identity types}
 
 With this machinery set up, we can now introduce identity types, in a slightly unconventional way: as an axiomatic cofibration, representing the boundary inclusion of an interval, together with an elimination principle for its extension type.
