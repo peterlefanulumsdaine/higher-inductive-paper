@@ -448,7 +448,7 @@ The formation rule is:
   \Gamma, y:B \types C \fibtype \\ 
   \Gamma, x:A \types d : C\subst{\cofapp{i}{x}}{y}
 }{
-  \Gamma \types \extn{i}{y.C)}{x.d)} \fibtype
+  \Gamma \types \extn{i}{y.C}{x.d} \fibtype
 } \end{equation}
 
 This is intended to be read as the type of “extensions of $d$ along $i$ (into $C$)”.
@@ -1157,6 +1157,59 @@ Fortunately, we will never need to use the acyclicity in the premises of other t
 
 \section{Model-categorical semantics}
 \label{sec:model-categories}
+
+\subsection{Cofibrant monads}
+\label{sec:cofibrant-monads}
+
+Given a fibration $f:Y\to X$ in $\C/\Gamma$, let $\poly f$ denote the induced indexed polynomial endofunctor.
+
+We write $\idmonad$ for the indexed identity functor, regarded as a monad; it is the initial object in the category of monads, and its category of algebras is of course the base category.
+It is also the free monad on the endofunctor that is constant at the initial object; note also that the latter can be written as $\poly f \times \emptyset$ for any $f$.
+
+\begin{defn}
+  A \textbf{generating cofibration of monads} is a map of monads of the form $\freemonad{ \poly f \times A} \to \freemonad{\poly f \times B}$ induced by a fibration $f$ between fibrant objects and a cofibration $i:A\to B$.
+  A \textbf{cofibration of monads} is a finite composite of pushouts of generating cofibrations.
+  A monad $T$ is \textbf{cofibrant} if $\idmonad \to T$ is a cofibration.
+\end{defn}
+
+Since pushouts of monads are algebraic, they induce pullbacks of categories of algebras.
+These are both strict pullbacks and weak 2-pullbacks, since the functor on algebra categories induced by any map of monads is an isofibration.
+
+In the category of algebras for a monad, we define classes of maps called \emph{fibrations}, \emph{weak equivalences}, and \emph{acyclic cofibrations} that are created in the base category.
+
+\begin{lem}\label{thm:moncof-plfib}
+  Suppose $\mu:S\to T$ is a cofibration of monads, $g:C\to D$ is a map of fibrant $T$-algebras, and $\mu^*C \to E \to \mu^*D$ is a factorization of $\mu^*g$ as an acyclic cofibration followed by a fibration.
+  Then the $S$-algebra structure of $E$ extends to a $T$-algebra structure such that the entire factorization lifts to $T$-algebras.
+\end{lem}
+\begin{proof}
+  A straightforward argument shows that it suffices to check the case when $\mu$ is a generating cofibration $\freemonad{ \poly f \times A} \to \freemonad{\poly f \times B}$.
+  In this case we have the following diagram:
+  \begin{equation}
+  \vcenter{\xymatrix{
+      \poly f(C) \times A\ar[r]\ar[d] &
+      \poly f(C) \times B\ar[r]\ar[d] &
+      C\ar[d]\\
+      \poly f(E) \times A\ar[r]\ar[d] \ar@(ur,ul)[rr] &
+      \poly f(E) \times B \ar[d] &
+      E\ar[d]\\
+      \poly f(D) \times A\ar[r] &
+      \poly f(D) \times B\ar[r] &
+      D
+      }}
+\end{equation}
+Therefore, to fill it in with a map $\poly f(E)\times B\to E$, it suffices to lift in the following square:
+\begin{equation}
+  \vcenter{\xymatrix{
+      Q\ar[r]\ar[d] &
+      E\ar[d]\\
+      \poly f(E) \times B \ar[r] &
+      D
+      }}
+\end{equation}
+where $Q$ is the pushout of the span $\poly f(E)\times A \ot \poly f(C)\times A \to \poly f(C) \times B$.
+Now $\poly f$ preserves acyclic cofibrations between fibrant objects, since it is the composite of three functors that do (using the fact that $f$ is a fibration between fibrant objects, the model structure is right proper, and the cofibrations are the monomorphisms).
+Thus, the map $Q \to \poly f(E) \times B$ is the pushout product of an acyclic cofibration $\poly f(C) \to \poly f(E)$ with a cofibration $A\to B$, hence an acyclic cofibration, while of course $E\to D$ is a fibration; so a lift exists.
+\end{proof}
 
 
 
