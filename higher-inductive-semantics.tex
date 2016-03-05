@@ -1169,6 +1169,8 @@ Fortunately, we will never need to use the acyclicity in the premises of other t
 \subsection{Cofibrant monads}
 \label{sec:cofibrant-monads}
 
+In this section I am currently sloppy about indexed-ness and talk about fibrant objects in some places where we should talk about fibrations.
+
 Given a fibration $f:Y\to X$ in $\C/\Gamma$, let $\poly f$ denote the induced indexed polynomial endofunctor.
 
 We write $\idmonad$ for the indexed identity functor, regarded as a monad; it is the initial object in the category of monads, and its category of algebras is of course the base category.
@@ -1176,8 +1178,8 @@ It is also the free monad on the endofunctor that is constant at the initial obj
 
 \begin{defn}
   A \textbf{generating cofibration of monads} is a map of monads of the form $\freemonad{ \poly f \times A} \to \freemonad{\poly f \times B}$ induced by a fibration $f$ between fibrant objects and a cofibration $i:A\to B$.
-  A \textbf{cofibration of monads} is a finite composite of pushouts of generating cofibrations.
-  A monad $T$ is \textbf{cofibrant} if $\idmonad \to T$ is a cofibration.
+  A \textbf{cell complex of monads} is a (finite?) composite of pushouts of generating cofibrations.
+  A monad $T$ is a \textbf{cell monad} if $\idmonad \to T$ is a cofibration.
 \end{defn}
 
 Since pushouts of monads are algebraic, they induce pullbacks of categories of algebras.
@@ -1186,7 +1188,7 @@ These are both strict pullbacks and weak 2-pullbacks, since the functor on algeb
 In the category of algebras for a monad, we define classes of maps called \emph{fibrations}, \emph{weak equivalences}, and \emph{acyclic cofibrations} that are created in the base category.
 
 \begin{lem}\label{thm:moncof-plfib}
-  Suppose $\mu:S\to T$ is a cofibration of monads, $g:C\to D$ is a map of fibrant $T$-algebras, and $\mu^*C \to E \to \mu^*D$ is a factorization of $\mu^*g$ as an acyclic cofibration followed by a fibration.
+  Suppose $\mu:S\to T$ is a cell complex of monads, $g:C\to D$ is a map of fibrant $T$-algebras, and $\mu^*C \to E \to \mu^*D$ is a factorization of $\mu^*g$ as an acyclic cofibration followed by a fibration.
   Then the $S$-algebra structure of $E$ extends to a $T$-algebra structure such that the entire factorization lifts to $T$-algebras.
 \end{lem}
 \begin{proof}
@@ -1217,6 +1219,172 @@ Therefore, to fill it in with a map $\poly f(E)\times B\to E$, it suffices to li
 where $Q$ is the pushout of the span $\poly f(E)\times A \ot \poly f(C)\times A \to \poly f(C) \times B$.
 Now $\poly f$ preserves acyclic cofibrations between fibrant objects, since it is the composite of three functors that do (using the fact that $f$ is a fibration between fibrant objects, the model structure is right proper, and the cofibrations are the monomorphisms).
 Thus, the map $Q \to \poly f(E) \times B$ is the pushout product of an acyclic cofibration $\poly f(C) \to \poly f(E)$ with a cofibration $A\to B$, hence an acyclic cofibration, while of course $E\to D$ is a fibration; so a lift exists.
+\end{proof}
+
+
+For the nonce, let us call a fibration category \textbf{pleasant} if it is equipped with an additional class of maps called ``acyclic cofibrations'' such that every acyclic cofibration is a weak equivalence and every map factors as an acyclic cofibration followed by a fibration.
+We do not assume any lifting properties.
+
+\begin{cor}
+  If $T$ is a cofibrant monad, then the category of fibrant $T$-algebras is a pleasant fibration category.
+\end{cor}
+\begin{proof}
+  This is certainly true of $\idmonad$, so it suffices to check that it lifts along cell complexes of monads.
+  Since limits and all the classes of maps are created in $\C$, most of the axioms are obvious; the one nontrivial one is the factorization axiom, and that follows from \cref{thm:moncof-plfib}.
+\end{proof}
+
+A fibration category, like any category with weak equivalences, has a simplicial localization and hence presents an $(\infty,1)$-category.
+In~\cite{szumilo:cocompl-hoth} it is shown that this localization can also be constructed using ``simplicial frames'', like for a model category.
+This implies the following:
+
+\begin{lem}
+  Suppose an object $X$ of a fibration category is ``acyclically-cofibrant'' in the sense that any fibration $Y\to X$ has a section.
+  Then $X$ presents an initial object of the simplicial localization $(\infty,1)$-category.
+\end{lem}
+\begin{proof}
+  TODO.
+\end{proof}
+
+\begin{thm}
+  An acyclically-cofibrant fibrant $T$-algebra presents an initial object of the simplicial localization of the category of fibrant $T$-algebras.\qed
+\end{thm}
+
+The property of cell complexes of monads expressed in \cref{thm:moncof-plfib} is closely related to the ``lifting property for factorizations'' appearing in the notion of \emph{fibration of fibration categories} from~\cite[Definition 1.9]{szumilo:cocompl-hoth}; the difference is that the latter applies to any factorization into a \emph{weak equivalence} followed by a fibration.
+We do not know whether the functors induced by cell complexes of monads are fibrations of fibration categories, but we can collect the properties that they do satisfy in the following definition.
+
+\begin{defn}\label{def:pleasant-fib}
+  A functor $\pi:\C\to\D$ between pleasant fibration categories is \textbf{pleasantly exact} if it preserves fibrations, acyclic fibrations, terminal objects, pullbacks along fibrations, and acyclic cofibrations.
+  A pleasantly exact functor is a \textbf{pleasant fibration} if it satisfies the following:
+  \begin{enumerate}
+  \item It is an isofibration.\label{item:pf1}
+  \item The conclusion of \cref{thm:moncof-plfib}: if $g:C\to D$ is a map in $\C$, and $\pi C \xto{j} X \xto{q} \pi D$ is a factorization of $\pi g$ as an acyclic cofibration followed by a fibration, then there exists a factorization $C \xto{i} E \xto{p} D$ of $g$ as an acyclic cofibration followed by a fibration such that $\pi i = j$ and $\pi p = q$.\label{item:pf2}
+  \item If $g:C\to D$ is a map in $\C$, and $\pi C \xto{j} X \xto{q} \pi D$ is a factorization of $\pi g$ as a \emph{weak equivalence} followed by a fibration, then there exists a fibration $E \xto{p} D$ in $\C$ such that $\pi p = q$.\label{item:pf3}
+  \item If $C$ is an object of $\C$ and $q:X\to \pi C$ is an acyclic fibration, then there exists an acyclic fibration $p:E\to C$ such that $\pi p = q$.\label{item:pf4}
+  \end{enumerate}
+\end{defn}
+
+\begin{thm}
+  If $\mu:S\to T$ is a map of monads, then $\mu^*$ is pleasantly exact.
+  If $\mu$ is a cell complex, then $\mu^*$ is a pleasant fibration.
+\end{thm}
+\begin{proof}
+  The first statement is clear since limits and all the classes of maps are created in the base category.
+  For the second, it is obviously an isofibration, and we have shown~\ref{item:pf2} already in \cref{thm:moncof-plfib}, so it remains to consider \cref{def:pleasant-fib}\ref{item:pf3} and~\ref{item:pf4}.
+  As in \cref{thm:moncof-plfib}, we may reduce to the case of a generating cofibration of monads $\freemonad{ \poly f \times A} \to \freemonad{\poly f \times B}$.
+
+  Condition~\ref{item:pf4} is easier; so suppose $C$ is a $(\poly f \times B)$-algebra, $E$ is a $(\poly f \times A)$-algebra, and $q:E\to C$ is a $(\poly f \times A)$-algebra map that is an acyclic fibration.
+  Then we have the following square
+  \begin{equation}
+    \vcenter{\xymatrix{
+        \poly f(E) \times A\ar[rr]\ar[d] & &
+        E \ar[d]^q\\
+        \poly f(E) \times B \ar[r] &
+        \poly f(C) \times B \ar[r] &
+        C
+      }}
+  \end{equation}
+  in which the left-hand map is a cofibration and the right-hand map is an acyclic fibration.
+  Thus a lift exists, which is precisely an $(\poly f \times B)$-algebra structure on $E$ making $q$ into a $(\poly f \times B)$-algebra map.
+
+  Now for condition~\ref{item:pf3}, suppose that $g:C\to D$ is a map of $(\poly f \times B)$-algebras, and $C\xto{i} E\xto{p} D$ is a factorization of its underlying $(\poly f \times A)$-algebra map as a weak equivalence followed by a fibration.
+  % we want to extend the $\freemonad{ \poly f \times A}$-structure of $E$ to a $\freemonad{\poly f \times B}$-structure such that $p$ is a $\freemonad{\poly f \times B}$-algebra map.
+  Since $\poly f$ preserves weak equivalences between fibrant objects (as all its three constituent functors do), $\poly f(i)$ is a weak equivalence, and so are $\poly f(i) \times A$ and $\poly f(i) \times B$.
+  Let $Q$ be the pushout
+  \begin{equation}
+    \vcenter{\xymatrix{
+        \poly f(C) \times A \ar[r]\ar[d] &
+        \poly f(C) \times B\ar[d]\\
+        \poly f(E) \times A\ar[r] &
+        Q
+      }}
+  \end{equation}
+  Since $\poly f(C) \times A \to \poly f(C)\times B$ is a cofibration, $\poly f(C) \times A \to P$ is a weak equivalence, and hence by 2-out-of-3 so is the induced map $Q \to \poly f(E) \times B$.
+  Furthermore, the $({\poly f \times A})$-structure on $i$ yields a map $Q\to E$ such that the following square commutes:
+  \begin{equation}
+    \vcenter{\xymatrix{
+        Q\ar[r]\ar[d] &
+        E\ar[dd]^q\\
+        \poly f(E) \times B\ar[d] &
+        \\
+        \poly f(D) \times B \ar[r] &
+        D
+      }}\label{eq:cellmonad-fibliftsq}
+  \end{equation}
+  Since $q$ is a fibration and $E$ and $D$ are fibrant, we have the following diagram in which the square is a pullback, the vertical arrows are fibrations, and the horizontal arrows are weak equivalences.
+  \begin{equation}
+    \vcenter{\xymatrix{
+        \map(\poly f(E) \times B,E) \ar[rr] \ar[dd] \ar@{.>}[dr] && \map(Q,E) \ar@{=}[d] \\
+        &\bullet\ar[r]\ar[d] &
+        \map(Q, E) \ar[d]\\
+        \map(\poly f(E) \times B, D) \ar@{=}[r] &
+        \map(\poly f(E) \times B, D) \ar[r] &
+        \map(Q, D)
+      }}
+  \end{equation}
+  By 2-out-of-3, it follows that the dotted arrow is a weak equivalence, hence a homotopy equivalence over $\map(\poly f(E) \times B, D)$.
+  Since~\eqref{eq:cellmonad-fibliftsq} gives an element of its codomain (the pullback $\bullet$), we thus have an element of its domain with the same image in $\map(\poly f(E) \times B, D)$.
+  But this is exactly a $(\poly f \times B)$-algebra structure on $E$ making $q$ a $(\poly f \times B)$-algebra map, as desired.
+\end{proof}
+
+Now we can essentially copy a couple of the central results of~\cite[\S1.2]{szumilo:cocompl-hoth}.
+
+\begin{lem}\label{thm:pb-plfib}
+  In the category of pleasant fibration categories and pleasantly exact functors, all pullbacks of pleasant fibrations exist.
+\end{lem}
+\begin{proof}
+  The proof of~\cite[Proposition 1.10]{szumilo:cocompl-hoth} (dualized) applies essentially without change, except that to construct factorizations in the pullback we use the ``good'' factorizations into an acyclic cofibration and a fibration, which are preserved by pleasantly exact functors and lifted by pleasant fibrations.
+\end{proof}
+
+\begin{lem}
+  A pleasant fibration $\pi:\C\to\D$ induces an equivalence of Dwyer-Kan localizations if and only if
+  \begin{itemize}
+  \item It reflects weak equivalences, and
+  \item For any $C\in\C$ and fibration $q:X\to \pi C$ in $\D$, there is a fibration $p:D\to C$ in $\C$ with $\pi p = q$.
+  \end{itemize}
+  In this case we call it a \textbf{pleasantly acyclic fibration}.
+\end{lem}
+\begin{proof}
+  The proof of~\cite[Proposition 1.10]{szumilo:cocompl-hoth} (dualized) again applies essentially directly, the only change being that instead of applying the ``lifting property for pseudofactorizations'' (which pleasant fibrations do not satisfy), we first lift $t'$ using \cref{def:pleasant-fib}\ref{item:pf4}, and then lift $j$ using \cref{def:pleasant-fib}\ref{item:pf3} --- we don't manage to lift $s'$, but this doesn't matter.
+\end{proof}
+
+\begin{cor}\label{thm:pb-plafib}
+  Pleasantly acyclic fibrations are stable under pullback along pleasantly exact functors.\qed
+\end{cor}
+
+Putting these together as in~\cite[Theorem 1.14]{szumilo:cocompl-hoth}, we obtain the following:
+
+\begin{thm}\label{thm:pleasant-fibcat}
+  The category of pleasant fibration categories and pleasantly exact functors is itself a fibration category, where the weak equivalences are those inducing an equivalence of Dwyer-Kan localizations and the fibrations are the pleasant fibrations.
+\end{thm}
+\begin{proof}
+  The proof is almost identical to~\cite[Theorem 1.14]{szumilo:cocompl-hoth} once we have \cref{thm:pb-plfib,thm:pb-plafib}; what remains is to construct path objects.
+  We use exactly the same construction as (the dual of) \textit{ibid.}.
+  Define the acyclic cofibrations in $P\C$ to be the levelwise ones; what remains to show is that $P\C \to\C\times \C$ is a pleasant fibration.
+  The proof in \textit{ibid.}\ of the lifting property for factorizations, if carried out using good factorizations in $\C$, immediately implies \cref{def:pleasant-fib}\ref{item:pf2}, while of course \cref{def:pleasant-fib}\ref{item:pf3} is a special case of the ordinary lifting property for factorizations in \textit{ibid}.
+  For \cref{def:pleasant-fib}\ref{item:pf4}, suppose we have a span of acyclic fibrations $C_0 \ot C_{01} \to C_1$ along with acyclic fibrations $D_0 \to C_0$ and $D_1 \to C_1$.
+  Let $D_{01}$ be the wide pullback $D_0 \times_{C_0} C_{01} \times_{C_1} D_1$; then $D \to C$ is an acyclic fibration in $P\C$.
+\end{proof}
+
+Since we use the same path object as in~\cite[Theorem 1.14]{szumilo:cocompl-hoth}, the proof shows a little more:
+
+\begin{sch}\label{thm:dblfact}
+  Every pleasantly exact functor factors as a pleasantly exact weak equivalence followed by a functor that is \emph{both} a pleasant fibration and a fibration in the sense of~\cite{szumilo:cocompl-hoth}.
+\end{sch}
+\begin{proof}
+  The path object fibration $P\C \to\C\times \C$ is both, and the construction of arbitrary factorizations from path objects involves a pullback of this map composed with a product projection, which is also both.
+\end{proof}
+
+This enables us to deduce that the pushouts appearing in cell complexes of monads are homotopically well-behaved.
+
+\begin{thm}
+  A pullback of a pleasant fibration along a pleasantly exact functor induces a homotopy pullback of Dwyer-Kan localizations.
+\end{thm}
+\begin{proof}
+  Consider a cospan $\C \xto{g} \D \xot{q} \E$ where $g$ is pleasantly exact and $p$ is a pleasant fibration.
+  By \cref{thm:dblfact}, we can factor $p$ as a weak equivalence $w$ followed by a functor $q$ that is both a pleasant fibration and a fibration.
+  Thus, by the cogluing lemma in the fibration category of \cref{thm:pleasant-fibcat}, the pullback of $g$ and $p$ is weakly equivalent to the pullback of $g$ and $q$.
+  But the latter is a pullback of a fibration in the sense of~\cite{szumilo:cocompl-hoth}, so by~\cite[Propositions 3.4 and 3.15]{szumilo:cocompl-hoth} it induces a homotopy pullback of quasicategories of frames.
+  Hence, so does the former.
 \end{proof}
 
 
