@@ -1242,7 +1242,18 @@ This implies the following:
   Then $X$ presents an initial object of the simplicial localization $(\infty,1)$-category.
 \end{lem}
 \begin{proof}
-  TODO.
+  Let $h\C$ denote the localization $(\infty,1)$-category; we first show that every morphism $Y\to X$ in $h\C$ has a section (up to homotopy, as appropriate in an $(\infty,1)$-category).
+  By the construction of the quasicategory of frames in~\cite{szumilo:cocompl-hoth}, any morphism $Y\to X$ in $h\C$ can be represented by a span $Y \xot{p} Z\xto{f} X$ in $\C$ where $p$ is an acyclic fibration and $f$ is a fibration.
+  By assumption, $f$ has a section $s$; then $p s : X\to Y$ represents a section of $fp^{-1}$, since $f p^{-1} p s \sim f s = 1_X$.
+
+  Now we show that the hom-space $h\C(X,Y)$ is contractible for any $Y$.
+  First of all we note that it is inhabited, since the projection $X\times Y \to X$ in $\C$ has a section.
+  Furthermore, it is connected, for if we have $f,g\in h\C(X,Y)$ then their equalizer is a map to $X$, and a section of it shows that $f\sim g$.
+  
+  Now it will suffice to show that for any $f\in h\C(X,Y)$ and $n\in\mathbb{N}$, the homotopy group $\pi_n(h\C(X,Y),f)$ is trivial.
+  Let $\alpha : S^n \to h\C(X,Y)$ represent some element of $\pi_n(h\C(X,Y),f)$.
+  Then since $h\C$ is finitely complete by~\cite[Theorem 3.3]{szumilo:cocompl-hoth}, the cotensor $Y^{S^n}$ exists, and $\alpha$ corresponds to a map $\hat{\alpha}:X\to Y^{S^n}$.
+  But the constant loop $c:S^n \to h\C(X,Y)$ also corresponds to a map $\hat{c}:X\to Y^{S^n}$, and the equalizer of $\hat{\alpha}$ and $\hat{c}$ has a section, so $\hat{c}\sim\hat{\alpha}$ and hence $\alpha\sim c$.
 \end{proof}
 
 \begin{thm}
