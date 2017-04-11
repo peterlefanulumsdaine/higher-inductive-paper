@@ -1,0 +1,180 @@
+\documentclass{amsart}
+
+\input{decls}
+\input{macros}
+\def\name#1{\ulcorner #1\urcorner}
+\setcounter{tocdepth}{1}
+\usepackage[utf8]{inputenc}
+
+\title{Semantics of pushouts in homotopy type theory}
+
+\author{Peter LeFanu Lumsdaine}
+\author{Michael Shulman}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+\label{sec:introduction}
+
+
+
+\section{Type-theoretic model categories}
+\label{sec:model-categ-type}
+
+We will work throughout in the following context.
+
+\begin{defn}
+  A \textbf{strong type-theoretic simplicial model category} is a simplicial model category \sM with the following additional properties.
+  \begin{enumerate}
+  \item Limits preserve cofibrations.\label{item:m1}
+  \item \sM is \emph{right proper}, i.e.\ weak equivalences are preserved by pullback along fibrations.\label{item:m2}
+  \item \sM is locally cartesian closed.\label{item:m3}
+  \end{enumerate}
+\end{defn}
+
+In particular, a \emph{Cisinski model category}~\cite{cisinski:topos,cisinski:presheaves} is a model structure on a Grothendieck topos whose cofibrations are the monomorphisms.
+Therefore, any right proper simplicial Cisinski model category is a strong type-theoretic simplicial model category.
+
+As shown in~\cite{shulman:invdia}, the subcategory of fibrant objects in a type-theoretic model category is a ``type-theoretic fibration category''.
+In particular, cofibrations are stable under pullback, so acyclic cofibrations are stable under pullback along fibrations, and hence dependent products of fibrations along fibrations are fibrations.
+This gives the categorical analogue of the structure required to model type theory with dependent sums (including a unit type), dependent products, and an identity type.
+To actually construct such an interpretation requires a coherence theorem\footnote{And also an ``initiality theorem''.} making all the structure strictly stable under pullback.
+
+We will use the coherence method of~\cite{lw:localuniv}, which applies to many different kinds of structure: it shows that if a structure is ``weakly stable'', meaning that the pullback of \emph{a} structure is \emph{a} structure, then in the ``left adjoint splitting'' it can be made strictly stable.
+The idea is that if $\Gamma$ is an object of $\sM$, then ``a type $A$ in context $\Gamma$'' is interpreted by a fibration $E_A \fib V_A$ and a map $\name{A}:\Gamma\to V_A$; we call $V_A$ the ``local universe'' and think of this as a representative of the pullback of $E_A$ along $\name{A}$.
+Reindexing of such types is done by simple composition (``$f^*A$'' is $\name{A}\circ f$) which is strictly associative.
+Moreover, the presence of local universes allows us to apply categorical constructions once in the ``universal case'', making them strictly preserved by reindexing as well; see~\cite{lw:localuniv} for details.
+
+% We will also need the following enhancement of~\cite{lw:localuniv}.
+% For a type-theoretic model category, by the \textbf{fibrant left adjoint splitting} we mean the substructure of the left adjoint splitting consisting of only those types whose local universe object $V_A$ is fibrant.
+% Up to homotopy, this carries the same information, since every map is weakly equivalent to a fibration between fibrant objects.
+
+% \begin{thm}\label{thm:fibrant-lu}
+%   In a type-theoretic fibration category, the fibrant left adjoint splitting also inherits strictly stable structure of dependent sums, dependent products, and identity types.
+% \end{thm}
+% \begin{proof}
+%   It suffices to show that the ``universal case'' constructions on local universes all preserve fibrancy.
+%   The product of fibrant objects is certainly fibrant, and the construction $V_A \triangleleft V_B$ from~\cite[\S3.3]{lw:localuniv} is fibrant if all inputs are since the dependent product of a fibration along a fibration is a fibration.
+%   This suffices for the formation rules of dependent sums and products, and the other rules are automatically stable since they are unique (in our context these objects have strict universal properties).
+
+%   For the identity type, the local universe of the formation and introduction rules is just the domain of a composite of fibrations over a fibrant object, hence fibrant.
+%   Here we need to consider also the local universe for the elimination and computation rules; but this is also constructed as a dependent product of a fibration along a fibration.
+% \end{proof}
+
+We have also added here to the definition of type-theoretic model category the assumption that the model category is simplicial, i.e.\ it is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product axiom.
+This enables us to construct path objects (which model identity types) as simplicial powers.
+Specifically, if $\ivl$ denotes the 1-simplex (the simplicial interval), then for any fibrant object $A$, the power $A^\ivl$ is a path-object for $A$.
+Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``local power'' $p^\ivl = A^\ivl \times_{\Gamma^\ivl} \Gamma$ is a path-object for $A$ regarded as a type over $\Gamma$.
+
+This is important for us because it means that homotopies can be represented in adjoint form: a map $A\to B^\ivl$ is equivalent to a map $A\ten \ivl \to B$, where $A\ten \ivl$ is the simplicial copower.
+Note that like other colimits, the simplicial copower of $p:A\fib \Gamma$ in the slice category over $\Gamma$ is just $A\ten\ivl$ with the projection $A\ten\ivl \to A \to \Gamma$.
+Moreover, each slice category of \sM is a simplicial model category, and pullback preserves both simplicial powers and copowers.
+
+
+\section{Coproducts}
+\label{sec:coproducts}
+
+We warm up for pushouts by considering the case of coproducts.
+To start with, we specialize the definitions from~\cite[\S3.4.1]{lw:localuniv} to our context of a strong type-theoretic simplicial model category.
+We qualify these definitions with ``type-theoretic'' to distinguish them from the ordinary categorical constructions in \sM.
+
+\begin{defn}\label{defn:sum}
+  A \textbf{type-theoretic coproduct} of fibrations $A_1\to \Gamma$ and $A_2\to\Gamma$ consists of a fibration $A_1\oplus A_2 \to\Gamma$ with maps $\nu_i: A_i \to A_1\oplus A_2$ over $\Gamma$ such that for any fibration $C\to A_1\oplus A_2$ with sections $t_i : A_i \to C$ over $\nu_i$, there exists a section $s:A_1\oplus A_2 \to C$ such that $s\circ \nu_i = t_i$.
+
+  We say \sM has \textbf{weakly stable type-theoretic coproducts} if for any $A_1\to \Gamma$ and $A_2\to\Gamma$ there exists a type-theoretic coproduct $A_1\oplus A_2$ such that for any $\sigma:\Delta\to\Gamma$, the pullback $\sigma^*(A_1\oplus A_2)$ with injections $\sigma^*\nu_i$ is a type-theoretic coproduct of $\sigma^*A_1$ and $\sigma^* A_2$.
+\end{defn}
+
+\begin{thm}[{\cite[Lemma 3.4.1.4]{lw:localuniv}}]
+  If \sM has weakly stable type-theoretic coproducts, then its left adjoint splitting models type theory with coproduct types.
+  % Moreover, so does its fibrant left adjoint splitting.
+\end{thm}
+% \begin{proof}
+%   The first statement follows from~\cite[Lemma 3.4.1.4]{lw:localuniv}.
+%   For the second, it remains to show that fibrancy of local universes is preserved.
+%   The local universe for the formation and introduction rules is $V_{A_1}\times V_{A_2}$, which is certainly fibrant if $V_{A_1}$ and $V_{A_2}$ are.
+%   The local universe for the elimination and computation rules is more complicated, but involves only fibrations and dependent products, so it is also fibrant if all inputs are.
+% \end{proof}
+
+Now, how do we actually \emph{construct} weakly stable type-theoretic coproducts?
+Of course, since \sM is a model category, it has ordinary categorical coproducts, and the coproduct $A_1 + A_2 \to \Gamma$ satisfies all parts of \cref{defn:sum} except that it may not be a fibration.
+(Admittedly, for some particularly nice \sM, such as simplicial sets, it is always a fibration.
+However, we treat the general case not only out of a desire for generality, but because in the case of pushouts the analogous argument will be necessary even when \sM is simplicial sets.)
+
+The obvious solution is to fibrantly replace it.
+Thus, let $A_1 + A_2 \to A_1\oplus A_2 \fib \Gamma$ be an (acyclic cofibration, fibration) factorization.
+
+\begin{thm}\label{thm:coproduct}
+  For any fibrations $A_1 \fib \Gamma$ and $A_2\fib\Gamma$, % with $\Gamma$ a fibrant object, 
+  the fibration $A_1\oplus A_2 \fib\Gamma$ is a weakly stable type-theoretic coproduct.
+\end{thm}
+\begin{proof}
+  We define the injections by composition with those of $A_1+A_2$.
+  To show that $A_1\oplus A_2$ is a type-theoretic coproduct, let $C\fib A_1\oplus A_2$ be a fibration with sections $t_i$ over $A_i$.
+  Then the universal property of $A_1+A_2$ induces a section $t : A_1+A_2 \to C$, and the lifting property of the acyclic cofibration $A_1+A_2 \to A_1\oplus A_2$ against the fibration $C\fib A_1\oplus A_2$ allows us to extend this section to $A_1\oplus A_2$.
+
+  To show that this type-theoretic coproduct is weakly stable, it suffices to show that for any $\sigma :\Delta\to\Gamma$, the pullback $\sigma^*(A_1+A_2) \to \sigma^*(A_1\oplus A_2)$ is again an acyclic cofibration.
+  Since cofibrations are stable under pullback in any type-theoretic model category, this map is a cofibration; thus it remains to show it is a weak equivalence.
+  Weak equivalences are not generally stable under pullback, but weak equivalences between fibrations are; so we would be done if $A_1+A_2 \to \Gamma$ were a fibration, but the whole point is that it may not be.
+
+  Right properness of \sM ensures that weak equivalences are also stable under pullback along fibrations, so we would be done if $\sigma$ were a fibration.
+  In general it may not be either, but we can factor it as an acyclic cofibration followed by a fibration.
+  Thus, without loss of generality we may assume that $\sigma$ is an acyclic cofibration.
+
+  In this case, right properness tells us that the induced maps $\sigma^*A_i \to A_i$ and $\sigma^*(A_1\oplus A_2) \to (A_1\oplus A_2)$ are weak equivalences, hence acyclic cofibrations, since they are pullbacks of $\sigma$ along fibrations.
+  Moreover, acyclic cofibrations are closed under coproducts (being the left class of a weak factorization system), so the induced map $\sigma^*A_1 +\sigma^*A_2 \to A_1+A_2$ is an acyclic cofibration.
+  Moreover, since $\sigma^*$ is a left adjoint, it preserves coproducts.
+  Thus, in the following square
+  \[ \xymatrix{ \sigma^*(A_1+A_2) \ar[r]^-\sim \ar[d] & A_1+A_2 \ar[d]^\sim \\ \sigma^*(A_1\oplus A_2) \ar[r]_-\sim & A_1\oplus A_2} \]
+  all the marked maps are acyclic cofibrations, hence weak equivalences.
+  Hence, by 2-out-of-3, so is the remaining map, which is what we wanted.
+\end{proof}
+
+\begin{cor}
+  The left adjoint splitting of \sM models coproduct types.
+\end{cor}
+
+
+\section{Pushouts}
+\label{sec:pushouts}
+
+Higher inductive pushouts are not a traditionally standard type constructor, so we need to begin with definitions.
+In this section we will only consider a specialization of weakly stable structure to our context of a strong type-theoretic simplicial model category.
+In the next section we will define relate this to type theory, in particular defining strictly stable structure and prove the relevant local universes coherence theorem.
+
+\begin{defn}\label{defn:pushout}
+  Let $f_1:A\to B_1$ and $f_2:A\to B_2$ be morphisms between fibrations $A\fib\Gamma$ and $B_i\fib\Gamma$.
+  A \textbf{type-theoretic pushout} is a fibration $P\fib\Gamma$ with maps $\nu_i : B_i \to P$ over $\Gamma$ and a homotopy $\mu:A \ten \ivl \to P$ over $\Gamma$ between $\nu_1 \circ f_1$ and $\nu_2\circ f_2$, such that for any fibration $C\fib P$ equipped with sections $t_i : B_i \to C$ over $\nu_i$ and a homotopy $u:A\ten \ivl \to C$ over $\mu$, there exists a section $s:P\to C$ such that $s\circ \nu_i = t_i$ and $s\circ \mu = u$.
+
+  We say \sM has \textbf{weakly stable type-theoretic pushouts} if for any $f_1,f_2$ there exists a type-theoretic pushout $P$ such that for any $\sigma:\Delta\to\Gamma$, the pullback $\sigma^* P$ with injections $\sigma^*\nu_i$ and homotopy $\sigma^*\mu$ is a type-theoretic pushout of $\sigma^*f_1$ and $\sigma^* f_2$.
+\end{defn}
+
+\begin{thm}
+  Any strong type-theoretic simplicial model category has weakly stable type-theoretic pushouts.
+\end{thm}
+\begin{proof}
+  Give $f_1,f_2$, let $Q$ be their explicit homotopy pushout, meaning the pushout of the following diagram in \sM:
+  % \[ \xymatrix@-.5pc{ & A \ar[r]^{f_1} \ar[d]^{i_1} & B_1 \\ A \ar[d]_{f_2} \ar[r]^-{i_2} & A\ten \ivl\\ B_2 } \]
+  \[ \xymatrix{ A+A \ar[r]^{\iota} \ar[d]_{f_1+f_2} & A\ten\ivl \\ B_1+B_2 } \]
+  By construction, this satisfies all parts of \cref{defn:pushout} except that it may not be a fibration over $\Gamma$.
+  (And in this case it really isn't, even in simplicial sets.)
+  Let $P$ be its fibrant replacement, i.e.\ we have a factorization $Q\to P \fib \Gamma$ as an acyclic cofibration followed by a fibration.
+  Then $P$ has injections and a homotopy obtained by composition from $Q$, and for any fibration $C\fib P$ as in \cref{defn:pushout} we can first define a section over $Q$ by its universal property and then extend to $P$ by lifting against the acyclic cofibration $Q\to P$.
+
+  It remains to deal with weak stability.
+  As in \cref{thm:coproduct}, for this it suffices to show that $\sigma^*Q\to\sigma^*P$ is an acyclic cofibration for any acyclic cofibration $\sigma:\Delta\to\Gamma$, and by 2-out-of-3 it suffices to show that $\sigma^*Q \to Q$ is an acyclic cofibration.
+  Again, $\sigma^*$ preserves colimits and simplicial copowers, so $\sigma^*Q $ is the pushout of $\sigma^*B_1+\sigma^*B_2$ and $\sigma^*A \ten\ivl$ under $\sigma^*A+\sigma^*A$.
+  Furthermore, again as in \cref{thm:coproduct}, $\sigma^*A \to A$ and $\sigma^*B_i \to B_i$ are acyclic cofibrations, hence so are $\sigma^*A+\sigma^*A \to A+A$ and ${\sigma^*B_1 +\sigma^*B_2} \to B_1+B_2$.
+
+  Now, since $\sigma^*Q \to Q$ factors through the pushout $(B_1+B_2) \sqcup_{\sigma^*B_1 +\sigma^*B_2} \sigma^*Q$, it suffices to show that both halves of that factorization are acyclic cofibrations.
+  The first half $\sigma^*Q \to (B_1+B_2) \sqcup_{\sigma^*B_1 +\sigma^*B_2} \sigma^*Q$ is a pushout of the acyclic cofibration ${\sigma^*B_1 +\sigma^*B_2} \to B_1+B_2$, hence an acyclic cofibration.
+  And by the standard sort of pushout-cube arguments the second half $(B_1+B_2) \sqcup_{\sigma^*B_1 +\sigma^*B_2} \sigma^*Q \to Q$ is a pushout of the induced map 
+\end{proof}
+
+
+\bibliographystyle{alpha}
+\bibliography{basictex/all}
+
+\end{document}
