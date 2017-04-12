@@ -3,6 +3,7 @@
 \input{decls}
 \input{macros}
 \def\name#1{\ulcorner #1\urcorner}
+\let\J\iJ
 \setcounter{tocdepth}{1}
 \usepackage[utf8]{inputenc}
 
@@ -21,28 +22,29 @@
 
 
 
-\section{Type-theoretic model categories}
+\section{Good model categories}
 \label{sec:model-categ-type}
 
 We will work throughout in the following context.
 
 \begin{defn}
-  A \textbf{strong type-theoretic simplicial model category} is a simplicial model category \sM with the following additional properties.
+  A \textbf{good model category} is a model category \sM with the following additional properties.
   \begin{enumerate}
-  \item Limits preserve cofibrations.\label{item:m1}
+  \item \sM is simplicial.\label{item:m0}
+  \item The cofibrations are the monomorphisms.\label{item:m1}
   \item \sM is \emph{right proper}, i.e.\ weak equivalences are preserved by pullback along fibrations.\label{item:m2}
   \item \sM is locally cartesian closed.\label{item:m3}
   \end{enumerate}
 \end{defn}
 
 In particular, a \emph{Cisinski model category}~\cite{cisinski:topos,cisinski:presheaves} is a model structure on a Grothendieck topos whose cofibrations are the monomorphisms.
-Therefore, any right proper simplicial Cisinski model category is a strong type-theoretic simplicial model category.
+Therefore, any right proper simplicial Cisinski model category is a good model category.
 
-As shown in~\cite{shulman:invdia}, the subcategory of fibrant objects in a type-theoretic model category is a ``type-theoretic fibration category''.
+Every good model category is a type-theoretic model category in the sense of~\cite{shulman:invdia}, and hence the subcategory of fibrant objects is a type-theoretic fibration category.
 In particular, cofibrations are stable under pullback, so acyclic cofibrations are stable under pullback along fibrations, and hence dependent products of fibrations along fibrations are fibrations.
 This gives the categorical analogue of the structure required to model type theory with dependent sums (including a unit type), dependent products, and an identity type.
-To actually construct such an interpretation requires a coherence theorem\footnote{And also an ``initiality theorem''.} making all the structure strictly stable under pullback.
 
+To actually construct such an interpretation requires a coherence theorem\footnote{And also an ``initiality theorem''.} making all the structure strictly stable under pullback.
 We will use the coherence method of~\cite{lw:localuniv}, which applies to many different kinds of structure: it shows that if a structure is ``weakly stable'', meaning that the pullback of \emph{a} structure is \emph{a} structure, then in the ``left adjoint splitting'' it can be made strictly stable.
 The idea is that if $\Gamma$ is an object of $\sM$, then ``a type $A$ in context $\Gamma$'' is interpreted by a fibration $E_A \fib V_A$ and a map $\name{A}:\Gamma\to V_A$; we call $V_A$ the ``local universe'' and think of this as a representative of the pullback of $E_A$ along $\name{A}$.
 Reindexing of such types is done by simple composition (``$f^*A$'' is $\name{A}\circ f$) which is strictly associative.
@@ -64,10 +66,10 @@ Moreover, the presence of local universes allows us to apply categorical constru
 %   Here we need to consider also the local universe for the elimination and computation rules; but this is also constructed as a dependent product of a fibration along a fibration.
 % \end{proof}
 
-We have also added here to the definition of type-theoretic model category the assumption that the model category is simplicial, i.e.\ it is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product axiom.
+Assumption~\ref{item:m0} tells us that \sM is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product and pullback-corner axioms.
 This enables us to construct path objects (which model identity types) as simplicial powers.
 Specifically, if $\ivl$ denotes the 1-simplex (the simplicial interval), then for any fibrant object $A$, the power $A^\ivl$ is a path-object for $A$.
-Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``local power'' $p^\ivl = A^\ivl \times_{\Gamma^\ivl} \Gamma$ is a path-object for $A$ regarded as a type over $\Gamma$.
+Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``local power'' $p^\ivl = A^\ivl \times_{\Gamma^\ivl} \Gamma$ is a path-object for $A$ regarded as a type over $\Gamma$; see \cref{thm:stable-id}.
 
 This is important for us because it means that homotopies can be represented in adjoint form: a map $A\to B^\ivl$ is equivalent to a map $A\ten \ivl \to B$, where $A\ten \ivl$ is the simplicial copower.
 Note that like other colimits, the simplicial copower of $p:A\fib \Gamma$ in the slice category over $\Gamma$ is just $A\ten\ivl$ with the projection $A\ten\ivl \to A \to \Gamma$.
@@ -78,7 +80,7 @@ Moreover, each slice category of \sM is a simplicial model category, and pullbac
 \label{sec:coproducts}
 
 We warm up for pushouts by considering the case of coproducts.
-To start with, we specialize the definitions from~\cite[\S3.4.1]{lw:localuniv} to our context of a strong type-theoretic simplicial model category.
+To start with, we specialize the definitions from~\cite[\S3.4.1]{lw:localuniv} to our context of a good model category.
 We qualify these definitions with ``typal'' (the adjective of ``type'') to distinguish them from the ordinary categorical constructions in \sM.
 
 \begin{defn}\label{defn:sum}
@@ -116,7 +118,7 @@ Thus, let $A_1 + A_2 \to A_1\oplus A_2 \fib \Gamma$ be an (acyclic cofibration, 
   Then the universal property of $A_1+A_2$ induces a section $t : A_1+A_2 \to C$, and the lifting property of the acyclic cofibration $A_1+A_2 \to A_1\oplus A_2$ against the fibration $C\fib A_1\oplus A_2$ allows us to extend this section to $A_1\oplus A_2$.
 
   To show that this typal coproduct is weakly stable, it suffices to show that for any $\sigma :\Delta\to\Gamma$, the pullback $\sigma^*(A_1+A_2) \to \sigma^*(A_1\oplus A_2)$ is again an acyclic cofibration.
-  Since cofibrations are stable under pullback in any type-theoretic model category, this map is a cofibration; thus it remains to show it is a weak equivalence.
+  Since cofibrations are stable under pullback, this map is a cofibration; thus it remains to show it is a weak equivalence.
   Weak equivalences are not generally stable under pullback, but weak equivalences between fibrations are; so we would be done if $A_1+A_2 \to \Gamma$ were a fibration, but the whole point is that it may not be.
 
   Right properness of \sM ensures that weak equivalences are also stable under pullback along fibrations, so we would be done if $\sigma$ were a fibration.
@@ -141,10 +143,10 @@ Thus, let $A_1 + A_2 \to A_1\oplus A_2 \fib \Gamma$ be an (acyclic cofibration, 
 \label{sec:pushouts}
 
 Higher inductive pushouts are not a traditionally standard type constructor, so we need to begin with definitions.
-In this section we will consider a sort of weakly stable structure that only makes sense in a context where we have simplicial homotopies.
+First we consider a sort of weakly stable structure that only makes sense in a context where we have simplicial homotopies.
 Later we will relate this to type theory, define strictly stable pushouts, and prove the relevant local universes coherence theorem.
 
-\begin{defn}\label{defn:pushout}
+\begin{defn}\label{defn:ivl-pushout}
   Let $f_1:A\to B_1$ and $f_2:A\to B_2$ be morphisms between fibrations $A\fib\Gamma$ and $B_i\fib\Gamma$.
   A \textbf{$\ivl$-typal pushout} is a fibration $P\fib\Gamma$ with maps $\nu_i : B_i \to P$ over $\Gamma$ and a homotopy $\mu:A \ten \ivl \to P$ over $\Gamma$ between $\nu_1 \circ f_1$ and $\nu_2\circ f_2$, such that for any fibration $C\fib P$ equipped with sections $t_i : B_i \to C$ over $\nu_i$ and a homotopy $u:A\ten \ivl \to C$ over $\mu$, there exists a section $s:P\to C$ such that $s\circ \nu_i = t_i$ and $s\circ \mu = u$.
 
@@ -152,16 +154,16 @@ Later we will relate this to type theory, define strictly stable pushouts, and p
 \end{defn}
 
 \begin{thm}
-  Any strong typal simplicial model category has weakly stable $\ivl$-typal pushouts.
+  Any good model category has weakly stable $\ivl$-typal pushouts.
 \end{thm}
 \begin{proof}
   Give $f_1,f_2$, let $Q$ be their explicit homotopy pushout, meaning the pushout of the following diagram in \sM:
   % \[ \xymatrix@-.5pc{ & A \ar[r]^{f_1} \ar[d]^{i_1} & B_1 \\ A \ar[d]_{f_2} \ar[r]^-{i_2} & A\ten \ivl\\ B_2 } \]
   \[ \xymatrix{ A+A \ar[r]^{\iota} \ar[d]_{f_1+f_2} & A\ten\ivl \\ B_1+B_2 } \]
-  By construction, this satisfies all parts of \cref{defn:pushout} except that it may not be a fibration over $\Gamma$.
+  By construction, this satisfies all parts of \cref{defn:ivl-pushout} except that it may not be a fibration over $\Gamma$.
   (And in this case it really isn't, even in simplicial sets.)
   Let $P$ be its fibrant replacement, i.e.\ we have a factorization $Q\to P \fib \Gamma$ as an acyclic cofibration followed by a fibration.
-  Then $P$ has injections and a homotopy obtained by composition from $Q$, and for any fibration $C\fib P$ as in \cref{defn:pushout} we can first define a section over $Q$ by its universal property and then extend to $P$ by lifting against the acyclic cofibration $Q\to P$.
+  Then $P$ has injections and a homotopy obtained by composition from $Q$, and for any fibration $C\fib P$ as in \cref{defn:ivl-pushout} we can first define a section over $Q$ by its universal property and then extend to $P$ by lifting against the acyclic cofibration $Q\to P$.
 
   It remains to deal with weak stability.
   As in \cref{thm:coproduct}, for this it suffices to show that $\sigma^*Q\to\sigma^*P$ is an acyclic cofibration for any acyclic cofibration $\sigma:\Delta\to\Gamma$, and by 2-out-of-3 it suffices to show that $\sigma^*Q \to Q$ is an acyclic cofibration.
@@ -186,6 +188,57 @@ Later we will relate this to type theory, define strictly stable pushouts, and p
   However, this map is the pushout-product of the acyclic cofibration $\sigma^*A\to A$ and the cofibration of simplicial sets $\mathbf{2}\to\ivl$.
   Thus since the model structure is simplicial, it is an acyclic cofibration as well.
 \end{proof}
+
+Inside of (ordinary, Martin-L\"of) type theory, of course, we do not have an ``$\ivl$'', so \cref{defn:ivl-pushout} does not correspond directly to anything type-theoretic the way \cref{defn:sum} does.
+Instead we need a version of this definition that refers only to identity types, which categorically means path-objects.
+This is an instance of ``one type constructor stacked on top of another'', like the case of $\mathsf{W}$-types considered in~\cite[\S3.4.4]{lw:localuniv}; hence we need to start by defining good classes of identity types.
+
+\begin{defn}
+  A \textbf{stable class of identity types} on \sM consists of:
+  \begin{itemize}
+  \item For each fibration $A\fib \Gamma$, a non-empty family of ``good'' factorizations $A \to P_\Gamma A \fib A\times_\Gamma A$ of the diagonal in which the second factor is a fibration, stable under reindexing in the sense that the pullback of any good factorization along any map $\sigma:\Delta\to\Gamma$ is again good.
+  \item For each good factorization $A \to P_\Gamma A \fib A\times_\Gamma A$ and each fibration $C\fib A\times_\Gamma A$ equipped with a section $c:A\to C$ over the diagonal, a non-empty family of ``good'' extensions of that section to $P_\Gamma A$.
+  \end{itemize}
+\end{defn}
+
+\begin{thm}\label{thm:stable-id}
+  Any good model category has a stable class of identity types, called the \textbf{canonical stable class of identity types}, in which:
+  \begin{itemize}
+  \item the good factorizations of a fibration $p:A\fib\Gamma$ are those for which $P_\Gamma A$ isomorphic to the simplicial power $p^\ivl$ in the slice category over $\Gamma$, with its canonical factorization, and
+  \item for any $C$ and $c$, every extension of $c$ to $P_\Gamma A$ is good.
+  \end{itemize}
+\end{thm}
+\begin{proof}
+  The projection $P_\Gamma A \to A\times_\Gamma A$ is the pullback corner map for the fibrant object $A\in\sM/\Gamma$ and the cofibration $\mathbf{2}\to \ivl$.
+  Since $\sM/\Gamma$ is a simplicial model category, this map is a fibration; thus all good factorizations have the correct type.
+
+  Similarly, the inclusion $A\to P_\Gamma A$ is the pullback corner map for $A$ and the projection $\ivl \to \mathbf{1}$; since $A$ is fibrant and $\ivl \to \mathbf{1}$ is a weak equivalence between fibrant objects, $A\to P_\Gamma A$ is a weak equivalence.
+  Moreover, it is a split monomorphism, hence a cofibration, and thus an acyclic cofibration.
+  It follows that given any $C$ and $c$ there exists such an extension, i.e.\ the set of good extensions is non-empty.
+\end{proof}
+
+\begin{defn}\label{defn:J-pushout}
+  Let $f_1:A\to B_1$ and $f_2:A\to B_2$ be morphisms between fibrations $A\fib\Gamma$ and $B_i\fib\Gamma$, and suppose given a stable class of identity types on \sM.
+  A \textbf{\J-typal pushout} relative to this stable class is a fibration $D\fib\Gamma$ with maps $\nu_i : B_i \to D$ over $\Gamma$ and a lifting $\mu:A \to P_\Gamma D$ lifting $(\nu_1 \circ f_1,\nu_2\circ f_2):A \to D\times_\Gamma D$, such that for any fibration $C\fib D$ equipped with sections $t_i : B_i \to C$ over $\nu_i$ and a map $u:?$, there exists a section $s:P\to C$ such that $s\circ \nu_i = t_i$ and ?.
+
+  It is \textbf{weakly stable} if\dots
+\end{defn}
+
+\begin{thm}
+  Any good model category has weakly stable \J-typal pushouts relative to the canonical stable class of identity types.
+\end{thm}
+\begin{proof}
+  TODO
+\end{proof}
+
+
+\section{Coherence for pushouts}
+\label{sec:coherence-pushouts}
+
+The definition of weak stability is chosen to as to be able to apply the local universes coherence method of~\cite{lw:localuniv}.
+However, at present this method is not a single theorem but has to be applied separately in each case; we proceed to do this for pushouts.
+
+[Hmm, I guess at this point we have to start talking about comprehension categories, which means repeating \cref{defn:J-pushout} in that generality.]
 
 
 \bibliographystyle{alpha}
