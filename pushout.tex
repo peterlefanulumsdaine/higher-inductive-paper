@@ -133,7 +133,7 @@ Thus, let $A_1 + A_2 \to A_1\oplus A_2 \fib \Gamma$ be an (acyclic cofibration, 
 \end{proof}
 
 \begin{cor}
-  The left adjoint splitting of \sM models coproduct types.
+  The left adjoint splitting of \sM models coproduct types.\qed
 \end{cor}
 
 
@@ -141,18 +141,18 @@ Thus, let $A_1 + A_2 \to A_1\oplus A_2 \fib \Gamma$ be an (acyclic cofibration, 
 \label{sec:pushouts}
 
 Higher inductive pushouts are not a traditionally standard type constructor, so we need to begin with definitions.
-In this section we will only consider a specialization of weakly stable structure to our context of a strong type-theoretic simplicial model category.
-In the next section we will define relate this to type theory, in particular defining strictly stable structure and prove the relevant local universes coherence theorem.
+In this section we will consider a sort of weakly stable structure that only makes sense in a context where we have simplicial homotopies.
+Later we will relate this to type theory, define strictly stable pushouts, and prove the relevant local universes coherence theorem.
 
 \begin{defn}\label{defn:pushout}
   Let $f_1:A\to B_1$ and $f_2:A\to B_2$ be morphisms between fibrations $A\fib\Gamma$ and $B_i\fib\Gamma$.
-  A \textbf{type-theoretic pushout} is a fibration $P\fib\Gamma$ with maps $\nu_i : B_i \to P$ over $\Gamma$ and a homotopy $\mu:A \ten \ivl \to P$ over $\Gamma$ between $\nu_1 \circ f_1$ and $\nu_2\circ f_2$, such that for any fibration $C\fib P$ equipped with sections $t_i : B_i \to C$ over $\nu_i$ and a homotopy $u:A\ten \ivl \to C$ over $\mu$, there exists a section $s:P\to C$ such that $s\circ \nu_i = t_i$ and $s\circ \mu = u$.
+  A \textbf{$\ivl$-type-theoretic pushout} is a fibration $P\fib\Gamma$ with maps $\nu_i : B_i \to P$ over $\Gamma$ and a homotopy $\mu:A \ten \ivl \to P$ over $\Gamma$ between $\nu_1 \circ f_1$ and $\nu_2\circ f_2$, such that for any fibration $C\fib P$ equipped with sections $t_i : B_i \to C$ over $\nu_i$ and a homotopy $u:A\ten \ivl \to C$ over $\mu$, there exists a section $s:P\to C$ such that $s\circ \nu_i = t_i$ and $s\circ \mu = u$.
 
-  We say \sM has \textbf{weakly stable type-theoretic pushouts} if for any $f_1,f_2$ there exists a type-theoretic pushout $P$ such that for any $\sigma:\Delta\to\Gamma$, the pullback $\sigma^* P$ with injections $\sigma^*\nu_i$ and homotopy $\sigma^*\mu$ is a type-theoretic pushout of $\sigma^*f_1$ and $\sigma^* f_2$.
+  We say \sM has \textbf{weakly stable $\ivl$-type-theoretic pushouts} if for any $f_1,f_2$ there exists a $\ivl$-type-theoretic pushout $P$ such that for any $\sigma:\Delta\to\Gamma$, the pullback $\sigma^* P$ with injections $\sigma^*\nu_i$ and homotopy $\sigma^*\mu$ is a $\ivl$-type-theoretic pushout of $\sigma^*f_1$ and $\sigma^* f_2$.
 \end{defn}
 
 \begin{thm}
-  Any strong type-theoretic simplicial model category has weakly stable type-theoretic pushouts.
+  Any strong type-theoretic simplicial model category has weakly stable $\ivl$-type-theoretic pushouts.
 \end{thm}
 \begin{proof}
   Give $f_1,f_2$, let $Q$ be their explicit homotopy pushout, meaning the pushout of the following diagram in \sM:
@@ -168,9 +168,23 @@ In the next section we will define relate this to type theory, in particular def
   Again, $\sigma^*$ preserves colimits and simplicial copowers, so $\sigma^*Q $ is the pushout of $\sigma^*B_1+\sigma^*B_2$ and $\sigma^*A \ten\ivl$ under $\sigma^*A+\sigma^*A$.
   Furthermore, again as in \cref{thm:coproduct}, $\sigma^*A \to A$ and $\sigma^*B_i \to B_i$ are acyclic cofibrations, hence so are $\sigma^*A+\sigma^*A \to A+A$ and ${\sigma^*B_1 +\sigma^*B_2} \to B_1+B_2$.
 
-  Now, since $\sigma^*Q \to Q$ factors through the pushout $(B_1+B_2) \sqcup_{\sigma^*B_1 +\sigma^*B_2} \sigma^*Q$, it suffices to show that both halves of that factorization are acyclic cofibrations.
-  The first half $\sigma^*Q \to (B_1+B_2) \sqcup_{\sigma^*B_1 +\sigma^*B_2} \sigma^*Q$ is a pushout of the acyclic cofibration ${\sigma^*B_1 +\sigma^*B_2} \to B_1+B_2$, hence an acyclic cofibration.
-  And by the standard sort of pushout-cube arguments the second half $(B_1+B_2) \sqcup_{\sigma^*B_1 +\sigma^*B_2} \sigma^*Q \to Q$ is a pushout of the induced map 
+  Now consider the following commutative cube, in which the left-hand and right-hand faces are pushouts, and the objects $R$ and $S$ are also pushouts.
+  \[\begin{tikzcd}
+    & \sigma^* A+\sigma^*A \arrow[dl] \arrow[rr] \arrow[dd] \ar[dr,phantom,"R"{name=sr}]
+    & & A+A \arrow[dl] \arrow[dd] \ar[to=sr] \\
+    \sigma^*A\ten\ivl\arrow[dd] \ar[to=sr] & & A\ten\ivl \ar[from=sr] \\
+    & \sigma^*B_1+\sigma^*B_2 \arrow[dl] \arrow[rr] \ar[dr,phantom,"S"{name=tr}]
+    \ar[from=sr,to=tr,crossing over]
+    \arrow[from=ul,to=ur, crossing over]
+    & & B_1+B_2 \arrow[dl] \ar[to=tr] \\
+    \sigma^*Q \arrow[rr] \ar[to=tr] & & Q \arrow[from=uu, crossing over]
+    \ar[from=tr] \\
+  \end{tikzcd}\]
+  To show that $\sigma^*Q \to Q$ is an acyclic cofibration, it will suffice to show that both of its factors $\sigma^*Q\to S$ and $S\to Q$ are such.
+  The former is easy, since it is a pushout of the acyclic cofibration ${\sigma^*B_1 +\sigma^*B_2} \to B_1+B_2$.
+  For the latter, a standard argument shows that it is the pushout of the map $R\to A\ten\ivl$ in the upper square.
+  However, this map is the pushout-product of the acyclic cofibration $\sigma^*A\to A$ and the cofibration of simplicial sets $\mathbf{2}\to\ivl$.
+  Thus since the model structure is simplicial, it is an acyclic cofibration as well.
 \end{proof}
 
 
