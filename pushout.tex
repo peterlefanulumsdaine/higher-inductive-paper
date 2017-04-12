@@ -79,16 +79,16 @@ Moreover, each slice category of \sM is a simplicial model category, and pullbac
 
 We warm up for pushouts by considering the case of coproducts.
 To start with, we specialize the definitions from~\cite[\S3.4.1]{lw:localuniv} to our context of a strong type-theoretic simplicial model category.
-We qualify these definitions with ``type-theoretic'' to distinguish them from the ordinary categorical constructions in \sM.
+We qualify these definitions with ``typal'' (the adjective of ``type'') to distinguish them from the ordinary categorical constructions in \sM.
 
 \begin{defn}\label{defn:sum}
-  A \textbf{type-theoretic coproduct} of fibrations $A_1\to \Gamma$ and $A_2\to\Gamma$ consists of a fibration $A_1\oplus A_2 \to\Gamma$ with maps $\nu_i: A_i \to A_1\oplus A_2$ over $\Gamma$ such that for any fibration $C\to A_1\oplus A_2$ with sections $t_i : A_i \to C$ over $\nu_i$, there exists a section $s:A_1\oplus A_2 \to C$ such that $s\circ \nu_i = t_i$.
+  A \textbf{typal coproduct} of fibrations $A_1\to \Gamma$ and $A_2\to\Gamma$ consists of a fibration $A_1\oplus A_2 \to\Gamma$ with maps $\nu_i: A_i \to A_1\oplus A_2$ over $\Gamma$ such that for any fibration $C\to A_1\oplus A_2$ with sections $t_i : A_i \to C$ over $\nu_i$, there exists a section $s:A_1\oplus A_2 \to C$ such that $s\circ \nu_i = t_i$.
 
-  We say \sM has \textbf{weakly stable type-theoretic coproducts} if for any $A_1\to \Gamma$ and $A_2\to\Gamma$ there exists a type-theoretic coproduct $A_1\oplus A_2$ such that for any $\sigma:\Delta\to\Gamma$, the pullback $\sigma^*(A_1\oplus A_2)$ with injections $\sigma^*\nu_i$ is a type-theoretic coproduct of $\sigma^*A_1$ and $\sigma^* A_2$.
+  We say \sM has \textbf{weakly stable typal coproducts} if for any $A_1\to \Gamma$ and $A_2\to\Gamma$ there exists a typal coproduct $A_1\oplus A_2$ such that for any $\sigma:\Delta\to\Gamma$, the pullback $\sigma^*(A_1\oplus A_2)$ with injections $\sigma^*\nu_i$ is a typal coproduct of $\sigma^*A_1$ and $\sigma^* A_2$.
 \end{defn}
 
 \begin{thm}[{\cite[Lemma 3.4.1.4]{lw:localuniv}}]
-  If \sM has weakly stable type-theoretic coproducts, then its left adjoint splitting models type theory with coproduct types.
+  If \sM has weakly stable typal coproducts, then its left adjoint splitting models type theory with coproduct types.
   % Moreover, so does its fibrant left adjoint splitting.
 \end{thm}
 % \begin{proof}
@@ -98,7 +98,7 @@ We qualify these definitions with ``type-theoretic'' to distinguish them from th
 %   The local universe for the elimination and computation rules is more complicated, but involves only fibrations and dependent products, so it is also fibrant if all inputs are.
 % \end{proof}
 
-Now, how do we actually \emph{construct} weakly stable type-theoretic coproducts?
+Now, how do we actually \emph{construct} weakly stable typal coproducts?
 Of course, since \sM is a model category, it has ordinary categorical coproducts, and the coproduct $A_1 + A_2 \to \Gamma$ satisfies all parts of \cref{defn:sum} except that it may not be a fibration.
 (Admittedly, for some particularly nice \sM, such as simplicial sets, it is always a fibration.
 However, we treat the general case not only out of a desire for generality, but because in the case of pushouts the analogous argument will be necessary even when \sM is simplicial sets.)
@@ -108,14 +108,14 @@ Thus, let $A_1 + A_2 \to A_1\oplus A_2 \fib \Gamma$ be an (acyclic cofibration, 
 
 \begin{thm}\label{thm:coproduct}
   For any fibrations $A_1 \fib \Gamma$ and $A_2\fib\Gamma$, % with $\Gamma$ a fibrant object, 
-  the fibration $A_1\oplus A_2 \fib\Gamma$ is a weakly stable type-theoretic coproduct.
+  the fibration $A_1\oplus A_2 \fib\Gamma$ is a weakly stable typal coproduct.
 \end{thm}
 \begin{proof}
   We define the injections by composition with those of $A_1+A_2$.
-  To show that $A_1\oplus A_2$ is a type-theoretic coproduct, let $C\fib A_1\oplus A_2$ be a fibration with sections $t_i$ over $A_i$.
+  To show that $A_1\oplus A_2$ is a typal coproduct, let $C\fib A_1\oplus A_2$ be a fibration with sections $t_i$ over $A_i$.
   Then the universal property of $A_1+A_2$ induces a section $t : A_1+A_2 \to C$, and the lifting property of the acyclic cofibration $A_1+A_2 \to A_1\oplus A_2$ against the fibration $C\fib A_1\oplus A_2$ allows us to extend this section to $A_1\oplus A_2$.
 
-  To show that this type-theoretic coproduct is weakly stable, it suffices to show that for any $\sigma :\Delta\to\Gamma$, the pullback $\sigma^*(A_1+A_2) \to \sigma^*(A_1\oplus A_2)$ is again an acyclic cofibration.
+  To show that this typal coproduct is weakly stable, it suffices to show that for any $\sigma :\Delta\to\Gamma$, the pullback $\sigma^*(A_1+A_2) \to \sigma^*(A_1\oplus A_2)$ is again an acyclic cofibration.
   Since cofibrations are stable under pullback in any type-theoretic model category, this map is a cofibration; thus it remains to show it is a weak equivalence.
   Weak equivalences are not generally stable under pullback, but weak equivalences between fibrations are; so we would be done if $A_1+A_2 \to \Gamma$ were a fibration, but the whole point is that it may not be.
 
@@ -146,13 +146,13 @@ Later we will relate this to type theory, define strictly stable pushouts, and p
 
 \begin{defn}\label{defn:pushout}
   Let $f_1:A\to B_1$ and $f_2:A\to B_2$ be morphisms between fibrations $A\fib\Gamma$ and $B_i\fib\Gamma$.
-  A \textbf{$\ivl$-type-theoretic pushout} is a fibration $P\fib\Gamma$ with maps $\nu_i : B_i \to P$ over $\Gamma$ and a homotopy $\mu:A \ten \ivl \to P$ over $\Gamma$ between $\nu_1 \circ f_1$ and $\nu_2\circ f_2$, such that for any fibration $C\fib P$ equipped with sections $t_i : B_i \to C$ over $\nu_i$ and a homotopy $u:A\ten \ivl \to C$ over $\mu$, there exists a section $s:P\to C$ such that $s\circ \nu_i = t_i$ and $s\circ \mu = u$.
+  A \textbf{$\ivl$-typal pushout} is a fibration $P\fib\Gamma$ with maps $\nu_i : B_i \to P$ over $\Gamma$ and a homotopy $\mu:A \ten \ivl \to P$ over $\Gamma$ between $\nu_1 \circ f_1$ and $\nu_2\circ f_2$, such that for any fibration $C\fib P$ equipped with sections $t_i : B_i \to C$ over $\nu_i$ and a homotopy $u:A\ten \ivl \to C$ over $\mu$, there exists a section $s:P\to C$ such that $s\circ \nu_i = t_i$ and $s\circ \mu = u$.
 
-  We say \sM has \textbf{weakly stable $\ivl$-type-theoretic pushouts} if for any $f_1,f_2$ there exists a $\ivl$-type-theoretic pushout $P$ such that for any $\sigma:\Delta\to\Gamma$, the pullback $\sigma^* P$ with injections $\sigma^*\nu_i$ and homotopy $\sigma^*\mu$ is a $\ivl$-type-theoretic pushout of $\sigma^*f_1$ and $\sigma^* f_2$.
+  We say \sM has \textbf{weakly stable $\ivl$-typal pushouts} if for any $f_1,f_2$ there exists a $\ivl$-typal pushout $P$ such that for any $\sigma:\Delta\to\Gamma$, the pullback $\sigma^* P$ with injections $\sigma^*\nu_i$ and homotopy $\sigma^*\mu$ is a $\ivl$-typal pushout of $\sigma^*f_1$ and $\sigma^* f_2$.
 \end{defn}
 
 \begin{thm}
-  Any strong type-theoretic simplicial model category has weakly stable $\ivl$-type-theoretic pushouts.
+  Any strong typal simplicial model category has weakly stable $\ivl$-typal pushouts.
 \end{thm}
 \begin{proof}
   Give $f_1,f_2$, let $Q$ be their explicit homotopy pushout, meaning the pushout of the following diagram in \sM:
