@@ -10,8 +10,14 @@
 \let\r\ir
 \autodefs{\fId}
 \let\Id\fId
+\let\G\cG
+\def\dG{\widehat{\G}}
+\usepackage{scalefnt}
+\newcommand{\mysc}[1]{\text{\scalefont{0.76}\uppercase{#1}}}
+\renewcommand{\idover}[4][]{\fId_{#1}^{#4}(#2,#3)}
 \setcounter{tocdepth}{1}
 \usepackage[utf8]{inputenc}
+\hyphenation{pseu-do-func-tor-ial}
 
 \title{Semantics of pushouts in homotopy type theory}
 
@@ -38,13 +44,22 @@ We will work throughout in the following context.
   \begin{enumerate}
   \item \sM is simplicial.\label{item:m0}
   \item The cofibrations are the monomorphisms.\label{item:m1}
-  \item \sM is \emph{right proper}, i.e.\ weak equivalences are preserved by pullback along fibrations.\label{item:m2}
-  \item \sM is locally cartesian closed.\label{item:m3}
+  \item \sM is right proper, i.e.\ weak equivalences are preserved by pullback along fibrations.\label{item:m2}
+  \item As a category, \sM is locally cartesian closed.\label{item:m3}
   \end{enumerate}
 \end{defn}
 
 In particular, a \emph{Cisinski model category}~\cite{cisinski:topos,cisinski:presheaves} is a model structure on a Grothendieck topos whose cofibrations are the monomorphisms.
 Therefore, any right proper simplicial Cisinski model category is a good model category.
+
+Assumption~\ref{item:m0} tells us that \sM is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product and pullback-corner axioms.
+This enables us to construct path objects (which model identity types) as simplicial powers.
+Specifically, if $\ivl$ denotes the 1-simplex (the simplicial interval), then for any fibrant object $A$, the power $A^\ivl$ is a path-object for $A$.
+Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``local power'' $B^\ivl_A = A^\ivl \times_{\Gamma^\ivl} \Gamma$ is a path-object for $A$ regarded as a type over $\Gamma$; see \cref{thm:stable-id}.
+
+This is important for us because it means that homotopies can be represented in adjoint form: a map $A\to B^\ivl$ is equivalent to a map $A\ten \ivl \to B$, where $A\ten \ivl$ is the simplicial copower.
+Note that like other colimits, the simplicial copower of $p:A\fib \Gamma$ in the slice category over $\Gamma$ is just $A\ten\ivl$ with the projection $A\ten\ivl \to A \to \Gamma$.
+Moreover, each slice category of \sM is a simplicial model category, and pullback preserves both simplicial powers and copowers.
 
 Every good model category is a type-theoretic model category in the sense of~\cite{shulman:invdia}, and hence the subcategory of fibrant objects is a type-theoretic fibration category.
 In particular, cofibrations are stable under pullback, so acyclic cofibrations are stable under pullback along fibrations, and hence dependent products of fibrations along fibrations are fibrations.
@@ -54,7 +69,8 @@ To actually construct such an interpretation requires a coherence theorem\footno
 We will use the coherence method of~\cite{lw:localuniv}, which applies to many different kinds of structure: it shows that if a structure is ``weakly stable'', meaning that the pullback of \emph{a} structure is \emph{a} structure, then in the ``left adjoint splitting'' it can be made strictly stable.
 The idea is that if $\Gamma$ is an object of $\sM$, then ``a type $A$ in context $\Gamma$'' is interpreted by a fibration $E_A \fib V_A$ and a map $\name{A}:\Gamma\to V_A$; we call $V_A$ the ``local universe'' and think of this as a representative of the pullback of $E_A$ along $\name{A}$.
 Reindexing of such types is done by simple composition (``$f^*A$'' is $\name{A}\circ f$) which is strictly associative.
-Moreover, the presence of local universes allows us to apply categorical constructions once in the ``universal case'', making them strictly preserved by reindexing as well; see~\cite{lw:localuniv} for details.
+Moreover, the presence of local universes allows us to apply categorical constructions once in the ``universal case'', making them strictly preserved by reindexing as well.
+See~\cite{lw:localuniv} for an extensive discussion; we will prove the relevant results for our situation below.
 
 % We will also need the following enhancement of~\cite{lw:localuniv}.
 % For a type-theoretic model category, by the \textbf{fibrant left adjoint splitting} we mean the substructure of the left adjoint splitting consisting of only those types whose local universe object $V_A$ is fibrant.
@@ -72,14 +88,6 @@ Moreover, the presence of local universes allows us to apply categorical constru
 %   Here we need to consider also the local universe for the elimination and computation rules; but this is also constructed as a dependent product of a fibration along a fibration.
 % \end{proof}
 
-Assumption~\ref{item:m0} tells us that \sM is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product and pullback-corner axioms.
-This enables us to construct path objects (which model identity types) as simplicial powers.
-Specifically, if $\ivl$ denotes the 1-simplex (the simplicial interval), then for any fibrant object $A$, the power $A^\ivl$ is a path-object for $A$.
-Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``local power'' $p^\ivl = A^\ivl \times_{\Gamma^\ivl} \Gamma$ is a path-object for $A$ regarded as a type over $\Gamma$; see \cref{thm:stable-id}.
-
-This is important for us because it means that homotopies can be represented in adjoint form: a map $A\to B^\ivl$ is equivalent to a map $A\ten \ivl \to B$, where $A\ten \ivl$ is the simplicial copower.
-Note that like other colimits, the simplicial copower of $p:A\fib \Gamma$ in the slice category over $\Gamma$ is just $A\ten\ivl$ with the projection $A\ten\ivl \to A \to \Gamma$.
-Moreover, each slice category of \sM is a simplicial model category, and pullback preserves both simplicial powers and copowers.
 
 
 \section{Coproducts}
@@ -150,13 +158,13 @@ Thus, let $A_1 + A_2 \to A_1\oplus A_2 \fib \Gamma$ be an (acyclic cofibration, 
 
 Higher inductive pushouts are not a traditionally standard type constructor, so we need to begin with definitions.
 First we consider a sort of weakly stable structure that only makes sense in a context where we have simplicial homotopies.
-Later we will relate this to type theory, define strictly stable pushouts, and prove the relevant local universes coherence theorem.
+In \cref{sec:coherence-pushouts} we will rephrase this in type-theoretic language and prove the relevant local universes coherence theorem.
 
 \begin{defn}\label{defn:ivl-pushout}
   Let $f_1:A\to B_1$ and $f_2:A\to B_2$ be morphisms between fibrations $A\fib\Gamma$ and $B_i\fib\Gamma$.
-  A \textbf{$\ivl$-typal pushout} is a fibration $P\fib\Gamma$ with maps $\nu_i : B_i \to D$ over $\Gamma$ and a homotopy $\mu:A \ten \ivl \to D$ over $\Gamma$ between $\nu_1 \circ f_1$ and $\nu_2\circ f_2$, such that for any fibration $C\fib D$ equipped with sections $t_i : B_i \to C$ over $\nu_i$ and a homotopy $u:A\ten \ivl \to C$ over $\mu$, there exists a section $s:D\to C$ such that $s\circ \nu_i = t_i$ and $s\circ \mu = u$.
+  A \textbf{$\ivl$-typal pushout} is a fibration $D\fib\Gamma$ with maps $\nu_i : B_i \to D$ over $\Gamma$ and a homotopy $\mu:A \ten \ivl \to D$ over $\Gamma$ between $\nu_1 \circ f_1$ and $\nu_2\circ f_2$, such that for any fibration $C\fib D$ equipped with sections $t_i : B_i \to C$ over $\nu_i$ and a homotopy $u:A\ten \ivl \to C$ over $\mu$, there exists a section $s:D\to C$ such that $s\circ \nu_i = t_i$ and $s\circ \mu = u$.
 
-  We say \sM has \textbf{weakly stable $\ivl$-typal pushouts} if for any $f_1,f_2$ there exists a $\ivl$-typal pushout $P$ such that for any $\sigma:\Delta\to\Gamma$, the pullback $\sigma^* P$ with injections $\sigma^*\nu_i$ and homotopy $\sigma^*\mu$ is a $\ivl$-typal pushout of $\sigma^*f_1$ and $\sigma^* f_2$.
+  We say \sM has \textbf{weakly stable $\ivl$-typal pushouts} if for any $f_1,f_2$ there exists a $\ivl$-typal pushout $D$ such that for any $\sigma:\Delta\to\Gamma$, the pullback $\sigma^* D$ with injections $\sigma^*\nu_i$ and homotopy $\sigma^*\mu$ is a $\ivl$-typal pushout of $\sigma^*f_1$ and $\sigma^* f_2$.
 \end{defn}
 
 \begin{thm}
@@ -199,66 +207,162 @@ Later we will relate this to type theory, define strictly stable pushouts, and p
 \section{Pushouts in comprehension categories}
 \label{sec:coherence-pushouts}
 
-Inside of (ordinary, Martin-L\"of) type theory, of course, we do not have an ``$\ivl$'', so \cref{defn:ivl-pushout} does not correspond directly to anything type-theoretic the way \cref{defn:sum} does.
+Inside of (ordinary, Martin-L\"of) type theory, of course, we do not have a ``$\ivl$'', so \cref{defn:ivl-pushout} does not correspond directly to anything type-theoretic the way \cref{defn:sum} does.
 Instead we need a version of this definition that refers only to identity types, which categorically means path-objects.
 This is an instance of ``one type constructor stacked on top of another'', like the case of $\mathsf{W}$-types considered in~\cite[\S3.4.4]{lw:localuniv}; hence we need to start by defining good classes of identity types.
 
 Let $(\C,\T)$ be a comprehension category.
 As in~\cite{lw:localuniv}, if $A\in\T(\Gamma)$ we denote its comprehension by $\Gamma.A\to\Gamma$, and its reindexing along $\sigma:\Delta\to\Gamma$ by $A[\sigma]$.
+
 The example we have in mind is $\Mf$, whose base category is a good model category \sM and whose types in context $\Gamma$ are the fibrations over $\Gamma$, with tautological comprehension and reindexing by pullback.
+That is, the total category of the fibration $\T\to\C$ is the category whose objects are fibrations in $\sM$ and whose morphisms are pullback squares.
+
+In what follows, by a \emph{family} we mean an \emph{indexed family}.
+That is, a ``family of elements of $S$'', for any set $S$, consists of a set $F$ and a function $F\to S$.
+We often abuse notation by identifying elements of $F$ with their images in $S$, but it is important that such a family is not just a subset of $S$.
+There is a category $\mathrm{Fam}$ whose objects are families $F\to S$ and whose morphisms are commutative squares.
 
 \begin{defn}
   A \textbf{stable class of identity types} on \C consists of:
   \begin{itemize}
-  \item For each $A\in \T(\Gamma)$, a non-empty family of ``good identity types'' $\Id_A \in \T(\Gamma.A.A)$.
-    These must be stable under reindexing, in that if $\Id_A$ is a good identity type for $A$ then $\Id_A[\sigma]$ is good for $A[\sigma]$.
-  \item For each good identity type, a non-empty family of ``good reflexivity terms'' that are sections of the comprehension $\Gamma.A.\Id_A[\delta_A] \to \Gamma.A$, stable under reindexing (if \r is a good reflexivity term for $A$ then $\r[\sigma]$ is good for $A[\sigma]$).
-    % factorizations $A \to P_\Gamma A \fib A\times_\Gamma A$ of the diagonal in which the second factor is a fibration, stable under reindexing in the sense that the pullback of any good factorization along any map $\sigma:\Delta\to\Gamma$ is again good.
-  \item For each good identity type $\Id_A$ and good reflexivity term $\r$, and each type $C\in\T(\Gamma.A.A.\Id_A)$ equipped with a section $c$ of $C[\delta_A][\r]\in\T(\Gamma.A)$, a non-empty family of ``good extensions'' of $c$ to a section of $C$ itself, stable under reindexing (the reindexing of a good extension of $c$ is a good extension of $c[\sigma]$).
-    Of course every good extension must actually be an extension, i.e.\ its composite with $\delta_A \circ \r$ must be $c$.
-    %$A \to P_\Gamma A \fib A\times_\Gamma A$ and each fibration $C\fib A\times_\Gamma A$ equipped with a section $c:A\to C$ over the diagonal, a non-empty family of ``good'' extensions of that section to $P_\Gamma A$.
+  \item For each $A\in \T(\Gamma)$, a non-empty family $\G_\Id(A)$ of elements of $\T(\Gamma.A.A)$, called ``good identity types'' $\Id_A$.
+    These must be weakly stable under reindexing, in that for any $\sigma:\Delta\to\Gamma$, there is a morphism of families $\G_\Id(A) \to \G_\Id(A[\sigma])$ over the reindexing functor $\T(\Gamma.A.A) \to \T(\Delta.A[\sigma].A[\sigma])$.
+    If $\Id_A\in\G_\Id(A)$ is a good identity type for $A$, we abuse notation by writing $\Id_A[\sigma] \in \G_\Id(A[\sigma])$ for its image.
+  \item For each good identity type $\Id_A\in\G_\Id(A)$, a non-empty family $\G_\r(A,\Id_A)$ of ``good reflexivity terms'' that are sections of $\Id_A[\delta_A] \in \T(\Gamma.A)$.
+    These must be weakly stable under reindexing, in that we have morphisms of families $\G_\r(A,\Id_A) \to \G_\r(A[\sigma],\Id_A[\sigma])$ over the reindexing morphisms of types and good identity types.
+  \item For each good identity type $\Id_A$ and good reflexivity term $\r$, and each type $C\in\T(\Gamma.A.A.\Id_A)$ equipped with a section $c$ of $C[\delta_A,\r]\in\T(\Gamma.A)$, a non-empty family $\G_\J(\Id_A,\r,C,c)$ of ``good extensions'' of $c$ to a section of $C$ itself.
+    Of course, every good extension must actually be an extension, i.e.\ its composite with $\delta_A \circ \r$ must be $c$.
+    Good extensions must also be weakly stable under reindexing, in that we have morphisms $\G_\J(\Id_A,\r,C,c) \to \G_\J(\Id_A[\sigma],\r[\sigma],C[\sigma],c[\sigma])$ over the reindexings of everything else.
   \end{itemize}
 \end{defn}
 
-Note that a good identity type together with a good reflexivity term consist equivalently of a factorization of $\Gamma.A \to \Gamma.A.A$ through the comprehension $\Gamma.A.A.\Id_A \to \Gamma.A.A$ of some type $\Id_A$.
+Note that the underlying data of a good identity type and a good reflexivity term consist equivalently of a factorization of $\Gamma.A \to \Gamma.A.A$ through the comprehension $\Gamma.A.A.\Id_A \to \Gamma.A.A$ of some type $\Id_A$.
 
 \begin{thm}\label{thm:stable-id}
   If \sM is a good model category, then \Mf has a stable class of identity types, called the \textbf{canonical stable class of identity types}, in which:
   \begin{itemize}
-  \item the good factorizations of a fibration $p:\Gamma.A\fib\Gamma$ are those for which $\Gamma.A.A.\Id_A$ is isomorphic to the simplicial power $p^\ivl$ in the slice category over $\Gamma$, with its canonical factorization, and
-  \item for any $C$ and $c$, every extension of $c$ to $\Id_A$ is good.
+  \item $\G_\Id(A)$ is the set of objects of $\sM/\Gamma$ equipped with data exhibiting the universal property of the simplicial power $(\Gamma.A)^\ivl_\Gamma$ therein.
+  \item For each such object, the factorization $\Gamma.A \to (\Gamma.A)^\ivl_\Gamma \to \Gamma.A.A \cong \Gamma.A \times_\Gamma \Gamma.A$ is induced by powering with the maps $\mathbf{2} \to \ivl \to \mathbf{1}$ of simplicial sets.
+    In particular, every good identity type has exactly one good reflexivity term.
+  \item For any $C$ and $c$, every extension of $c$ to $\Id_A$ is good in a unique way.
   \end{itemize}
 \end{thm}
 \begin{proof}
-  The projection $P_\Gamma A \to A\times_\Gamma A$ is the pullback corner map for the fibrant object $A\in\sM/\Gamma$ and the cofibration $\mathbf{2}\to \ivl$.
-  Since $\sM/\Gamma$ is a simplicial model category, this map is a fibration; thus all good factorizations have the correct type.
+  The projection $(\Gamma.A)^\ivl_\Gamma \to \Gamma.A\times_\Gamma \Gamma.A$ is the pullback corner map for the fibrant object $\Gamma.A\in\sM/\Gamma$ and the cofibration $\mathbf{2}\to \ivl$.
+  Since $\sM/\Gamma$ is a simplicial model category, this map is a fibration, hence the comprehension of a type over $\Gamma.A.A$.
 
-  Similarly, the inclusion $A\to P_\Gamma A$ is the pullback corner map for $A$ and the projection $\ivl \to \mathbf{1}$; since $A$ is fibrant and $\ivl \to \mathbf{1}$ is a weak equivalence between fibrant objects, $A\to P_\Gamma A$ is a weak equivalence.
+  The stability of simplicial powers under pullback gives the reindexing operations for good identity types and good reflexivity terms.
+  Note that unlike for many other type constructors such as $\Sigma$- and $\Pi$-types, although these identity types are determined by a 1-categorical universal property, the type-theoretic data we consider (the reflexivity term) is not sufficient to describe this universal property.
+
+  Similarly, the inclusion $\Gamma.A\to (\Gamma.A)^\ivl_\Gamma$ is the pullback corner map for $A$ and the projection $\ivl \to \mathbf{1}$.
+  Since $\Gamma.A$ is fibrant in $\sM/\Gamma$ and $\ivl \to \mathbf{1}$ is a weak equivalence between fibrant objects, this is a weak equivalence.
   Moreover, it is a split monomorphism, hence a cofibration, and thus an acyclic cofibration.
-  It follows that given any $C$ and $c$ there exists such an extension, i.e.\ the set of good extensions is non-empty.
+  It follows that given any $C$ and $c$ there exists such an extension, i.e.\ the family of good extensions is non-empty.
+  Of course the reindexing of any extension is again an extension, and pseudofunctoriality is automatic.
 \end{proof}
 
-By the adjointness between simplicial powers and copowers, a simplicial homotopy $A\ten\ivl \to B$ between $f,g:A\toto B$ is equivalently a lift of $(f,g):A\to B\times B$ to $\Id_B$, i.e.\ a term of $\Id_B[(f,g)]$ in context $A$.
-But in order to rephrase \cref{defn:ivl-pushout} relative to a stable class of identity types, we also need to postcompose a homotopy with a function, and we need to talk about ``homotopies over homotopies''.
+By the adjointness between simplicial powers and copowers, a simplicial homotopy $A\ten\ivl \to B$ between $f,g:A\toto B$ is equivalently a lift of $(f,g):A\to B\times B$ to any canonical identity type $\Id_B = B^\ivl$, i.e.\ a term of $\Id_B[(f,g)]$ in context $A$.
+But in order to rephrase \cref{defn:ivl-pushout} relative to a stable class of identity types, we also need to talk about ``homotopies over homotopies'', for which we need \emph{dependent identity types}.
+Inside of type theory, the dependent identity type looks like this, for a dependent type $x:A \types B(x)\fibtype$:
+\[ a_1:A, a_2:A, e:\id[A]{a_1}{a_2}, b_1:A(a_1), b_2:A(a_2) \types \idover[x.B(x)]{b_1}{b_2}{e} \fibtype \]
+That is, it tells us how to identify two points in different fibers along a path in the base.
+Inside type theory, there are many ways to define such a type:
+\begin{enumerate}
+\item If we first define the \emph{transport} operation $\transf{e}:B(x) \to B(y)$ (using the eliminator for identity types), then we can define $\idover[x.B(x)]{u}{v}{e}$ to be $\id[B(y)]{\transf{e}(u)}{v}$.
+  This is the definition used by~\cite{hottbook} and~\cite{hottcoq}.\label{item:idover1}
+\item We could instead use $\id[B(x)]{u}{\transf{(\opp{e})}(v)}$, where $\opp{e}:\id[A]{y}{x}$ is the inverse path of $e$ (i.e.\ $\opp{(\blank)}$ witnesses the symmetry of equality).\label{item:idover2}
+\item We could use the eliminator for identity types on $e$, with $\idover[x.B(x)]{u}{v}{\refl_x}$ defined to be $\id[B(x)]{u}{v}$.
+  This is the definition used by~\cite{hottagda}.\label{item:idover3}
+\item We could define $\idover[x.B(x)]{u}{v}{e}$ as an inductive family, with a single constructor giving for any $x:A$ and $u:B(x)$ an element $\refl_u : \idover[x.B(x)]{u}{u}{\refl_x}$.\label{item:idover4}
+\end{enumerate}
+In a good model category, there is still another definition using $\ivl$ (see \cref{thm:stable-dep-id} below).
+To remain agnostic between all these choices, we introduce dependent identity types as their own type constructor.
 
+\begin{defn}
+  Suppose \C has a stable class of identity types.
+  A \textbf{stable class of dependent identity types} relative to this stable class consists of the following data, each of which must be weakly stable in a straightforward sense.
+  \begin{itemize}
+  \item For each $A\in\T(\Gamma)$ and $B\in\T(\Gamma.A)$, and each good identity type $\Id_A\in \G_\Id(A)$, a non-empty family $\dG_\Id(A,\Id_A,B)$ of ``good dependent identity types'' $\Id^A_B$ in $\T(\Gamma.A.A.\Id_A.B.B)$.
+  \item For each good dependent identity type as above, and each good reflexivity term $\r_A$ for $\Id_A$, a non-empty family $\dG_\r(A,\Id_A,\r,B,\Id^A_B)$ of ``good dependent reflexivity terms'' that are sections of $\Id^A_B[\delta_A,\r_A,\delta_B] \in \T(\Gamma.A.B)$.
+  \item For each good dependent identity type and good dependent reflexivity term as above, and each type $C\in \T(\Gamma.A.A.\Id_A.B.B.\Id^A_B)$ equipped with a section $c$ of $C[\delta_A,\r_A,\delta_B,\r^A_B]\in \T(\Gamma.A.B)$, a nonempty family $\dG_\J(A,\Id_A,\r_A,B,\Id^A_B,\r^A_B)$ of ``good extensions'' of $c$ to a section of $C$ itself (which are actually extensions thereof).
+  \end{itemize}
+\end{defn}
 
-% \begin{defn}\label{defn:J-pushout}
-%   Let $f_1:A\to B_1$ and $f_2:A\to B_2$ be morphisms between fibrations $A\fib\Gamma$ and $B_i\fib\Gamma$, and suppose given a stable class of identity types on \sM.
-%   A \textbf{\J-typal pushout} relative to this stable class is a fibration $D\fib\Gamma$ with maps $\nu_i : B_i \to D$ over $\Gamma$ and, for any good factorization $D \to P_\Gamma D \fib D\times_\Gamma D$, a map $\mu:A \to P_\Gamma D$ lifting $(\nu_1 \circ f_1,\nu_2\circ f_2):A \to D\times_\Gamma D$, such that for any fibration $C\fib D$ equipped with sections $t_i : B_i \to C$ over $\nu_i$ and a map $u:?$, there exists a section $s:P\to C$ such that $s\circ \nu_i = t_i$ and ?.
+Similarly to the non-dependent case, the underlying data of a good dependent identity type and a good dependent reflexivity term consist of a factorization of the diagonal of $\Gamma.A.B$ that lies over a given factorization of the diagonal of $\Gamma.A$, such that the dashed pullback map shown below is a dependent projection:
+\[
+\begin{tikzcd}[row sep=huge,column sep=huge]
+  \Gamma.A.B \ar[r] \ar[d] & \Gamma.A.A.\Id_A.B.B.\Id^A_B \ar[rr] \ar[d] \ar[drr,phantom,near start,"\Gamma.A.A.\Id_A.B.B"{name=hi}] \ar[dashed,to=hi] && \Gamma.A.A.B.B \ar[d] \ar[from=hi] \\
+  \Gamma.A \ar[r] & \Gamma.A.A.\Id_A \ar[rr] \ar[from=hi] && \Gamma.A.A
+\end{tikzcd}
+\]
 
-%   It is \textbf{weakly stable} if\dots
-% \end{defn}
+\begin{thm}\label{thm:stable-dep-id}
+  If \sM is a good model category, then \Mf has a \textbf{canonical stable class of dependent identity types} over the canonical stable class of identity types, in which:
+  \begin{itemize}
+  \item $\dG_\Id(A,\Id_A,B)$ is the set of objects of $\sM/\Gamma$ equipped with the universal property of a simplicial power $(\Gamma.A.B)^\ivl_\Gamma$.
+  \item For each such object, the above factorization is given by the following diagram:
+    \[
+    \begin{tikzcd}[row sep=large]
+      \Gamma.A.B \ar[r] \ar[d] & (\Gamma.A.B)^\ivl_\Gamma \ar[rr] \ar[d] \ar[drr,phantom,near start,"\bullet"{name=hi}] \ar[dashed,to=hi] && \Gamma.A.A.B.B \ar[d] \ar[from=hi] \\
+      \Gamma.A \ar[r] & (\Gamma.A)^\ivl_\Gamma \ar[rr] \ar[from=hi] && \Gamma.A.A
+    \end{tikzcd}
+    \]
+    In particular, every good dependent identity type has a unique good dependent reflexivity term.
+  \item for any $C$ and $c$, every extension of $c$ to $\Id^A_B$ is good.
+  \end{itemize}
+\end{thm}
+\begin{proof}
+  Similarly to the non-dependent case, the dotted projection above is the pullback corner map for the fibration $\Gamma.A.B\to\Gamma.A$ and the cofibration $\mathbf{2}\to \ivl$ in the simplicial model category $\sM/\Gamma$, hence a fibration.
+  The inclusion $\Gamma.A.B \to (\Gamma.A.B)^\ivl_\Gamma$ is an acyclic cofibration for the same reasons as in \cref{thm:stable-id}, so the set of good extensions is non-empty.
+\end{proof}
 
-% \begin{thm}
-%   Any good model category has weakly stable \J-typal pushouts relative to the canonical stable class of identity types.
-% \end{thm}
-% \begin{proof}
-%   TODO
-% \end{proof}
+Finally, in \cref{defn:ivl-pushout} we also need to postcompose a homotopy with a dependent function.
+That is, given $x:A \types f(x):B(x)$, we need the following term:
+\[ a_1:A, a_2:A, e:\id[A]{a_1}{a_2} \types \ap_f(e) : \idover[x.B(x)]{e}{f(a_1)}{f(a_2)} \]
+Inside type theory there is a standard way to define $\ap$, defined using the eliminator for the identity type.
+However, once again, in a good model category there is a different way to define it using the functoriality of simplicial powers (see \cref{thm:stable-ap}).
+Thus, we also introduce this abstractly.
 
+\begin{defn}
+  Suppose \C has stable classes of identity types and dependent identity types.
+  A \textbf{stable class of identity applications} consists of, for each types $A\in\T(\Gamma)$ and $B\in\T(\Gamma.A)$, each section $f$ of $B$, each good identity type and reflexivity term for $A$, and each corresponding dependent identity type and dependent reflexivity term for $B$, a non-empty family of ``good identity applications'', which are sections $\ap_f$ of the projection $\Gamma.A.A.\Id_A.B.B.\Id^A_B \to \Gamma.A.A.\Id_A$ such that the following squares commute:
+  \[
+  \begin{tikzcd}
+    \Gamma.A.B \ar[r,"\r"] & \Gamma.A.A.\Id_A.B.B.\Id^A_B \ar[r] & \Gamma.A.A.B.B \\
+    \Gamma.A \ar[r,"\r"] \ar[u,"f"] & \Gamma.A.A.\Id_A \ar[u,"{\ap_f}"] \ar[r] & \Gamma.A.A \ar[u,"{(f,f)}",swap]
+  \end{tikzcd}
+  \]
+  Moreover, good identity applications must be weakly stable under reindexing in an evident sense.
+\end{defn}
 
-% The definition of weak stability is chosen to as to be able to apply the local universes coherence method of~\cite{lw:localuniv}.
-% However, at present this method is not a single theorem but has to be applied separately in each case; we proceed to do this for pushouts.
+\begin{thm}\label{thm:stable-ap}
+  If \sM is a good model category, then \Mf has a \textbf{canonical stable class of identity applications} over the canonical stable classes of identity types and dependent identity types, in which the good sections $\ap_f$ are the maps $f^\ivl_\Gamma$ induced by the functoriality of simplicial powers.
+\end{thm}
+\begin{proof}
+  The requisite squares commute by the two-variable functoriality of simplicial powers.
+\end{proof}
+
+Note that in order for these maps to be well-defined, we must require an object of $\G_\Id(A)$ to be \emph{equipped with} the structure of a simplicial power, and hence $\G_\Id(A)$ cannot be merely a sub\emph{set} of $\T(\Gamma.A.A)$, since this structure is not determined even by the reflexivity term.
+
+Finally, we can define a type-theoretic notion of pushout.
+
+\begin{defn}\label{defn:pushout}
+  Suppose $\C$ has stable classes of identity types, dependent identity types, and identity applications.
+  A \textbf{stable class of typal pushouts} relative to these stable classes consists of the following data, all weakly stable under reindexing.
+  \begin{itemize}
+  \item For each pair $f_1:\Gamma.A\to \Gamma.B_1$ and $f_2:\Gamma.A\to \Gamma.B_2$ of morphisms over $\Gamma$, a non-empty family of ``good pushout types'' $D\in\T(\Gamma)$ equipped with ``good injections'' $\nu_i : \Gamma.B_i \to \Gamma.D$ over $\Gamma$.
+  \item For any good pushout $D$ and good injections $\nu_i$, and any good identity type for $D$, a non-empty family of ``good glueing data'' maps $\mu : \Gamma.A \to \Gamma.D.D.\Id_D$ over $(\nu_1 f_1,\nu_2 f_2)$.
+  \item For any good identity type, good reflexivity term, and good gluing data and good injections for a good pushout $D$, and any type $C\in\T(D)$ equipped with sections $t_i$ over $\nu_i$, a good dependent identity type $\Id^D_C$ with good reflexivity term, and a morphism $u:A\to \Gamma.D.D.\Id_D.C.C.\Id^D_C$ over $(\mu,t_1,t_2)$, a non-empty family of good sections $s$ of $C$ such that $s \circ \nu_i = t_i$, and for any good identity application $\ap_s$ we have $\ap_s \circ \mu = u$.
+  \end{itemize}
+\end{defn}
+
+\begin{thm}
+  In any good model category, the $\ivl$-typal pushouts (\cref{defn:ivl-pushout}) are a stable class of typal pushouts relative to the canonical stable classes of identity types, dependent identity types, and identity applications.
+\end{thm}
+\begin{proof}
+  The canonical stable classes were constructed exactly so that the data of \cref{defn:pushout} reduces to that of \cref{defn:ivl-pushout}.
+\end{proof}
+
 
 
 \bibliographystyle{alpha}
