@@ -12,9 +12,16 @@
 \let\Id\fId
 \let\G\cG
 \def\dG{\widehat{\G}}
+\let\type\fibtype
+\def\drefl{\refl'}
+\autodefs{\fPush}
 \usepackage{scalefnt}
 \newcommand{\mysc}[1]{\text{\scalefont{0.76}\uppercase{#1}}}
 \renewcommand{\idover}[4][]{\fId_{#1}^{#4}(#2,#3)}
+\newcommand{\Idtwo}[2]{\widetilde{\Id^{#1}_{#2}}}
+\newcommand{\rtwo}[2]{\widetilde{\r^{#1}_{#2}}}
+\newcommand{\idovertwo}[4][]{\widetilde{\fId^{#4}_{#1}}(#2,#3)}
+\newcommand{\aptwo}[1]{\widetilde{\ap_{#1}}}
 \setcounter{tocdepth}{1}
 \usepackage[utf8]{inputenc}
 \hyphenation{pseu-do-func-tor-ial}
@@ -43,7 +50,7 @@ We will work throughout in the following context.
   A \textbf{good model category} is a model category \sM with the following additional properties.
   \begin{enumerate}
   \item \sM is simplicial.\label{item:m0}
-  \item The cofibrations are the monomorphisms.\label{item:m1}
+  \item The cofibrations in \sM are exactly the monomorphisms.\label{item:m1}
   \item \sM is right proper, i.e.\ weak equivalences are preserved by pullback along fibrations.\label{item:m2}
   \item As a category, \sM is locally cartesian closed.\label{item:m3}
   \end{enumerate}
@@ -222,7 +229,7 @@ That is, a ``family of elements of $S$'', for any set $S$, consists of a set $F$
 We often abuse notation by identifying elements of $F$ with their images in $S$, but it is important that such a family is not just a subset of $S$.
 There is a category $\mathrm{Fam}$ whose objects are families $F\to S$ and whose morphisms are commutative squares.
 
-\begin{defn}
+\begin{defn}\label{defn:id}
   A \textbf{stable class of identity types} on \C consists of:
   \begin{itemize}
   \item For each $A\in \T(\Gamma)$, a non-empty family $\G_\Id(A)$ of elements of $\T(\Gamma.A.A)$, called ``good identity types'' $\Id_A$.
@@ -263,11 +270,11 @@ Note that the underlying data of a good identity type and a good reflexivity ter
 
 By the adjointness between simplicial powers and copowers, a simplicial homotopy $A\ten\ivl \to B$ between $f,g:A\toto B$ is equivalently a lift of $(f,g):A\to B\times B$ to any canonical identity type $\Id_B = B^\ivl$, i.e.\ a term of $\Id_B[(f,g)]$ in context $A$.
 But in order to rephrase \cref{defn:ivl-pushout} relative to a stable class of identity types, we also need to talk about ``homotopies over homotopies'', for which we need \emph{dependent identity types}.
-Inside of type theory, the dependent identity type looks like this, for a dependent type $x:A \types B(x)\fibtype$:
-\[ a_1:A, a_2:A, e:\id[A]{a_1}{a_2}, b_1:A(a_1), b_2:A(a_2) \types \idover[x.B(x)]{b_1}{b_2}{e} \fibtype \]
+Inside of type theory, the dependent identity type looks like this, for a dependent type $x:A \types B(x)\type$:
+\[ a_1:A, a_2:A, e:\id[A]{a_1}{a_2}, b_1:A(a_1), b_2:A(a_2) \types \idover[x.B(x)]{b_1}{b_2}{e} \type \]
 That is, it tells us how to identify two points in different fibers along a path in the base.
 Inside type theory, there are many ways to define such a type:
-\begin{enumerate}
+\begin{enumerate}\label{idover}
 \item If we first define the \emph{transport} operation $\transf{e}:B(x) \to B(y)$ (using the eliminator for identity types), then we can define $\idover[x.B(x)]{u}{v}{e}$ to be $\id[B(y)]{\transf{e}(u)}{v}$.
   This is the definition used by~\cite{hottbook} and~\cite{hottcoq}.\label{item:idover1}
 \item We could instead use $\id[B(x)]{u}{\transf{(\opp{e})}(v)}$, where $\opp{e}:\id[A]{y}{x}$ is the inverse path of $e$ (i.e.\ $\opp{(\blank)}$ witnesses the symmetry of equality).\label{item:idover2}
@@ -275,10 +282,11 @@ Inside type theory, there are many ways to define such a type:
   This is the definition used by~\cite{hottagda}.\label{item:idover3}
 \item We could define $\idover[x.B(x)]{u}{v}{e}$ as an inductive family, with a single constructor giving for any $x:A$ and $u:B(x)$ an element $\refl_u : \idover[x.B(x)]{u}{u}{\refl_x}$.\label{item:idover4}
 \end{enumerate}
-In a good model category, there is still another definition using $\ivl$ (see \cref{thm:stable-dep-id} below).
-To remain agnostic between all these choices, we introduce dependent identity types as their own type constructor.
+Compared to the first three, option~\ref{item:idover4} has the disadvantage that $\idover[x.B(x)]{u}{v}{\refl_x}$ is not judgmentally equal to $\id[B(x)]{u}{v}$.
+However, option~\ref{item:idover4} is also the one that corresponds most directly to the native path-object structure in a good model category, so it is the one we will adopt.
+In \cref{sec:pushouts-type-theory} we will show that our construction also gives pushouts relative to choices~\ref{item:idover1}--\ref{item:idover3}, albeit in a slightly weaker sense.
 
-\begin{defn}
+\begin{defn}\label{defn:dep-id}
   Suppose \C has a stable class of identity types.
   A \textbf{stable class of dependent identity types} relative to this stable class consists of the following data, each of which must be weakly stable in a straightforward sense.
   \begin{itemize}
@@ -323,7 +331,7 @@ Inside type theory there is a standard way to define $\ap$, defined using the el
 However, once again, in a good model category there is a different way to define it using the functoriality of simplicial powers (see \cref{thm:stable-ap}).
 Thus, we also introduce this abstractly.
 
-\begin{defn}
+\begin{defn}\label{defn:ap}
   Suppose \C has stable classes of identity types and dependent identity types.
   A \textbf{stable class of identity applications} consists of, for each types $A\in\T(\Gamma)$ and $B\in\T(\Gamma.A)$, each section $f$ of $B$, each good identity type and reflexivity term for $A$, and each corresponding dependent identity type and dependent reflexivity term for $B$, a non-empty family of ``good identity applications'', which are sections $\ap_f$ of the projection $\Gamma.A.A.\Id_A.B.B.\Id^A_B \to \Gamma.A.A.\Id_A$ such that the following squares commute:
   \[
@@ -352,17 +360,270 @@ Finally, we can define a type-theoretic notion of pushout.
   \begin{itemize}
   \item For each pair $f_1:\Gamma.A\to \Gamma.B_1$ and $f_2:\Gamma.A\to \Gamma.B_2$ of morphisms over $\Gamma$, a non-empty family of ``good pushout types'' $D\in\T(\Gamma)$ equipped with ``good injections'' $\nu_i : \Gamma.B_i \to \Gamma.D$ over $\Gamma$.
   \item For any good pushout $D$ and good injections $\nu_i$, and any good identity type for $D$, a non-empty family of ``good glueing data'' maps $\mu : \Gamma.A \to \Gamma.D.D.\Id_D$ over $(\nu_1 f_1,\nu_2 f_2)$.
-  \item For any good identity type, good reflexivity term, and good gluing data and good injections for a good pushout $D$, and any type $C\in\T(D)$ equipped with sections $t_i$ over $\nu_i$, a good dependent identity type $\Id^D_C$ with good reflexivity term, and a morphism $u:A\to \Gamma.D.D.\Id_D.C.C.\Id^D_C$ over $(\mu,t_1,t_2)$, a non-empty family of good sections $s$ of $C$ such that $s \circ \nu_i = t_i$, and for any good identity application $\ap_s$ we have $\ap_s \circ \mu = u$.
+  \item For any good identity type, good reflexivity term, and good gluing data and good injections for a good pushout $D$, and any type $C\in\T(D)$ equipped with sections $t_i$ over $\nu_i$, a good dependent identity type $\Id^D_C$ with good reflexivity term, and a morphism $u:A\to \Gamma.D.D.\Id_D.C.C.\Id^D_C$ over $(\mu,t_1,t_2)$, we have a non-empty family of good sections $s$ of $C$ such that $s \circ \nu_i = t_i$, and for any good identity application $\ap_s$ we have $\ap_s \circ \mu = u$.
   \end{itemize}
 \end{defn}
 
-\begin{thm}
+\begin{thm}\label{thm:model-pushout}
   In any good model category, the $\ivl$-typal pushouts (\cref{defn:ivl-pushout}) are a stable class of typal pushouts relative to the canonical stable classes of identity types, dependent identity types, and identity applications.
 \end{thm}
 \begin{proof}
   The canonical stable classes were constructed exactly so that the data of \cref{defn:pushout} reduces to that of \cref{defn:ivl-pushout}.
 \end{proof}
 
+
+\section{Pushouts in type theory}
+\label{sec:pushouts-type-theory}
+
+Finally, we move to strict stability and type theory.
+As in~\cite{lw:localuniv}, we do not formally make the connection all the way to syntactic type theory; we stop with strictly stable structure on a split comprehension category.
+(The gap requires an ``initiality theorem'' for syntax, which is straightforward but tedious and requires very different techniques.)
+
+Recall the basic condition on a comprehension category $(\C,\T)$ that makes local universe theorems work:
+\begin{equation}
+  \label{eq:lf}
+  \tag{LF} \parbox{10cm}{$\C$ has finite products, and dependent exponentials of display maps and product projections along display maps.}
+\end{equation}
+
+Of course, since good model category $\sM$ is locally cartesian closed, $\Mf$ always satisfies condition~\eqref{eq:lf}.
+
+\begin{defn}
+  A split comprehension category $\C$ has:
+  \begin{itemize}
+  \item \textbf{strictly stable identity types} if it has a stable class of identity types (\cref{defn:id}) for which each family of good structures is a singleton.
+  \item \textbf{strictly stable dependent identity types} if in addition it has a stable class of dependent identity types for which each family of good structures is a singleton.
+  \item \textbf{strictly stable identity applications} if in addition it has a stable class of identity applications for which each family of good structures is a singleton.
+  \item \textbf{strictly stable typal pushouts} if in addition it has a stable class of typal pushouts for which each family of good structures is a singleton.
+\end{itemize}
+\end{defn}
+
+Our strictly stable identity types are easily seen to be equivalent to~\cite[Definition 3.4.3.1]{lw:localuniv} with the ``Frobenius'' condition omitted (which we don't bother with since our intended models all have $\Pi$-types).
+Modulo the initiality theorem, the above strictly stable structure corresponds to the type-theoretic rules shown in \cref{fig:id,fig:depid,fig:ap,fig:pushouts}.
+
+\begin{rmk}\label{rmk:rule-style}
+  Because we are not concerned with syntactic properties such as admissibility of substitution, we have no qualms about adding variables to the context of the conclusion.
+  As a result, multiple rules often have the same premises; we combine these by listing multiple conclusions in the same rule.
+  This has the additional advantage that each multiple-conclusion rule corresponds to one new local universe on the semantic side.
+  (On the other hand, unlike in some syntactic presentations, we do include all type judgment premises in all rules, since these are necessary semantically.)
+\end{rmk}
+
+\begin{figure}
+  \centering
+  \begin{mathpar}
+    \inferrule{\Gamma\types A\type} % \\ \Gamma\types a_1:A \\ \Gamma\types a_2:A}
+    {\Gamma,a_1:A, a_2:A\types \id[A]{a_1}{a_2}\type \\ %}\and
+      % \inferrule{\Gamma\types A\type}{
+      \Gamma,a:A \types \refl_a : \id[A]{a}{a}}\and
+    \inferrule{\Gamma\types A\type \\ \Gamma,x:A,y:A,e:\id[A]{x}{y}\types C\type \\ \Gamma,x:A \types c:C[x/y,\refl_x/e]} % \\\\ \Gamma \types a_1:A \\ \Gamma\types a_2:A \\ \Gamma\types p:\id[A]{a_1}{a_2}}
+    {\Gamma,a_1:A,a_2:A,p:\id[A]{a_1}{a_2}\types \J(xye.C,x.c,a_1,a_2,p):C[a_1/x,a_2/y,p/e] \\ %}\and
+    % \inferrule{\Gamma\types A\type \\ \Gamma,x:A,y:A,e:\id[A]{x}{y}\types C\type \\ \Gamma,x:A \types c:C[x/y,\refl_x/e]} % \\ \Gamma \types a:A}
+    \Gamma,a:A\types \J(xye.C,x.c,a,a,\refl_a) \jdeq c[a/x]}
+  \end{mathpar}
+  \caption{Identity types}
+  \label{fig:id}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{mathpar}
+    \inferrule{\Gamma\types A\type \\ \Gamma,x:A \types B\type}
+    {\Gamma, a_1:A, a_2:A, e:\id[A]{a_1}{a_2}, b_1:B[a_1/x], b_2:B[a_2/x] \types \idover[B]{b_1}{b_2}{e}\type \\ %}\and
+      % \inferrule{\Gamma\types A\type \\ \Gamma,x:A \types B\type}
+    \Gamma, a:A, b:B[a/x]\types \drefl_b : \idover[B]{b}{b}{\refl_a}}\and
+    \inferrule{\Gamma\types A\type \\ \Gamma,x:A \types B\type \\ \Gamma,x:A,y:A,e:\id[A]{x}{y}, u:B, v:B[y/x], d:\idover[B]{u}{v}{e} \types C\type \\ \Gamma,x:A,u:B \types c:C[x/y,\refl_x/e,u/v,\drefl_u/d]}
+    %\\\\ \Gamma \types a_1:A \\ \Gamma\types a_2:A \\ \Gamma\types p:\id[A]{a_1}{a_2} \\\\
+    %\Gamma \types b_1:B[a_1/x] \\ \Gamma\types b_2:B[a_2/x] \\ \Gamma\types q:\idover[B]{b_1}{b_2}{p}}
+    {\Gamma, a_1:A, a_2:A, p:\id[A]{a_1}{a_2}, b_1:B[a_1/x], b_2:B[a_2/x], q:\idover[B]{b_1}{b_2}{p} \\ \hspace{2cm}\types \J'(xyeuvd.C,xu.c,a_1,a_2,p,b_1,b_2,q):C[a_1/x,a_2/y,p/e,b_1/u,b_2/v,q/d] \\ %\and
+    %\inferrule{\Gamma\types A\type \\ \Gamma,x:A \types B\type \\ \Gamma,x:A,y:A,e:\id[A]{x}{y}, u:B, v:B[y/x], d:\idover[B]{u}{v}{e} \types C\type \\ \Gamma,x:A,u:B \types c:C[x/y,\refl_x/e,u/v,\drefl_u/d]} % \\\\ \Gamma \types a:A \\ \Gamma \types b:B[a/x]
+    \Gamma, a:A, b:B[a/x]\types \J'(xyeuvd.C,xu.c,a,a,\refl_a,b,b,\drefl_b) \jdeq c[a/x,b/u]}
+  \end{mathpar}
+  \caption{Dependent identity types}
+  \label{fig:depid}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{mathpar}
+    \inferrule{\Gamma\types A\type \\ \Gamma,x:A\types B\type \\ \Gamma,x:A \types f:B} % \\\\ \Gamma\types a_1:A \\ \Gamma\types a_2:A \\ \Gamma\types p:\id[A]{a_1}{a_2}}
+    {\Gamma,a_1:A, a_2:A, p:\id[A]{a_1}{a_2} \types \ap_{x.f}(a_1,a_2,p) : \idover[B]{f[a_1/x]}{f[a_2/x]}{p} \\ %}\and
+    %\inferrule{\Gamma\types A\type \\ \Gamma,x:A\types B\type \\ \Gamma,x:A \types f:B}{
+      \Gamma,a:A\types \ap_{x.f}(a,a,\refl_a)\jdeq \drefl_{f[a/x]}}\and
+  \end{mathpar}
+  \caption{Identity applications}
+  \label{fig:ap}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{mathpar}
+    \inferrule{\Gamma\types A\type \\ \Gamma\types B_1\type \\ \Gamma\types B_2\type \\\\
+      \Gamma,x:A\types f_1:B_1 \\ \Gamma,x:A \types f_2:B_2}
+    {\Gamma \types \fPush (x.f_1,x.f_2) \type \\\\
+    \Gamma,y_1:B_1\types \nu_1(y_1):\fPush (x.f_1,x.f_2) \\
+    \Gamma,y_2:B_2\types \nu_2(y_2):\fPush (x.f_1,x.f_2) \\
+    \Gamma,a:A\types \mu(a):\id[\fPush(x.f_1,x.f_2)]{\nu_1(f_1[a/x])}{\nu_2(f_2[a/x])}}\and
+  % 
+    \inferrule{\Gamma\types A\type \\ \Gamma\types B_1\type \\ \Gamma\types B_2\type \\\\
+      \Gamma,x:A\types f_1:B_1 \\ \Gamma,x:A \types f_2:B_2 \\\\ \Gamma, u:\fPush(x.f_1,x.f_2) \types C\type \\
+      \Gamma, y_1:B_1\types t_1:C[\nu_1(y_1)/u] \\ \Gamma, y_2:B_2\types t_2:C[\nu_2(y_2)/u] \\
+      \Gamma, x:A \types m:\idover[C]{t_1[f_1(a)/y_1]}{{t_2[f_2(a)/y_2]}}{\mu(x)}}
+    {\Gamma,p:\fPush(x.f_1,x.f_2)\types \mathsf{pe}(u.C,y_1.t_1,y_2.t_2,a.m,p) : C[p/u] \\
+    \Gamma,b_1:B_1 \types \mathsf{pe}(u.C,y_1.t_1,y_2.t_2,a.m,\nu_1(b_1)) \jdeq t_1[b_1/y_1] \\
+    \Gamma,b_2:B_2 \types \mathsf{pe}(u.C,y_1.t_1,y_2.t_2,a.m,\nu_2(b_2)) \jdeq t_2[b_2/y_2] \\
+    \Gamma,a:A \types \ap_{u.\mathsf{pe}(u.C,y_1.t_1,y_2.t_2,a.m,u)}(a) \jdeq m[a/x]}\and
+  \end{mathpar}
+  \caption{Pushouts}
+  \label{fig:pushouts}
+\end{figure}
+
+We now briefly sketch the local universe coherence theorems for all of these structures; they are all straightforward applications of the techniques of~\cite{lw:localuniv}.
+
+\begin{thm}
+  If $\C$ has a stable class of identity types and satisfies~\eqref{eq:lf}, then $\C_!$ has strictly stable identity types.
+\end{thm}
+\begin{proof}
+  Just like~\cite[Theorem 3.4.3.2]{lw:localuniv}, only simpler due to the absence of Frobenius.
+  If $A\in\T_!(\Gamma)$ are represented by $E_A\in\T(V_A)$, then $\Id_A\in\T_!(\Gamma.A.A)$ is represented by a chosen good identity type $\Id_{E_A}\in \T(V_A.E_A.E_A)$, with reflexivity term also chosen in the same universal case.
+  The local universe for the elimination and computation rules is just as in~\cite[Theorem 3.4.3.2]{lw:localuniv} without the types ``$B_i$'':
+  \begin{align*}
+    V = [ & a:V_A, \\
+    & c:\prod x,x':E_A(a), y:\Id_{E_A}(a,x,x'). V_C,\\
+    & d:\prod x:E_A(a). E_C(c(x,x,\r_{E_A}(a,x)))].
+  \end{align*}
+  (As in~\cite{lw:localuniv}, we express local universes as iterated $\Sigma$-types in the internal extensional type theory of $\C$.)
+\end{proof}
+
+\begin{thm}
+  If $\C$ has a stable class of dependent identity types and satisfies~\eqref{eq:lf}, then $\C_!$ has strictly stable dependent identity types.
+\end{thm}
+\begin{proof}
+  If $A\in\T_!(\Gamma)$ and $B\in\T_!(\Gamma.A)$ is represented by $E_A\in\T(V_A)$ and $E_B\in\T(V_B)$, then $\Id^A_B\in\T_!(\Gamma.A.A.\Id_A.B.B)$ is represented by a chosen good dependent identity type for $E_B$ over $E_A$, with the local universe
+  \begin{align*}
+    [ a:V_A, b: (V_B)^{E_A(a)} ]
+    % & x:E_A(a), x':E_A(a), y:\Id_A(a,x,x'), \\
+    % &u:E_B(b(x)), u':E_B(b(x')) ]
+  \end{align*}
+  with dependent reflexivity term likewise chosen in this case.
+  (Note that this local universe is the same one $V_A \triangleleft V_B$ used in~\cite{lw:localuniv} for $\Pi$-types and $\Sigma$-types.)
+  The local universe for the elimination and computation rules is
+  \begin{align*}
+    [ & a:V_A, \\
+    & b:\prod x:E_A(a). V_B,\\
+    & c:\prod x,x':E_A(a), y:\Id_{E_A}(a,x,x'), u:E_B(b(x)), u':E_B(b(x')), z:\Id^{E_A}_{E_B}(a,x,x',y,b,u,u'). V_C,\\
+    & d:\prod x:E_A(a), u:E_B(b(x)) . E_C(c(x,x,\r_{E_A}(a,x),u,u,\r^{E_A}_{E_B}(a,x,u)))].\qedhere
+  \end{align*}
+\end{proof}
+
+It is perhaps worth emphasizing how the above local universes are obtained essentially algorithmically from the rules in \cref{fig:depid}, once given that the latter are written in the style of \cref{rmk:rule-style}.
+Namely, each premise of a rule corresponds to one term in the iterated $\Sigma$-type, which is a $\Pi$-type of the consequent of that premise over the additional variables (beyond the arbitrary context $\Gamma$) in the context of that premise.
+
+\begin{thm}
+  If $\C$ has a stable class of identity applications and satisfies~\eqref{eq:lf}, then $\C_!$ has strictly stable identity applications.
+\end{thm}
+\begin{proof}
+  The local universe is
+  \begin{align*}
+    [ & a:V_A \\
+    & b:\prod x:E_A(a). V_B,\\
+    & f:\prod x:E_A(a), E_B(b(x)) ].\qedhere
+  \end{align*}
+\end{proof}
+
+\begin{thm}\label{thm:lu-pushout}
+  If $\C$ has a stable class of typal pushouts and satisfies~\eqref{eq:lf}, then $\C_!$ has strictly stable typal pushouts.
+\end{thm}
+\begin{proof}
+  The local universe for the formation and introduction rules is
+  \begin{align*}
+    [ & a:V_A, b_1:V_{B_1}, b_2:V_{B_2}, \\
+    &f_1: \prod x:E_A(a). E_{B_1}(b_1),\\
+    &f_2: \prod x:E_A(a). E_{B_2}(b_2) ].
+  \end{align*}
+  And the local universe for the elimination and computation rules is
+  \begin{align*}
+    [ & a:V_A, b_1:V_{B_1}, b_2:V_{B_2}, \\
+    &f_1: \prod x:E_A(a). E_{B_1}(b_1),\\
+    &f_2: \prod x:E_A(a). E_{B_2}(b_2),\\
+    &c : \prod u:E_{\fPush(f_1,f_2)}(a,b_1,b_2,f_1,f_2). V_C, \\
+    &t_1 : \prod y_1:E_{B_1}(b_1). E_C(c(\nu_1(y_1))), \\
+    &t_2 : \prod y_2:E_{B_2}(b_2). E_C(c(\nu_2(y_2))), \\
+    &m : \prod x:E_A(a). \Id^{\fPush(f_1,f_2)}_C(a,b_1,b_2,f_1,f_2,c,\nu_1(f_1(x)),\nu_2(f_2(x)),\mu(x),t_1(f_1(x)),t_2(f_2(x)))
+    ].%\qedhere
+  \end{align*}
+\end{proof}
+
+\begin{thm}
+  For any good model category $\sM$, the split comprehension category $(\Mf)_!$ has strictly stable typal pushouts, relative to the strictly stable identity types, dependent identity types, and identity applications obtained by strictifying its canonical weakly stable ones.
+\end{thm}
+\begin{proof}
+  Combine \cref{thm:model-pushout,thm:lu-pushout}.
+\end{proof}
+
+This is almost, but not quite, the result we want.
+The pushout rules in \cref{fig:pushouts} differ from those commonly used (e.g.\ in~\cite{hottbook}) by the presence of the additional rules in \cref{fig:depid,fig:ap}.
+The usual approach is instead to start with only identity types as in \cref{fig:id}, and then \emph{define} dependent identity types using one of the methods~\ref{item:idover1}--\ref{item:idover3} listed on page~\pageref{idover}, similarly define $\ap$ using the eliminator of identity types, and then state rules such as those in \ref{fig:pushouts} relative to these defined structures.
+
+Such definitions certainly give \emph{some} classes of dependent identity types and identity applications, which are strictly stable if the identity types we started with are strictly stable.
+However, if such constructions are performed in $(\Mf)_!$, the resulting strictly stable classes will not generally be the \emph{same} as those obtained from the canonical weakly stable ones by the local universes construction.
+They will indeed be \emph{equivalent}, and we can transfer the structure of a pushout across such an equivalence, but at the cost of weakening the computation rule for the path-constructor from a judgmental equality to the existence of a path, as follows.
+
+\begin{defn}\label{defn:wk-pushouts}
+  A \textbf{stable class of weak typal pushouts} in a comprehension category $(\C,\T)$, relative to given stable classes of identity types, dependent identity types, and identity applications, consists of all the data and properties in \cref{defn:pushout} except that instead of $\ap_s\circ \mu = m$, we have for any good identity type $\Id_{\Id^D_C}\in\T(\Gamma.D.D.\Id_D.C.C.\Id^D_C.\Id^D_C)$ a non-empty family of ``good'' maps $v:A\to \Id_{\Id^D_C}$ over $(\ap_s\circ \mu, m)$.
+  If $\C$ is split and each family of good structures is a singleton, we say that $\C$ has \textbf{strictly stable weak typal pushouts}.
+\end{defn}
+
+Of course, typal pushouts are also weak typal pushouts, since if $\ap_s\circ \mu = m$ we can compose this map with $\r$ to get $v$.
+The corresponding modified elimination rule in syntactic type theory is shown in~\cref{fig:wk-pushout}.
+In the case when the dependent identity types and identity applications are defined from the ordinary identity types as on page~\pageref{idover}, this yields exactly the notion of pushout type used in~\cite[\S6.8]{hottbook}.
+Some reasons for choosing a weak computation rule for the path-constructor are adumbrated in~\cite[\S6.2 and Chapter 6 Notes]{hottbook}, one of which (non-strictness of the equivalence between left and right homotopies) is roughly the same reason such a rule appears here.
+
+\begin{figure}
+  \centering
+  \begin{mathpar}
+    \inferrule{\Gamma\types A\type \\ \Gamma\types B_1\type \\ \Gamma\types B_2\type \\\\
+      \Gamma,x:A\types f_1:B_1 \\ \Gamma,x:A \types f_2:B_2 \\\\ \Gamma, u:\fPush(x.f_1,x.f_2) \types C\type \\
+      \Gamma, y_1:B_1\types t_1:C[\nu_1(y_1)/u] \\ \Gamma, y_2:B_2\types t_2:C[\nu_2(y_2)/u] \\
+      \Gamma, x:A \types m:\idover[C]{t_1[f_1(a)/y_1]}{{t_2[f_2(a)/y_2]}}{\mu(x)}}
+    {\Gamma,a:A \types \mathsf{pec}(u.C,y_1.t_1,y_2.t_2,a.m,a) : \id{\ap_{u.\mathsf{pe}(u.C,y_1.t_1,y_2.t_2,a.m,u)}(a)}{m[a/x]}}\and
+  \end{mathpar}
+  \caption{Computation for weak pushouts}
+  \label{fig:wk-pushout}
+\end{figure}
+
+The following theorem could be stated for weakly stable structures in addition to strict ones, but we only need to apply it after the local universes splitting has occurred, so we don't bother with that generality.
+
+\begin{thm}
+  Let $\C$ be a split comprehension category equipped with strictly stable identity types.
+  If $\C$ has strictly stable weak typal pushouts with respect to one choice of strictly stable dependent identity types and identity applications, then with respect to any other choice of strictly stable dependent identity types and identity applications it also has strictly stable weak typal pushouts.
+\end{thm}
+\begin{proof}
+  We use the ordinary notation for the given identity types, dependent identity types, identity applications, and typal pushouts, and we write $\idovertwo[B]{x}{y}{e}$ and $\aptwo{f}$ and so on for some other choice of dependent identity types and identity applications.
+  Using the eliminators for dependent identity types in both directions (or equivalently the uniqueness-up-to-homotopy of weak factorization systems), we obtain maps in both directions making all the triangles commute:
+  \[
+  \begin{tikzcd}
+    & \Gamma.A.A.\Id_A.B.B.\Id^A_B \ar[dr] \ar[dd,shift left,"h"]\\
+    \Gamma.A.B \ar[ur,"{\r^A_B}"] \ar[dr,swap,"{\rtwo{A}{B}}"] && \Gamma.A.A.\Id_A.B.B\\
+    & \Gamma.A.A.\Id_A.B.B.\Idtwo{A}{B} \ar[ur] \ar[uu,shift left,"k"]
+  \end{tikzcd}
+  \]
+  Similarly, we obtain homotopies over $\Gamma.A.A.\Id_A.B.B$ between the round-trip composites in both directions (i.e.\ maps $\Gamma.A.B \to \Gamma.A.A.\Id_A.B.B.\Id^A_B.\Id^A_B.\Id_{\Id^A_B}$ and similarly), giving a homotopy equivalence $\Id^A_B \simeq \Idtwo{A}{B}$.
+  And if we have a section $f$ of $B\in\T(\Gamma.A)$, then the composite
+  \[ \Gamma.A.A.\Id_A \xto{\ap_f} \Gamma.A.A.\Id_A.B.B.\Id^A_B \xto{h} \Gamma.A.A.\Id_A.B.B.\Idtwo{A}{B} \]
+  is a lift of $(f,f)$, and has the property that when composed with $\r_A : \Gamma.A \to \Gamma.A.A.\Id_A$ it becomes $\rtwo{A}{B}$.
+  Since $\aptwo{f}$ also has these properties, we can use identity elimination to produce a homotopy $h\circ \ap_f \sim \aptwo{f}$ over $(f,f)$, i.e.\ a lift of $(h\circ \ap_f,\aptwo{f})$ to $\Gamma.A.A.\Id_A.B.B.\Idtwo{A}{B}.\Idtwo{A}{B}.\Id_{\Idtwo{A}{B}}$.
+
+  Now, note that only the eliminator and computation rules for pushouts refer to dependent identity types; the formation and introduction rules can be exactly as given.
+  For the eliminator, all the structure on $C$ in the second case can be used as-given except for $u:A\to \Gamma.D.D.\Id_D.C.C.\Idtwo{D}{C}$, which we compose with $k$ to produce data for the given eliminator.
+  This produces a section of the desired form, satisfying the computation rules $s\circ \nu_i = t_i$ and with a homotopy $\ap_s\circ \mu \sim k\circ m$.
+  Postcomposing this homotopy with $h$ (using ordinary $\Id$-elimination) and concatenating with the above-constructed homotopies $h\circ \ap_s \sim \aptwo{s}$ and $h\circ k \sim 1$, we get
+  \[ \aptwo{s} \circ \mu \sim h\circ \ap_s \circ \mu \sim h\circ k\circ m \sim m \]
+  which is what we want.
+  Since everything that went into the construction was assumed strictly stable, so is the result.
+\end{proof}
+
+\begin{cor}
+  For any good model category $\sM$, the split comprehension category $(\Mf)_!$ has strictly stable weak typal pushouts, relative to the strictly stable identity types obtained by strictifying its canonical weakly stable ones, and the dependent identity types obtained from any of~\ref{item:idover1}--\ref{item:idover3} on page~\pageref{idover} and the identity applications obtained from $\Id$-elimination.\qed
+\end{cor}
 
 
 \bibliographystyle{alpha}
