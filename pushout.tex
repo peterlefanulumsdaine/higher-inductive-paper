@@ -2,19 +2,25 @@
 
 \input{decls}
 \input{macros}
+\autodefs{\fPush\sFib}
 \def\name#1{\ulcorner #1\urcorner}
 \let\J\iJ
 \mdef\Mf{\sM_{\mathbf{f}}}
+\mdef\fibm{(\sM,\cF)}
+\mdef\fibmf{(\Mf,\cF_{\mathbf{f}})}
+\mdef\fibmbang{(\sM,\cF_!)}
+\mdef\fibmfbang{(\Mf,\cF_{\mathbf{f},!})}
 \let\C\cC
 \let\T\cT
 \let\r\ir
+\def\zero{\mathsf{zero}}
+\def\succ{\mathsf{succ}}
 \autodefs{\fId}
 \let\Id\fId
 \let\G\cG
 \def\dG{\widehat{\G}}
 \let\type\fibtype
 \def\drefl{\refl'}
-\autodefs{\fPush}
 \usepackage{scalefnt}
 \newcommand{\mysc}[1]{\text{\scalefont{0.76}\uppercase{#1}}}
 \renewcommand{\idover}[4][]{\fId_{#1}^{#4}(#2,#3)}
@@ -70,14 +76,24 @@ Moreover, each slice category of \sM is a simplicial model category, and pullbac
 
 Every good model category is a type-theoretic model category in the sense of~\cite{shulman:invdia}, and hence the subcategory of fibrant objects is a type-theoretic fibration category.
 In particular, cofibrations are stable under pullback, so acyclic cofibrations are stable under pullback along fibrations, and hence dependent products of fibrations along fibrations are fibrations.
-This gives the categorical analogue of the structure required to model type theory with dependent sums (including a unit type), dependent products, and an identity type.
+This gives the categorical analogue of the structure required to model type theory with dependent sums (including a unit type), dependent products, and identity types.
 
 To actually construct such an interpretation requires a coherence theorem\footnote{And also an ``initiality theorem''.} making all the structure strictly stable under pullback.
-We will use the coherence method of~\cite{lw:localuniv}, which applies to many different kinds of structure: it shows that if a structure is ``weakly stable'', meaning that the pullback of \emph{a} structure is \emph{a} structure, then in the ``left adjoint splitting'' it can be made strictly stable.
-The idea is that if $\Gamma$ is an object of $\sM$, then ``a type $A$ in context $\Gamma$'' is interpreted by a fibration $E_A \fib V_A$ and a map $\name{A}:\Gamma\to V_A$; we call $V_A$ the ``local universe'' and think of this as a representative of the pullback of $E_A$ along $\name{A}$.
-Reindexing of such types is done by simple composition (``$f^*A$'' is $\name{A}\circ f$) which is strictly associative.
-Moreover, the presence of local universes allows us to apply categorical constructions once in the ``universal case'', making them strictly preserved by reindexing as well.
-See~\cite{lw:localuniv} for an extensive discussion; we will prove the relevant results for our situation below.
+We will use the coherence method of~\cite{lw:localuniv}, which applies to many different kinds of structure.
+The input to this method is a \emph{comprehension category} $(\C,\T)$.
+One then defines the \textbf{left adjoint splitting} $(\C,\T_!)$ (or just $\C_!$ for short) in which a type $A\in \T_!(\Gamma)$ consists of an object $V_A\in\C$, a type $E_A\in\T(V_A)$, and a map $\name{A}:\Gamma\to V_A$.
+We call $V_A$ the ``local universe'' and think of this as a representative of the pullback of $E_A$ along $\name{A}$.
+Reindexing of such types is done by simple composition ($A[f]$ is $\name{A}\circ f$) which is strictly associative.
+The local universes technique then shows that if $\C$ satisfies a technical condition (see~\eqref{eq:lf} below) and $\C$ has ``weakly stable'' structure of some sort, meaning that it exists in each fiber $\T(\Gamma)$ and the reindexing of \emph{a} structure is \emph{a} structure, then $\C_!$ admits \emph{strictly} stable structure (obtained by constructing weakly stable structure once in the ``universal case''), and thus (modulo an appropriate ``initiality theorem'') provides semantics for the corresponding type-theoretic rules.
+See~\cite{lw:localuniv} for details.
+
+We summarize the above discussion as follows.
+
+\begin{thm}
+  Any good model category $\sM$ admits a natural structure of a comprehension category $\fibm$ where $\cF(\Gamma)$ is the category of fibrations with codomain $\Gamma$.
+  Moreover, $\fibm$ has weakly stable dependent sums, unit type, dependent products, and identity types, and therefore $\fibmbang$ has strictly stable dependent sums, unit type, dependent products, and identity types.
+\end{thm}
+
 
 % We will also need the following enhancement of~\cite{lw:localuniv}.
 % For a type-theoretic model category, by the \textbf{fibrant left adjoint splitting} we mean the substructure of the left adjoint splitting consisting of only those types whose local universe object $V_A$ is fibrant.
@@ -221,9 +237,6 @@ This is an instance of ``one type constructor stacked on top of another'', like 
 Let $(\C,\T)$ be a comprehension category.
 As in~\cite{lw:localuniv}, if $A\in\T(\Gamma)$ we denote its comprehension by $\Gamma.A\to\Gamma$, and its reindexing along $\sigma:\Delta\to\Gamma$ by $A[\sigma]$.
 
-The example we have in mind is $\Mf$, whose base category is a good model category \sM and whose types in context $\Gamma$ are the fibrations over $\Gamma$, with tautological comprehension and reindexing by pullback.
-That is, the total category of the fibration $\T\to\C$ is the category whose objects are fibrations in $\sM$ and whose morphisms are pullback squares.
-
 In what follows, by a \emph{family} we mean an \emph{indexed family}.
 That is, a ``family of elements of $S$'', for any set $S$, consists of a set $F$ and a function $F\to S$.
 We often abuse notation by identifying elements of $F$ with their images in $S$, but it is important that such a family is not just a subset of $S$.
@@ -246,7 +259,7 @@ There is a category $\mathrm{Fam}$ whose objects are families $F\to S$ and whose
 Note that the underlying data of a good identity type and a good reflexivity term consist equivalently of a factorization of $\Gamma.A \to \Gamma.A.A$ through the comprehension $\Gamma.A.A.\Id_A \to \Gamma.A.A$ of some type $\Id_A$.
 
 \begin{thm}\label{thm:stable-id}
-  If \sM is a good model category, then \Mf has a stable class of identity types, called the \textbf{canonical stable class of identity types}, in which:
+  If \sM is a good model category, then \fibm has a stable class of identity types, called the \textbf{canonical stable class of identity types}, in which:
   \begin{itemize}
   \item $\G_\Id(A)$ is the set of objects of $\sM/\Gamma$ equipped with data exhibiting the universal property of the simplicial power $(\Gamma.A)^\ivl_\Gamma$ therein.
   \item For each such object, the factorization $\Gamma.A \to (\Gamma.A)^\ivl_\Gamma \to \Gamma.A.A \cong \Gamma.A \times_\Gamma \Gamma.A$ is induced by powering with the maps $\mathbf{2} \to \ivl \to \mathbf{1}$ of simplicial sets.
@@ -305,7 +318,7 @@ Similarly to the non-dependent case, the underlying data of a good dependent ide
 \]
 
 \begin{thm}\label{thm:stable-dep-id}
-  If \sM is a good model category, then \Mf has a \textbf{canonical stable class of dependent identity types} over the canonical stable class of identity types, in which:
+  If \sM is a good model category, then \fibm has a \textbf{canonical stable class of dependent identity types} over the canonical stable class of identity types, in which:
   \begin{itemize}
   \item $\dG_\Id(A,\Id_A,B)$ is the set of objects of $\sM/\Gamma$ equipped with the universal property of a simplicial power $(\Gamma.A.B)^\ivl_\Gamma$.
   \item For each such object, the above factorization is given by the following diagram:
@@ -344,7 +357,7 @@ Thus, we also introduce this abstractly.
 \end{defn}
 
 \begin{thm}\label{thm:stable-ap}
-  If \sM is a good model category, then \Mf has a \textbf{canonical stable class of identity applications} over the canonical stable classes of identity types and dependent identity types, in which the good sections $\ap_f$ are the maps $f^\ivl_\Gamma$ induced by the functoriality of simplicial powers.
+  If \sM is a good model category, then \fibm has a \textbf{canonical stable class of identity applications} over the canonical stable classes of identity types and dependent identity types, in which the good sections $\ap_f$ are the maps $f^\ivl_\Gamma$ induced by the functoriality of simplicial powers.
 \end{thm}
 \begin{proof}
   The requisite squares commute by the two-variable functoriality of simplicial powers.
@@ -385,7 +398,7 @@ Recall the basic condition on a comprehension category $(\C,\T)$ that makes loca
   \tag{LF} \parbox{10cm}{$\C$ has finite products, and dependent exponentials of display maps and product projections along display maps.}
 \end{equation}
 
-Of course, since good model category $\sM$ is locally cartesian closed, $\Mf$ always satisfies condition~\eqref{eq:lf}.
+Of course, since a good model category $\sM$ is locally cartesian closed, $\fibm$ always satisfies condition~\eqref{eq:lf}.
 
 \begin{defn}
   A split comprehension category $\C$ has:
@@ -525,7 +538,7 @@ Namely, each premise of a rule corresponds to one term in the iterated $\Sigma$-
   \begin{align*}
     [ & a:V_A \\
     & b:\prod x:E_A(a). V_B,\\
-    & f:\prod x:E_A(a), E_B(b(x)) ].\qedhere
+    & f:\prod x:E_A(a). E_B(b(x)) ].\qedhere
   \end{align*}
 \end{proof}
 
@@ -553,7 +566,7 @@ Namely, each premise of a rule corresponds to one term in the iterated $\Sigma$-
 \end{proof}
 
 \begin{thm}
-  For any good model category $\sM$, the split comprehension category $(\Mf)_!$ has strictly stable typal pushouts, relative to the strictly stable identity types, dependent identity types, and identity applications obtained by strictifying its canonical weakly stable ones.
+  For any good model category $\sM$, the split comprehension category $\fibmbang$ has strictly stable typal pushouts, relative to the strictly stable identity types, dependent identity types, and identity applications obtained by strictifying its canonical weakly stable ones.
 \end{thm}
 \begin{proof}
   Combine \cref{thm:model-pushout,thm:lu-pushout}.
@@ -564,7 +577,7 @@ The pushout rules in \cref{fig:pushouts} differ from those commonly used (e.g.\ 
 The usual approach is instead to start with only identity types as in \cref{fig:id}, and then \emph{define} dependent identity types using one of the methods~\ref{item:idover1}--\ref{item:idover3} listed on page~\pageref{idover}, similarly define $\ap$ using the eliminator of identity types, and then state rules such as those in \ref{fig:pushouts} relative to these defined structures.
 
 Such definitions certainly give \emph{some} classes of dependent identity types and identity applications, which are strictly stable if the identity types we started with are strictly stable.
-However, if such constructions are performed in $(\Mf)_!$, the resulting strictly stable classes will not generally be the \emph{same} as those obtained from the canonical weakly stable ones by the local universes construction.
+However, if such constructions are performed in $\fibmbang$, the resulting strictly stable classes will not generally be the \emph{same} as those obtained from the canonical weakly stable ones by the local universes construction.
 They will indeed be \emph{equivalent}, and we can transfer the structure of a pushout across such an equivalence, but at the cost of weakening the computation rule for the path-constructor from a judgmental equality to the existence of a path, as follows.
 
 \begin{defn}\label{defn:wk-pushouts}
@@ -622,9 +635,130 @@ The following theorem could be stated for weakly stable structures in addition t
 \end{proof}
 
 \begin{cor}
-  For any good model category $\sM$, the split comprehension category $(\Mf)_!$ has strictly stable weak typal pushouts, relative to the strictly stable identity types obtained by strictifying its canonical weakly stable ones, and the dependent identity types obtained from any of~\ref{item:idover1}--\ref{item:idover3} on page~\pageref{idover} and the identity applications obtained from $\Id$-elimination.\qed
+  For any good model category $\sM$, the split comprehension category $\fibmbang$ has strictly stable weak typal pushouts, relative to the strictly stable identity types obtained by strictifying its canonical weakly stable ones, and the dependent identity types obtained from any of~\ref{item:idover1}--\ref{item:idover3} on page~\pageref{idover} and the identity applications obtained from $\Id$-elimination.\qed
 \end{cor}
 
+\section{Natural numbers}
+\label{sec:natural-numbers}
+
+The natural numbers type, though a standard type constructor, is not considered explicitly in~\cite{lw:localuniv}; thus we begin with its local universes theory.
+
+\begin{defn}
+  In a comprehension category $(\C,\T)$, a \textbf{natural numbers type} over $\Gamma\in\C$ is a type $\bN\in\T(\Gamma)$ together with a section $\zero:\Gamma\to\Gamma.\bN$ and a map $\succ:\Gamma.\bN\to\Gamma.\bN$ over $\Gamma$, such that for any type $C\in\T(\Gamma.\bN)$ equipped with $z:\Gamma\to\Gamma.\bN.C$ over $\zero$ and $s:\Gamma.\bN.C \to \Gamma.\bN.\C$ over $\succ$ there exists a section $f$ of $C$ such that $f \circ \zero = z$ and $f\circ \succ = s \circ f$.
+
+  We say $\C$ has a \textbf{weakly stable natural numbers type} if for any $\Gamma$ there is a natural numbers type $\bN\in\T(\Gamma)$ such that for any $\sigma:\Delta\to\Gamma$, $(\bN[\sigma],\zero[\sigma],\succ[\sigma])$ is a natural numbers type over $\Delta$.
+  Similarly, if $\C$ is split, it has a \textbf{strictly stable natural numbers type} if it has an operation assigning to each $\Gamma$ a natural numbers type $\bN\in\T(\Gamma)$ such that reindexing along any $\sigma:\Delta\to\Gamma$ preserves natural numbers types along with their data and specified sections.
+\end{defn}
+
+Of course, if $\C$ has a terminal object (as it usually does), then the quantification over $\Gamma$ in the latter definition follows from the special case $\Gamma=1$.
+A strictly stable natural numbers type is the semantic version of the usual rules for a natural numbers type, shown in \cref{fig:nno}.
+
+\begin{figure}
+  \centering
+  \begin{mathpar}
+    \inferrule{ }{\Gamma\types\bN\type}\and
+    \inferrule{ }{\Gamma\types \zero:\bN}\and
+    \inferrule{ }{\Gamma,x:\bN\types \succ(x):\bN}\and
+    \inferrule{\Gamma,x:\bN\types C\type \\ \Gamma\types z:C[\zero/x] \\ \Gamma,x:\bN,y:C \types s : C[\succ(x)/x]}{\Gamma,n:\bN\types \mathsf{Ne}(x.C,z,xy.s,n) : C[n/x] \\ \Gamma\types \mathsf{Ne}(x.C,z,xy.s,\zero) \jdeq z\\ \Gamma,n:\bN \types \mathsf{Ne}(x.C,z,xy.s,\succ(n)) \jdeq s[n/x,\mathsf{Ne}(x.C,z,xy.s,n)/y]}
+  \end{mathpar}
+  \caption{Natural numbers type}
+  \label{fig:nno}
+\end{figure}
+
+\begin{thm}
+  If $\C$ satisfies~\eqref{eq:lf} and has a weakly stable natural numbers type, then $\C_!$ has a strictly stable natural numbers type.
+\end{thm}
+\begin{proof}
+  Note that condition~\eqref{eq:lf} includes the existence of a terminal object.
+  We take the terminal object to be the local universe for the formation and introduction rules, choosing a weakly stable natural numbers type over it.
+  For the elimination and computation rules, the local universe is
+  \begin{align*}
+    [&c: \prod x:E_{\bN}. V_C,\\
+    &z: E_C(c(\zero)),\\
+    &s: \prod x:E_{\bN}, y:E_C(c(x)) . E_C(c(\succ(x))) ].\qedhere
+  \end{align*}
+\end{proof}
+
+In a good model category, the obvious candidate for a natural numbers type is the countable coproduct $\coprod_{n:\dN} 1$ of copies of the terminal object, which is automatically a ``natural numbers object'' in the usual sense of category theory.
+As usual, the problem is that in general this may not be fibrant.
+But unlike in the preceding sections, it does not suffice to simply fibrantly replace it.
+If $\bN$ is a fibrant replacement of $\coprod_{n:\dN} 1$, we can extend the zero and successor operations to it, and for any fibration $C\fib\bN$ equipped with $z$ and $s$ we can find a section of $C$ over $\coprod_{n:\dN} 1$ using its universal property and then extend that section to $\bN$ by lifting against the acyclic cofibration $\coprod_{n:\dN} 1 \to \bN$.
+
+However, such a lift will not generally satisfy the computation rules.
+It might be possible to choose it cleverly to satisfy the computation rule for $\zero$, but for $\succ$ there is essentially no hope, since the computation rule for $\succ$ relates the section to \emph{itself}, which is impossible to obtain using a simple lifting property.
+Thus, we have to be more clever.
+
+Let $F_\bN$ denote the endofunctor of $\sM$ defined by $F_\bN(X) = X+1$.
+Recall that an \textbf{endofunctor-algebra} for $F_\bN$ is an object $X$ together with a map $F_\bN(X) \to X$.
+A natural numbers object in the ordinary sense is precisely an \emph{initial} such endofunctor-algebra.
+And a natural numbers type over the terminal object is precisely a fibrant $F_\bN$-algebra $\bN$ such that any fibration $C\to\bN$ that is also a map of $F_\bN$-algebras has an $F_\bN$-algebra section.
+This suggests that $\bN$ is an ``initial fibrant $F_\bN$-algebra''; we now make this precise using the technology of \emph{algebraic weak factorization systems}~\cite{gt:nwfs,garner:nwfs,riehl:nwfs-model}.
+For this we strengthen our standing assumptions as follows.
+
+\begin{defn}
+  An \textbf{excellent model category} $\sM$ is a good model category that is in addition \emph{combinatorial}, i.e.\ a locally presentable category and cofibrantly generated as a model category.
+\end{defn}
+
+This allows us to use the technology of algebraically-free monads and algebraic colimits of monads~\cite{kelly:transfinite,nlab:transfinite}.
+Let $\dT_\bN$ denote the algebraically-free monad on $F_\bN$, which exists since $F_\bN$ is an accessible endofunctor.
+This is means it is a monad whose monad-algebras are precisely the endofunctor-algebras for $F_\bN$.
+By construction of $\dT_\bN$, it is also accessible.
+
+Now, by the construction of~\cite{garner:nwfs} and the combinatorial-ness of $\sM$, we have an accessible \textbf{fibrant factorization monad} $\dR$ on the arrow category $\sM^\to$, such that an arrow can be given an $\dR$-algebra structure if and only if it is a fibration, and $\dR$ preserves codomains.
+In particular, when restricted to arrows with terminal codomain, we get an accessible \textbf{fibrant replacement monad} $\dR_1$ on $\sM$ itself, such that an object can be given an $\dR_1$-algebra structure if and only if it is fibrant.
+Moreover, the composite of two $\dR$-algebras $X \xfib{f} Y \xfib{g} Z$ naturally acquires an $\dR$-algebra structure such that the commutative square
+\[
+\begin{tikzcd}
+  X \ar[d,"gf",swap] \ar[r,"f"] & Y \ar[d,"g"] \\ Z \ar[r,"1",swap]& Z
+\end{tikzcd}
+\]
+is a morphism of $\dR$-algebras.
+
+\begin{thm}
+  If $\sM$ is an excellent model category, then $\fibm$ has a natural numbers type over $1$.
+\end{thm}
+\begin{proof}
+  Consider the algebraic coproduct of monads $\dT_\bN+\dR_1$.
+  This is an (accessible) monad such that a $(\dT_\bN+\dR_1)$-algebra structure on an object $X$ is precisely a pair of an (unrelated) $\dT_\bN$-algebra structure (i.e.\ an $F_\bN$-endofunctor-algebra structure) and a $\dR_1$-algebra structure.
+  Let $\bN$ be the initial $(\dT_\bN+\dR_1)$-algebra, i.e.\ the free $(\dT_\bN+\dR_1)$-algebra on the initial object, $\bN =(\dT_\bN+\dR_1)(\emptyset)$.
+  Since $\bN$ is a $\dT_\bN$-algebra, it comes with $\zero$ and $\succ$; and since it is a $\dR_1$-algebra, it is fibrant.
+
+  Now suppose $p:C\fib \bN$ is a fibration of $F_\bN$-endofunctor-algebras.
+  Choose a $\dR$-algebra structure on $p$.
+  Then the composite $C\fib\bN\fib 1$ acquires an $\dR$-algebra structure, which is to say that $C$ acquires an $\dR_1$-algebra structure, such that $p$ is (not just an $\dR$-algebra but) a $\dR_1$-algebra map.
+  Since $C$ is also a $\dT_\bN$-algebra and $p$ is also a $\dT_\bN$-algebra map, it follows that $C$ is a $(\dT_\bN+\dR_1)$-algebra and $p$ is a $(\dT_\bN+\dR_1)$-algebra map.
+  But since $\bN$ is the initial $(\dT_\bN+\dR_1)$-algebra, any $(\dT_\bN+\dR_1)$-algebra map with codomain $\bN$ has a $(\dT_\bN+\dR_1)$-algebra section, and hence in particular a $\dT_\bN$-algebra section, as desired.
+\end{proof}
+
+In general it does not seem possible to prove that this natural numbers type is weakly stable, but with a small modification  we can.
+Let $\Mf$ denote the subcategory of fibrant objects in $\sM$, and $\fibmf$ the restriction of the comprehension category $\fibm$ to $\Mf$.
+Note that $\Mf$ is the smallest subcategory of $\sM$ to which $\cF$ can be restricted and still be a comprehension category, since every fibrant object is the comprehension of some fibration over $1$.
+In particular, any semantics of type theory in $\fibm$ must land inside $\Mf$, so nothing important is lost by this restriction.
+
+\begin{lem}
+  For any good model category $\sM$, the comprehension category $\fibmf$ also satisfies~\eqref{eq:lf}.
+\end{lem}
+\begin{proof}
+  The product of fibrant objects is of course fibrant, and the assumptions on a good model category ensure that the dependent exponential of a fibration along a fibration is again a fibration, hence its domain is fibrant if its codomain is.
+\end{proof}
+
+Moreover, any weakly stable structure possesed by $\fibm$ is also possesed by $\fibmf$.
+Thus, all our preceding theorems about strictly stable structure in $\fibmbang$ also apply to $\fibmfbang$.
+
+\begin{thm}
+  If $\sM$ is an excellent model category, then $\fibmf$ has a weakly stable natural numbers type.
+\end{thm}
+\begin{proof}
+  It suffices to show that any natural numbers type $\bN$ over $1$ is weakly stable, which is to say that for any (fibrant!)\ object $\Gamma$ the pullback $\Gamma^* \bN$ is a natural numbers type over $\Gamma$.
+  The proof is essentially the usual category-theoretic argument that pullback functors preserve natural numbers objects.
+  Suppose $C\fib \Gamma^* \bN$ is a fibration over $\Gamma$ equipped with a section $z:\Gamma\to C$ over $\Gamma^*(\zero)$ and a map $s:C\to C$ over $\Gamma^*(\succ)$.
+  Then (since $\Gamma$ is fibrant) $\Gamma_* C \fib \Gamma_* \Gamma^* \bN$ is a fibration, and using the elimination property of $\bN$ we can lift the unit $\bN \to \Gamma_* \Gamma^* \bN$ to a section $\bN\to \Gamma_* C$.
+  The adjunct of this is a section $\Gamma^* \bN \to C$ that satisfies the desired computation rules.
+\end{proof}
+
+\begin{cor}
+  If $\sM$ is an excellent model category, then $\fibmfbang$ has a strictly stable natural numbers type.\qed
+\end{cor}
 
 \bibliographystyle{alpha}
 \bibliography{basictex/all}
