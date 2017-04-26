@@ -8,6 +8,8 @@
 \let\W\iW
 \let\F\cF
 \let\N\iN
+\def\dId{\mathbb{I}\mathsf{d}}
+\def\dtprop{\dT_{\mathsf{Prop}}}
 \mdef\Mf{\sM_{\mathbf{f}}}
 \mdef\fibm{(\sM,\cF)}
 \mdef\fibmf{(\Mf,\cF_{\mathbf{f}})}
@@ -21,6 +23,9 @@
 \def\nrec{\mathsf{nrec}}
 \def\fold{\mathsf{fold}}
 \def\wrec{\mathsf{wrec}}
+\def\tr{\mathsf{tr}}
+\def\treq{\mathsf{treq}}
+\def\trrec{\mathsf{trrec}}
 \autodefs{\fId}
 \let\Id\fId
 \let\G\cG
@@ -38,6 +43,7 @@
 \usepackage[utf8]{inputenc}
 \hyphenation{pseu-do-func-tor-ial}
 \tikzset{idmap/.style={double equal sign distance,-}}
+\usetikzlibrary{decorations.pathmorphing}
 
 \title{Semantics of pushouts in homotopy type theory}
 
@@ -612,7 +618,7 @@ Some reasons for choosing a weak computation rule for the path-constructor are a
 
 The following theorem could be stated for weakly stable structures in addition to strict ones, but we only need to apply it after the local universes splitting has occurred, so we don't bother with that generality.
 
-\begin{thm}
+\begin{thm}\label{thm:transfer-depid}
   Let $\C$ be a split comprehension category equipped with strictly stable identity types.
   If $\C$ has strictly stable weak typal pushouts with respect to one choice of strictly stable dependent identity types and identity applications, then with respect to any other choice of strictly stable dependent identity types and identity applications it also has strictly stable weak typal pushouts.
 \end{thm}
@@ -802,7 +808,7 @@ Since a good model category is locally cartesian closed, it has \emph{pseudo-sta
   Thus, since $\W$ is the initial $(\dT_{\W A B} + \dR_{\Gamma})$-algebra, this morphism has a $(\dT_{\W A B} + \dR_{\Gamma})$-algebra section, and in particular a $F_{\W A B}$-endofunctor-algebra section, which is $\wrec$.
 \end{proof}
 
-\begin{thm}
+\begin{thm}\label{thm:wk-w}
   If $\sM$ is an excellent model category, then $\fibmf$ has weakly stable \W-types.
 \end{thm}
 \begin{proof}
@@ -843,53 +849,227 @@ Since a good model category is locally cartesian closed, it has \emph{pseudo-sta
   This is contained in the following lemma.
 \end{proof}
 
-\begin{lem}
+\begin{lem}\label{thm:W-cofmnd}
   Suppose a pair of pullback squares in a good model category $\sM$:
   \[
   \begin{tikzcd}
-    D \ar[r,>->,"i"] \ar[d,->>,"p",swap] \ar[dr,phantom,near start,"\lrcorner"] & C \ar[d,->>,"q"] \\
-    V \ar[r,>->,"j"] \ar[d,->>] \ar[dr,phantom,near start,"\lrcorner"] & W \ar[d,->>] \\
-    \Delta \ar[r,>->,"\sigma",swap] & \Gamma
+    C \ar[r,>->,squiggly,"i"] \ar[d,->>,"p",swap] \ar[dr,phantom,near start,"\lrcorner"] & D \ar[d,->>,"q"] \\
+    V \ar[r,>->,squiggly,"j"] \ar[d,->>] \ar[dr,phantom,near start,"\lrcorner"] & W \ar[d,->>] \\
+    \Delta \ar[r,>->,squiggly,"\sigma",swap] & \Gamma
   \end{tikzcd}
   \]
   in which all objects are fibrant, the downward-pointing arrows are fibrations, and the rightward-pointing arrows are acyclic cofibrations.
-  Suppose moreover that for some fibration $f:B\to A$ between fibrant objects of $\sM/\Gamma$, the object $W$ of $\sM/\Gamma$ is a $F_{\W A B}$-endofunctor-algebra, the objects $D$ is a $F_{\W (\sigma^*A) (\sigma^*B)}$-endofunctor-algebra, and $p$ is a $F_{\W (\sigma^*A) (\sigma^*B)}$-morphism (when $V$ has its induced structure from $W$).
-  Then there is a $F_{\W A B}$-endofunctor-algebra structure on $C$ inducing the structure on $D$ by pullback and making $q$ a $F_{\W A B}$-morphism.
+  Suppose moreover that for some fibration $f:B\to A$ between fibrant objects of $\sM/\Gamma$, the object $W$ of $\sM/\Gamma$ is a $F_{\W A B}$-endofunctor-algebra, the objects $C$ is a $F_{\W (\sigma^*A) (\sigma^*B)}$-endofunctor-algebra, and $p$ is a $F_{\W (\sigma^*A) (\sigma^*B)}$-morphism (when $V$ has its induced structure from $W$).
+  Then there is a $F_{\W A B}$-endofunctor-algebra structure on $D$ inducing the structure on $C$ by pullback and making $q$ a $F_{\W A B}$-morphism.
 \end{lem}
 \begin{proof}
   By definition, $F_{\W A B}(X) = f_* B^* X$ (with its canonical map to $A$ forgotten), and similarly $F_{\W (\sigma^*A) (\sigma^*B)}(X) = (\sigma^*f)_* (\sigma^*B)^* X$.
   Thus we are given the following commutative diagram of solid arrows and we want to construct the dashed arrow making the other squares commute:
   \[
   \begin{tikzcd}
-    (\sigma^*f)_* (\sigma^*B)^* D \ar[rr] \ar[dr] \ar[dd] && f_* B^* C \ar[dr,dashed] \ar[dd]\\
-    & D \ar[rr,>->,near end,"i",swap,crossing over] && C \ar[dd,->>,"q"] \\
+    (\sigma^*f)_* (\sigma^*B)^* C \ar[rr] \ar[dr] \ar[dd] && f_* B^* D \ar[dr,dashed] \ar[dd]\\
+    & C \ar[rr,->,near end,"i",swap,crossing over] && D \ar[dd,->>,"q"] \\
     (\sigma^*f)_* (\sigma^*B)^* V \ar[rr] \ar[dr] && f_* B^* W \ar[dr] \\
-    & V \ar[rr,>->,"j",swap] \ar[from=uu,crossing over,->>,near end,"p"] && W
+    & V \ar[rr,->,"j",swap] \ar[from=uu,crossing over,near end,"p"] && W
   \end{tikzcd}
   \]
   This is equivalent to solving the following lifting problem:
   \[
   \begin{tikzcd}
-    (\sigma^*f)_* (\sigma^*B)^* D \ar[r] \ar[d] & D \ar[r] & C \ar[d,->>] \\
-    f_* B^* C \ar[urr,dashed] \ar[r] & f_* B^* W \ar[r] & W
+    (\sigma^*f)_* (\sigma^*B)^* C \ar[r] \ar[d] & C \ar[r] & D \ar[d,->>] \\
+    f_* B^* D \ar[urr,dashed] \ar[r] & f_* B^* W \ar[r] & W
   \end{tikzcd}
   \]
-  so it suffices to show that $(\sigma^*f)_* (\sigma^*B)^* D \to f_* B^* C$ is an acyclic cofibration.
-  Now since $D = \sigma^*C$, we have $(\sigma^*B)^*D = \sigma^* B^* C$, so the map $(\sigma^*B)^*D \to B^* C$ is a pullback of $\sigma$ along the composite fibration $B^*C \to C \to \Gamma$, hence an acyclic cofibration.
-  But $(\sigma^*B)^*D$ is also the pullback of $B^* C$ along the map $B^*\sigma : \sigma^*B \to B$, so by the Beck-Chevalley condition for the pullback square
+  so it suffices to show that $(\sigma^*f)_* (\sigma^*B)^* C \to f_* B^* D$ is an acyclic cofibration.
+  Now since $C = \sigma^*D$, we have $(\sigma^*B)^*C = \sigma^* B^* D$, so the map $(\sigma^*B)^*C \to B^* D$ is a pullback of $\sigma$ along the composite fibration $B^*D \to D \to \Gamma$, hence an acyclic cofibration.
+  But $(\sigma^*B)^*C$ is also the pullback of $B^* D$ along the map $B^*\sigma : \sigma^*B \to B$, so by the Beck-Chevalley condition for the pullback square
   \[
   \begin{tikzcd}
     \sigma^* B \ar[r,"{B^*\sigma}"] \ar[d,"{\sigma^* f}",swap] & B \ar[d,"f"]\\
     \sigma^* A \ar[r,"{A^*\sigma}",swap] & A
   \end{tikzcd}
   \]
-  we have $(\sigma^*f)_* (\sigma^*B)^* D \cong (A^*\sigma)^* f_* B^* C$.
-  Thus, our desired map $(\sigma^*B)^*D \to B^* C$ is equivalently the pullback $(A^*\sigma)^* f_* B^* C \to f_* B^* C$ of the acyclic cofibration $A^*\sigma$ along the fibration $f_* B^* C \fib A$, and hence an acyclic cofibration.
+  we have $(\sigma^*f)_* (\sigma^*B)^* C \cong (A^*\sigma)^* f_* B^* D$.
+  Thus, our desired map $(\sigma^*B)^*C \to B^* D$ is equivalently the pullback $(A^*\sigma)^* f_* B^* D \to f_* B^* D$ of the acyclic cofibration $A^*\sigma$ along the fibration $f_* B^* D \fib A$, and hence an acyclic cofibration.
 \end{proof}
 
 \begin{cor}
   If $\sM$ is an excellent model category, then $\fibmfbang$ has strictly stable \W-types.
 \end{cor}
+
+
+\section{Propositional truncation}
+\label{sec:prop-trunc}
+
+Having dealt with both higher path-constructors in \crefrange{sec:pushouts}{sec:pushouts-type-theory} and recursive point-constructors in \crefrange{sec:natural-numbers}{sec:w-types}, we now combine them and consider a type with a recursive path-constructor.
+One of the simplest such is the propositional truncation, whose type-theoretic rules are shown in \cref{fig:proptrunc}.
+There should officially be a second computation rule regarding $\treq$, but the typal form of this (which, as in \cref{sec:pushouts-type-theory}, is all we will obtain eventually) is automatic since everything is a proposition.
+The semantic version of this definition is as follows.
+
+\begin{figure}
+  \centering
+  \begin{mathpar}
+    \inferrule{\Gamma\types A\type}{\Gamma\types \brck{A}\type}\and
+    \inferrule{\Gamma\types A\type}{\Gamma,x:A\types \tr({x}) : \brck{A}}\and
+    \inferrule{\Gamma\types A\type}{\Gamma,x:\brck A,y:\brck A\types \treq(x,y) : \id[\brck A]{x}{y}}\and
+    \inferrule{\Gamma\types A\type \\ \Gamma,z:\brck A \types C\type \\ \Gamma,x:A \types c:C[\tr(x)/z] \\ \Gamma,x:\brck A,y:\brck A,u:C[x/z],v:C[y/z]\types d:\idover[z.C]{u}{v}{\treq(x,y)}}{\Gamma,w:\brck A \types \trrec(z.C,x.c,xyuv.d,a) : C[w/z] \\ \Gamma,a:A \types \trrec(z.C,x.c,xyuv.d,\tr(a)) \jdeq c[a/x]}
+  \end{mathpar}
+  \caption{Propositional truncation}
+  \label{fig:proptrunc}
+\end{figure}
+
+\begin{defn}\label{defn:proptrunc}
+  Let $\C$ be a comprehension category with stable classes of identity types and dependent identity types.
+  A \textbf{stable class of propositional truncations} consists of, for any $A\in\T(\Gamma)$ a non-empty family of ``good propositional truncations'' $\brck A\in\T(\Gamma)$ with morphisms $\tr: \Gamma.A \to \Gamma.\brck A$ over $\Gamma$, and for any good identity type $\Id_{\brck A}$ a non-empty family of sections $\treq$ of the projection $\Gamma.\brck A.\brck A.\Id_{\brck A} \fib \Gamma.\brck A.\brck A$, plus for any $C\in\T(\Gamma.\brck A)$ equipped with a section $t:\Gamma.A\to\Gamma.\brck A.C$ over $\tr$, a good dependent identity type $\Id^{\brck A}_C$ over $\Id_{\brck A}$, and a section of the projection $\Gamma.\brck A.\brck A.\Id_{\brck A}.C.C.\Id^{\brck A}_C \to \Gamma.\brck A.\brck A.C.C$ over  $\treq$, a section $\trrec$ of $C$ such that $\trrec \circ \tr = t$; all equipped with appropriate reindexing operations.
+  We say $\C$ has \textbf{strictly stable propositional truncations} if it has a stable class thereof in which each family of good structures is a singleton.
+\end{defn}
+
+The local universes coherence lemma is proven as usual; we combine it with the analogue of \cref{thm:transfer-depid}.
+
+\begin{lem}
+  If $\C$ satisfies~\eqref{eq:lf} and has a stable class of propositional truncations relative to some stable classes of identity types and dependent identity types, then $\C_!$ has strictly stable propositional truncations relative to the identity types obtained by strictifying the given ones and \emph{any} dependent identity types over these.
+\end{lem}
+\begin{proof}
+  The local universe for the formation and introduction rules is just $V_A$, while that for the elimination and computation rules is
+  \begin{align*}
+    [& a:V_A,\\
+    &c:\prod z:E_{\brck A}(a) . V_C \\
+    &t:\prod x:E_{A}(a) . E_C(c(\tr(x))) \\
+    &d:\prod x,y:E_{\brck A}(a), u:E_C(c(x)), v:E_C(c(y)) . E_{\Id^{\brck A}_C}(a,x,y,u,v) ]
+  \end{align*}
+  And if $C$ has eliminator data relative to some other dependent identity types, then by composing it with the map $k$ from \cref{thm:transfer-depid} we obtain eliminator data for the given strictified ones, allowing us to define the desired section.
+\end{proof}
+
+Passing to the model-categorical context, it is useful to isolate the following definition.
+
+\begin{defn}\label{defn:prop}
+  A morphism $X\to \Gamma$ in a good model category is a \textbf{proposition over $\Gamma$} if it is equipped with a section of the projection $X^\ivl_\Gamma \to X\times_\Gamma X$, i.e.\ a simplicial homotopy over $\Gamma$ between the two projections $X\times_\Gamma X \toto X$.
+  A \textbf{map of propositions over $\Gamma$} is a map over $\Gamma$ that preserves these sections (or homotopies).
+\end{defn}
+
+Note that when interpreted with respect to the canonical identity types and dependent identity types in a good model category, the introduction rule for $\brck A$ says that it is a fibrant proposition with a map from $A$, and the elimination rule says that any fibration over $\brck A$ that is a map of propositions and has a section over $A$ has a section over $\brck A$.
+
+\cref{defn:prop} does not require $X\to \Gamma$ to be a fibration, but when it is, the definition has the following reformulations.
+
+\begin{lem}\label{thm:prop-diag}
+  The following are equivalent for a fibration $p:X\fib\Gamma$ in a good model category.
+  \begin{enumerate}
+  \item $p$ admits some structure of a proposition over $\Gamma$.\label{item:pd1}
+  \item The diagonal $X\to X\times_\Gamma X$ is a weak equivalence.\label{item:pd2}
+  \item The diagonal $X\to X\times_\Gamma X$ is an acyclic cofibration.\label{item:pd3}
+  \end{enumerate}
+\end{lem}
+\begin{proof}
+  The diagonal is always a split mono, hence a cofibration, so \ref{item:pd2}$\Leftrightarrow$\ref{item:pd3} is easy.
+  And \ref{item:pd3}$\Rightarrow$\ref{item:pd1} by lifting in the square
+  \[
+  \begin{tikzcd}
+    X \ar[d,>->,squiggly] \ar[r,"\r"] & X^\ivl_\Gamma \ar[d,->>] \\
+    X\times_\Gamma X \ar[r,idmap] & X\times_\Gamma X
+  \end{tikzcd}
+  \]
+  in which the right-hand map is a fibration since $p$ is a fibration, as in \cref{thm:stable-id}.
+  Finally, if~\ref{item:pd1} then any two parallel maps over $\Gamma$ with target $X$ are simplicially homotopic, by composing with the specified section.
+  Thus, consider either projection $X\times_\Gamma X\to X$; this is a retraction of the diagonal, while the composite $X\times_\Gamma X\to X \to X\times_\Gamma X$ is simplicially homotopic to the identity by the above.
+  Thus the diagonal is a simplicial homotopy equivalence.
+\end{proof}
+
+\begin{lem}\label{thm:prop-over}
+  Given a proposition $X\fib \Gamma$ over $\Gamma$ in a good model category, the following are equivalent for a further fibration $Y\fib X$.
+  \begin{enumerate}
+  \item $Y\fib X$ admits some structure of a proposition over $X$.
+  \item the composite $Y\fib X\fib \Gamma$ admits some structure of a proposition over $\Gamma$.
+  \item the composite $Y\fib X\fib \Gamma$ admits some structure of a proposition over $\Gamma$ such that $Y\to X$ is a map of propositions.
+  \end{enumerate}
+\end{lem}
+\begin{proof}
+  We have a pullback square
+  \[
+  \begin{tikzcd}
+    Y\times_X Y \ar[r,>->,squiggly] \ar[d] \ar[dr,phantom,near start,"\lrcorner"] & Y\times_\Gamma Y \ar[d,->>]\\
+    X \ar[r,>->,squiggly] & X\times_\Gamma X
+  \end{tikzcd}
+  \]
+  in which the right-hand map is a fibration (the product of two fibrations in $\sM/\Gamma$) and the bottom map is an acyclic cofibration by \cref{thm:prop-diag}, hence the top map is also an acyclic cofibration.
+  Thus, by the 2-out-of-3 property, the diagonal $Y\to Y\times_X Y$ is a weak equivalence (i.e.\ $Y$ can be structured as a proposition over $X$) if and only if the diagonal $Y\to Y\times_\Gamma Y$ is a weak equivalence (i.e.\ $Y$ can be structured as a proposition over $\Gamma$).
+  Moreover, in this case we can structure $Y$ as a proposition over $\Gamma$ making $Y\to X$ a map of propositions by lifting in the following square:
+  \[
+  \begin{tikzcd}
+    Y \ar[r] \ar[d,>->,squiggly] & Y^\ivl_\Gamma \ar[d,->>]\\
+    Y\times_\Gamma Y \ar[r] & (Y\times_\Gamma Y)\times_{(X\times_\Gamma X)} X^\ivl_\Gamma
+  \end{tikzcd}
+  \]
+  Here the right-hand map is a fibration since it is the pullback corner product in $\sM/\Gamma$ of the fibration $Y\fib X$ and the cofibration $\mathbf{2} \to \ivl$, so such a lift exists.
+\end{proof}
+
+The following proof introduces one more new idea: algebraic pushouts of monads to ``glue in recursive paths''.
+
+\begin{thm}
+  If $\sM$ is an excellent model category, then $\fibmf$ has a stable class of propositional truncations relative to its canonical stable classes of identity types and dependent identity types, and hence $\fibmfbang$ has strictly stable propositional truncations.
+\end{thm}
+\begin{proof}
+  % Interpreted in the case of canonical identity types, \cref{defn:proptrunc} says that for each fibration $\Gamma.A\fib \Gamma$ we want a non-empty class of fibrations $\Gamma.\brck A \fib \Gamma$ with maps $\tr: \Gamma.A \to \Gamma.\brck A$ over $\Gamma$ and a simplicial homotopy $\treq$ between the two projections $\Gamma.\brck A \times_\Gamma \Gamma.\brck A \toto \Gamma.\brck A$, such that any fibration $\Gamma.\brck A.C \fib \Gamma.\brck A$ equipped with a section $t$ over $\tr$ and a simplicial homotopy over $\treq$ between the two projections $\Gamma.\brck A.C \times_\Gamma \Gamma.\brck A.C \toto \Gamma.\brck A.C$ has a section $f$ such that $f\circ \tr = t$.
+  Let $F_{\ivl}$ be the endofunctor of $\sM/\Gamma$ defined by $F_{\ivl}(X) = (X \times_\Gamma X) \otimes \ivl$.
+  Then an $F_{\ivl}$-endofunctor-algebra structure on $X$ consists of a simplicial homotopy between two maps $X \times_\Gamma X \toto X$.
+  These two maps can be arbitrary and are given as part of the algebra structure, but we can identify them with the projections by taking an algebraic colimit of monads.
+
+  If we define $F_{\mathbf{2}}(X) = (X\times_\Gamma X) \otimes \mathbf{2}$, then an $F_{\mathbf{2}}$-endofunctor-algebra structure consists of two maps $X \times_\Gamma X \toto X$.
+  Moreover, there is a natural transformation $F_{\mathbf{2}} \to F_\ivl$ such that the induced functor from $F_{\ivl}$-endofunctor-algebras to $F_{\mathbf{2}}$-endofunctor-algebras forgets the homotopy but remembers the maps.
+  And if $\dT_{\mathbf{2}}$ and $\dT_\ivl$ denote the algebraically-free monads on these (accessible) endofunctors, we have an induced monad morphism $\dT_{\mathbf{2}} \to \dT_\ivl$ that has the same effect on algebras.
+
+  Let $\dId$ denote the identity functor with its unique monad structure, so that every object has a unique $\dId$-algebra structure.
+  Every object also has a canonical (though not unique) $\dT_{\mathbf{2}}$-algebra structure consisting of the two projections, so there is a monad morphism $\dT_{\mathbf{2}} \to \dId$.
+  Let $\dtprop$ be the algebraic monad pushout:
+  \[
+  \begin{tikzcd}
+    \dT_{\mathbf{2}} \ar[r] \ar[d] & \dId \ar[d] \\ \dT_{\ivl} \ar[r] & \dtprop
+  \end{tikzcd}
+  \]
+  Then a $\dtprop$-algebra is exactly a proposition over $\Gamma$.
+
+  Finally, consider the algebraic monad coproduct $\dtprop + \dR_\Gamma$, and let $\brck A = (\dtprop+\dR_\Gamma)(A)$.
+  (More precisely, we define a ``good'' propositional truncation to be a fibration over $\Gamma$ equipped with an isomorphism to $(\dtprop+\dR_\Gamma)(A)$.)
+  Then $\brck A \to \Gamma$ is a fibration, since it is an $\dR_\Gamma$-algebra, and $\brck A$ is a proposition since it is a $\dtprop$-algebra, while the unit of the monad $\dtprop + \dR_\Gamma$ supplies $\tr:A\to\brck A$.
+
+  The eliminator data consists of a fibration $p:C\fib \brck A$ that is also a $\dtprop$-algebra morphism, together with a map $t:A\to C$ over $\tr$.
+  As usual, we choose an $\dR$-algebra structure on $p$, inducing an $\dR$-algebra structure on the composite $C\fib \brck A \fib \Gamma$ such that $p$ becomes a $\dR$-algebra morphism.
+  Thus, $t:A\to C$ is a map from $A$ to a $(\dtprop+\dR_\Gamma)$-algebra, so it factors uniquely through the free $(\dtprop+\dR_\Gamma)$-algebra on $A$, which by definition is $\brck A$.
+  And when we compose this factorization $f:\brck A \to C$ with $p$, we get a factorization of $\tr$ through itself, which must therefore be the identity; thus $f$ is a section of $p$ as desired.
+
+  It remains to prove weak stability.
+  Since pullback preserves limits and simplicial homotopies, it preserves the introduction rule, i.e.\ it takes propositions to propositions.
+  For elimination and computation, as in \cref{thm:wk-w} we deal separately with the cases when $\sigma:\Delta\to\Gamma$ is a fibration or an acyclic cofibration.
+
+  If $\sigma$ is a fibration and $C\fib \sigma^*\brck A$ is a fibration of propositions over $\Delta$, then as usual we have a fibration $\sigma_* C \fib \sigma_* \sigma^* \brck A$ over $\Gamma$.
+  Moreover, $\sigma_*$ also preserves propositions, since it is a simplicial right adjoint and hence preserves limits and simplicial homotopies.
+  Thus, $\sigma_* C\to\sigma_*\sigma^*\brck A$ is also a fibration of propositions over $\Gamma$, while the unit $\eta : \brck A \to \sigma_* \sigma^* \brck A$ is a map of propositions.
+  Thus, the pullback $\eta^* \sigma_* C \fib \brck A$ is also a proposition over $\Gamma$.
+  Moreover, if $C$ has a section over $\sigma^*A$, then $\sigma_* C$ has a section over $A$, which therefore extends to a section of $\eta^* \sigma_* C$, i.e.\ a map $\brck A \to \sigma_* C$ over $\eta$.
+  This transposes to a section of $C$, as desired.
+
+  On the other hand, if $\sigma$ is an acyclic cofibration, then so is $\brck{A}^*\sigma : \sigma^*\brck A \to \brck A$, since $\brck A \fib \Gamma$ is a fibration.
+  Since $\Delta$ is fibrant, so is $\sigma^*\brck A$, and so just as in \cref{thm:wk-w} $\brck{A}^*\sigma$ admits a retraction $r$.
+  Now suppose $C\fib \sigma^*\brck A$ is a fibration of propositions over $\Delta$, with a section $c$ over $\sigma^*A$.
+  Then $r^*C \fib \brck A$ is a fibration whose pullback along $\sigma$ is $C$, and by lifting in the following square
+  \[
+  \begin{tikzcd}
+    \sigma^*A \ar[d,>->,squiggly] \ar[r,"c"] & C \cong \sigma^*r^*C \ar[r] & r^*C \ar[d,->>]\\
+    A \ar[rr] && \brck A
+  \end{tikzcd}
+  \]
+  we obtain a section of $r^*C$ over $A$ whose pullback to $\Delta$ is the given $c$.
+  Moreover, since $C\cong \sigma^* r^* C$, we have the following commutative square
+  \[
+  \begin{tikzcd}
+    C \ar[d,squiggly] \ar[r,>->,squiggly] & r^* C \ar[d]\\
+    C\times_\Delta C \ar[r,squiggly] & r^*C \times_\Gamma r^*C
+  \end{tikzcd}
+  \]
+  in which all maps except the right-hand one are known to be weak equivalences: the left-hand one since $C$ is a proposition over $\Gamma$, the top since it is a pullback of the weak equivalence $\sigma$ along a fibration, and the bottom since it is a homotopy pullback of weak equivalences.
+  Thus, by 2-out-of-3 the right-hand map is also a weak equivalence, i.e.\ $r^*C$ is a proposition over $\Gamma$.
+  Therefore, by \cref{thm:prop-over}, we can give it the structure of a proposition such that $r^*C \to \brck A$ is a map of propositions.
+  So we can apply $\trrec$ to obtain a section of it, which pulls back to the desired section of $C$.
+\end{proof}
 
 
 \bibliographystyle{alpha}
