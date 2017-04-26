@@ -7,6 +7,7 @@
 \let\J\iJ
 \let\W\iW
 \let\F\cF
+\let\N\iN
 \mdef\Mf{\sM_{\mathbf{f}}}
 \mdef\fibm{(\sM,\cF)}
 \mdef\fibmf{(\Mf,\cF_{\mathbf{f}})}
@@ -36,6 +37,7 @@
 \setcounter{tocdepth}{1}
 \usepackage[utf8]{inputenc}
 \hyphenation{pseu-do-func-tor-ial}
+\tikzset{idmap/.style={double equal sign distance,-}}
 
 \title{Semantics of pushouts in homotopy type theory}
 
@@ -649,10 +651,10 @@ The following theorem could be stated for weakly stable structures in addition t
 The natural numbers type, though a standard type constructor, is not considered explicitly in~\cite{lw:localuniv}; thus we begin with its local universes theory.
 
 \begin{defn}
-  In a comprehension category $(\C,\T)$, a \textbf{natural numbers type} over $\Gamma\in\C$ is a type $\bN\in\T(\Gamma)$ together with a section $\zero:\Gamma\to\Gamma.\bN$ and a map $\succ:\Gamma.\bN\to\Gamma.\bN$ over $\Gamma$, plus an operation assigning to any type $C\in\T(\Gamma.\bN)$ equipped with $z:\Gamma\to\Gamma.\bN.C$ over $\zero$ and $s:\Gamma.\bN.C \to \Gamma.\bN.\C$ over $\succ$, a section $f$ of $C$ such that $f \circ \zero = z$ and $f\circ \succ = s \circ f$.
+  In a comprehension category $(\C,\T)$, a \textbf{natural numbers type} over $\Gamma\in\C$ is a type $\N\in\T(\Gamma)$ together with a section $\zero:\Gamma\to\Gamma.\N$ and a map $\succ:\Gamma.\N\to\Gamma.\N$ over $\Gamma$, plus an operation assigning to any type $C\in\T(\Gamma.\N)$ equipped with $z:\Gamma\to\Gamma.\N.C$ over $\zero$ and $s:\Gamma.\N.C \to \Gamma.\N.\C$ over $\succ$, a section $f$ of $C$ such that $f \circ \zero = z$ and $f\circ \succ = s \circ f$.
 
-  We say $\C$ has a \textbf{weakly stable natural numbers type} if for any $\Gamma$ there is a natural numbers type $\bN\in\T(\Gamma)$ such that for any $\sigma:\Delta\to\Gamma$, $(\bN[\sigma],\zero[\sigma],\succ[\sigma])$ is a natural numbers type over $\Delta$.
-  Similarly, if $\C$ is split, it has a \textbf{strictly stable natural numbers type} if it has an operation assigning to each $\Gamma$ a natural numbers type $\bN\in\T(\Gamma)$ such that reindexing along any $\sigma:\Delta\to\Gamma$ preserves natural numbers types along with their data and specified sections.
+  We say $\C$ has a \textbf{weakly stable natural numbers type} if for any $\Gamma$ there is a natural numbers type $\N\in\T(\Gamma)$ such that for any $\sigma:\Delta\to\Gamma$, $(\N[\sigma],\zero[\sigma],\succ[\sigma])$ is a natural numbers type over $\Delta$.
+  Similarly, if $\C$ is split, it has a \textbf{strictly stable natural numbers type} if it has an operation assigning to each $\Gamma$ a natural numbers type $\N\in\T(\Gamma)$ such that reindexing along any $\sigma:\Delta\to\Gamma$ preserves natural numbers types along with their data and specified sections.
 \end{defn}
 
 Of course, if $\C$ has a terminal object (as it usually does), then the quantification over $\Gamma$ in the latter definition follows from the special case $\Gamma=1$.
@@ -661,10 +663,10 @@ A strictly stable natural numbers type is the semantic version of the usual rule
 \begin{figure}
   \centering
   \begin{mathpar}
-    \inferrule{ }{\Gamma\types\bN\type}\and
-    \inferrule{ }{\Gamma\types \zero:\bN}\and
-    \inferrule{ }{\Gamma,x:\bN\types \succ(x):\bN}\and
-    \inferrule{\Gamma,x:\bN\types C\type \\ \Gamma\types z:C[\zero/x] \\ \Gamma,x:\bN,y:C \types s : C[\succ(x)/x]}{\Gamma,n:\bN\types \nrec(x.C,z,xy.s,n) : C[n/x] \\ \Gamma\types \nrec(x.C,z,xy.s,\zero) \jdeq z\\ \Gamma,n:\bN \types \nrec(x.C,z,xy.s,\succ(n)) \jdeq s[n/x,\nrec(x.C,z,xy.s,n)/y]}
+    \inferrule{ }{\Gamma\types\N\type}\and
+    \inferrule{ }{\Gamma\types \zero:\N}\and
+    \inferrule{ }{\Gamma,x:\N\types \succ(x):\N}\and
+    \inferrule{\Gamma,x:\N\types C\type \\ \Gamma\types z:C[\zero/x] \\ \Gamma,x:\N,y:C \types s : C[\succ(x)/x]}{\Gamma,n:\N\types \nrec(x.C,z,xy.s,n) : C[n/x] \\ \Gamma\types \nrec(x.C,z,xy.s,\zero) \jdeq z\\ \Gamma,n:\N \types \nrec(x.C,z,xy.s,\succ(n)) \jdeq s[n/x,\nrec(x.C,z,xy.s,n)/y]}
   \end{mathpar}
   \caption{Natural numbers type}
   \label{fig:nno}
@@ -678,26 +680,26 @@ A strictly stable natural numbers type is the semantic version of the usual rule
   We take the terminal object to be the local universe for the formation and introduction rules, choosing a weakly stable natural numbers type over it.
   For the elimination and computation rules, the local universe is
   \begin{align*}
-    [&c: \prod x:E_{\bN}. V_C,\\
+    [&c: \prod x:E_{\N}. V_C,\\
     &z: E_C(c(\zero)),\\
-    &s: \prod x:E_{\bN}, y:E_C(c(x)) . E_C(c(\succ(x))) ].\qedhere
+    &s: \prod x:E_{\N}, y:E_C(c(x)) . E_C(c(\succ(x))) ].\qedhere
   \end{align*}
 \end{proof}
 
 In a good model category, the obvious candidate for a natural numbers type is the countable coproduct $\coprod_{n:\dN} 1$ of copies of the terminal object, which is automatically a ``natural numbers object'' in the usual sense of category theory.
 As usual, the problem is that in general this may not be fibrant (though it is in many examples, such as simplicial sets).
 But unlike in the preceding sections, it does not suffice to simply fibrantly replace it.
-If $\bN$ is a fibrant replacement of $\coprod_{n:\dN} 1$, we can extend the zero and successor operations to it, and for any fibration $C\fib\bN$ equipped with $z$ and $s$ we can find a section of $C$ over $\coprod_{n:\dN} 1$ using its universal property and then extend that section to $\bN$ by lifting against the acyclic cofibration $\coprod_{n:\dN} 1 \to \bN$.
+If $\N$ is a fibrant replacement of $\coprod_{n:\dN} 1$, we can extend the zero and successor operations to it, and for any fibration $C\fib\N$ equipped with $z$ and $s$ we can find a section of $C$ over $\coprod_{n:\dN} 1$ using its universal property and then extend that section to $\N$ by lifting against the acyclic cofibration $\coprod_{n:\dN} 1 \to \N$.
 
 However, such a lift will not generally satisfy the computation rules.
 It might be possible to choose it cleverly to satisfy the computation rule for $\zero$, but for $\succ$ there is essentially no hope, since the computation rule for $\succ$ relates the section to \emph{itself}, which is impossible to obtain using a simple lifting property.
 Thus, we have to be more clever.
 
-Let $F_\bN$ denote the endofunctor of $\sM$ defined by $F_\bN(X) = X+1$.
-Recall that an \textbf{endofunctor-algebra} for $F_\bN$ is an object $X$ together with a map $F_\bN(X) \to X$.
+Let $F_\N$ denote the endofunctor of $\sM$ defined by $F_\N(X) = X+1$.
+Recall that an \textbf{endofunctor-algebra} for $F_\N$ is an object $X$ together with a map $F_\N(X) \to X$.
 A natural numbers object in the ordinary sense is precisely an \emph{initial} such endofunctor-algebra.
-And a natural numbers type over the terminal object is precisely a fibrant $F_\bN$-algebra $\bN$ such that any fibration $C\to\bN$ that is also a map of $F_\bN$-algebras has an $F_\bN$-algebra section.
-This suggests that $\bN$ is an ``initial fibrant $F_\bN$-algebra''; we now make this precise using the technology of \emph{algebraic weak factorization systems}~\cite{gt:nwfs,garner:soa,riehl:nwfs-model}.
+And a natural numbers type over the terminal object is precisely a fibrant $F_\N$-algebra $\N$ such that any fibration $C\to\N$ that is also a map of $F_\N$-algebras has an $F_\N$-algebra section.
+This suggests that $\N$ is an ``initial fibrant $F_\N$-algebra''; we now make this precise using the technology of \emph{algebraic weak factorization systems}~\cite{gt:nwfs,garner:soa,riehl:nwfs-model}.
 For this we strengthen our standing assumptions as follows.
 
 \begin{defn}
@@ -705,16 +707,16 @@ For this we strengthen our standing assumptions as follows.
 \end{defn}
 
 This allows us to use the technology of algebraically-free monads and algebraic colimits of monads~\cite{kelly:transfinite,nlab:transfinite}.
-Let $\dT_\bN$ denote the algebraically-free monad on $F_\bN$, which exists since $F_\bN$ is an accessible endofunctor.
-This is means it is a monad whose monad-algebras are precisely the endofunctor-algebras for $F_\bN$.
-By construction of $\dT_\bN$, it is also accessible.
+Let $\dT_\N$ denote the algebraically-free monad on $F_\N$, which exists since $F_\N$ is an accessible endofunctor.
+This is means it is a monad whose monad-algebras are precisely the endofunctor-algebras for $F_\N$.
+By construction of $\dT_\N$, it is also accessible.
 
 Now, by the construction of~\cite{garner:soa} and the combinatorial-ness of $\sM$, we have an accessible \textbf{fibrant factorization monad} $\dR$ on the arrow category $\sM^\to$, such that an arrow can be given an $\dR$-algebra structure if and only if it is a fibration, and $\dR$ preserves codomains.
 In particular, when restricted to arrows with terminal codomain, we get an accessible \textbf{fibrant replacement monad} $\dR_1$ on $\sM$ itself, such that an object can be given an $\dR_1$-algebra structure if and only if it is fibrant.
 Moreover, the composite of two $\dR$-algebras $X \xfib{f} Y \xfib{g} Z$ naturally acquires an $\dR$-algebra structure such that the commutative square
 \[
 \begin{tikzcd}
-  X \ar[d,"gf",swap] \ar[r,"f"] & Y \ar[d,"g"] \\ Z \ar[r,"1",swap]& Z
+  X \ar[d,"gf",swap] \ar[r,"f"] & Y \ar[d,"g"] \\ Z \ar[r,idmap]& Z
 \end{tikzcd}
 \]
 is a morphism of $\dR$-algebras.
@@ -723,16 +725,16 @@ is a morphism of $\dR$-algebras.
   If $\sM$ is an excellent model category, then $\fibm$ has a natural numbers type over $1$.
 \end{thm}
 \begin{proof}
-  Consider the algebraic coproduct of monads $\dT_\bN+\dR_1$.
-  This is an (accessible) monad such that a $(\dT_\bN+\dR_1)$-algebra structure on an object $X$ is precisely a pair of an (unrelated) $\dT_\bN$-algebra structure (i.e.\ an $F_\bN$-endofunctor-algebra structure) and a $\dR_1$-algebra structure.
-  Let $\bN$ be the initial $(\dT_\bN+\dR_1)$-algebra, i.e.\ the free $(\dT_\bN+\dR_1)$-algebra on the initial object, $\bN =(\dT_\bN+\dR_1)(\emptyset)$.
-  Since $\bN$ is a $\dT_\bN$-algebra, it comes with $\zero$ and $\succ$; and since it is a $\dR_1$-algebra, it is fibrant.
+  Consider the algebraic coproduct of monads $\dT_\N+\dR_1$.
+  This is an (accessible) monad such that a $(\dT_\N+\dR_1)$-algebra structure on an object $X$ is precisely a pair of an (unrelated) $\dT_\N$-algebra structure (i.e.\ an $F_\N$-endofunctor-algebra structure) and an $\dR_1$-algebra structure.
+  Let $\N$ be the initial $(\dT_\N+\dR_1)$-algebra, i.e.\ the free $(\dT_\N+\dR_1)$-algebra on the initial object, $\N =(\dT_\N+\dR_1)(\emptyset)$.
+  Since $\N$ is a $\dT_\N$-algebra, it comes with $\zero$ and $\succ$; and since it is an $\dR_1$-algebra, it is fibrant.
 
-  Now suppose $p:C\fib \bN$ is a fibration of $F_\bN$-endofunctor-algebras.
-  Choose a $\dR$-algebra structure on $p$.
-  Then the composite $C\fib\bN\fib 1$ acquires an $\dR$-algebra structure, which is to say that $C$ acquires an $\dR_1$-algebra structure, such that $p$ is (not just an $\dR$-algebra but) a $\dR_1$-algebra map.
-  Since $C$ is also a $\dT_\bN$-algebra and $p$ is also a $\dT_\bN$-algebra map, it follows that $C$ is a $(\dT_\bN+\dR_1)$-algebra and $p$ is a $(\dT_\bN+\dR_1)$-algebra map.
-  But since $\bN$ is the initial $(\dT_\bN+\dR_1)$-algebra, any $(\dT_\bN+\dR_1)$-algebra map with codomain $\bN$ has a $(\dT_\bN+\dR_1)$-algebra section, and hence in particular a $\dT_\bN$-algebra section, as desired.
+  Now suppose $p:\N.C\fib \N$ is a fibration of $F_\N$-endofunctor-algebras.
+  Choose an $\dR$-algebra structure on $p$.
+  Then the composite $\N.C\fib\N\fib 1$ acquires an $\dR$-algebra structure, which is to say that $\N.C$ acquires an $\dR_1$-algebra structure, such that $p$ is (not just an $\dR$-algebra but) an $\dR_1$-algebra map.
+  Since $\N.C$ is also a $\dT_\N$-algebra and $p$ is also a $\dT_\N$-algebra map, it follows that $\N.C$ is a $(\dT_\N+\dR_1)$-algebra and $p$ is a $(\dT_\N+\dR_1)$-algebra map.
+  But since $\N$ is the initial $(\dT_\N+\dR_1)$-algebra, any $(\dT_\N+\dR_1)$-algebra map with codomain $\N$ has a $(\dT_\N+\dR_1)$-algebra section, and hence in particular a $\dT_\N$-algebra section, as desired.
 \end{proof}
 
 In general it does not seem possible to prove that this natural numbers type is weakly stable, but with a small modification  we can.
@@ -754,11 +756,15 @@ Thus, all our preceding theorems about strictly stable structure in $\fibmbang$ 
   If $\sM$ is an excellent model category, then $\fibmf$ has a weakly stable natural numbers type.
 \end{thm}
 \begin{proof}
-  It suffices to show that any natural numbers type $\bN$ over $1$ is weakly stable, which is to say that for any (fibrant!)\ object $\Gamma$ the pullback $\Gamma^* \bN$ is a natural numbers type over $\Gamma$.
+  It suffices to show that any natural numbers type $\N$ over $1$ is weakly stable, which is to say that for any (fibrant!)\ object $\Gamma$ the pullback $\Gamma^* \N$ is a natural numbers type over $\Gamma$.
   The proof is essentially the usual category-theoretic argument that pullback functors preserve natural numbers objects.
-  Suppose $C\fib \Gamma^* \bN$ is a fibration over $\Gamma$ equipped with a section $z:\Gamma\to C$ over $\Gamma^*(\zero)$ and a map $s:C\to C$ over $\Gamma^*(\succ)$.
-  Then (since $\Gamma$ is fibrant) $\Gamma_* C \fib \Gamma_* \Gamma^* \bN$ is a fibration, and using the elimination property of $\bN$ we can lift the unit $\bN \to \Gamma_* \Gamma^* \bN$ to a section $\bN\to \Gamma_* C$.
-  The adjunct of this is a section $\Gamma^* \bN \to C$ that satisfies the desired computation rules.
+  Suppose $C\fib \Gamma^* \N$ is a fibration over $\Gamma$ equipped with a section $z:\Gamma\to C$ over $\Gamma^*(\zero)$ and a map $s:C\to C$ over $\Gamma^*(\succ)$.
+  Then (since $\Gamma$ is fibrant) $\Gamma_* C \fib \Gamma_* \Gamma^* \N$ is a fibration, equipped with a point $\Gamma_*(z) : \Gamma_*(\Gamma^*(1)) = \Gamma_*(\Gamma) \to \Gamma_*(C)$ over $\Gamma_*(\Gamma^*(\zero))$ and a map $\Gamma_*(s):\Gamma_*(C)\to\Gamma_*(C)$ over $\Gamma_*(\Gamma^*(\succ))$.
+
+  Now pull $\Gamma_* C$ back to $\N$ along the unit $\eta_\N$ of the adjunction $\Gamma^* \adj \Gamma_*$.
+  Since $\eta$ is natural we have $\Gamma_*(\Gamma^*(\zero)) \circ \eta_1 = \eta_\N \circ \zero$ and $\Gamma_*(\Gamma^*(\succ)) \circ \eta_\N = \eta_\N \circ \succ$, so we have an induced map $z' : 1 \to \eta_\N^*\Gamma_*C$ over $\zero$ and $s':\eta_\N^*\Gamma_*C \to \eta_\N^*\Gamma_*C$ over $\succ$.
+  Thus, using $\nrec$ for $\N$ we have a section $f:\N\to \eta_\N^*\Gamma_* C$ such that $f \circ \zero = z'$ and $f\circ \succ = s' \circ f$, or equivalently a map $g:\N \to \Gamma_*C$ over $\eta_\N$ such that $g\circ \zero = \Gamma_*(z) \circ \eta_1$ and $g\circ \succ = \Gamma_*(s) \circ g$.
+  Finally, transposing $g$ across the adjunction $\Gamma^* \adj \Gamma_*$, we obtain $\Gamma^* \N \to C$ over $1_\N$ (the adjunct of $\eta_\N$) such that $h\circ \Gamma^*(\zero) = z$ and $h\circ \Gamma^*(\succ) = s\circ h$, as desired.
 \end{proof}
 
 \begin{cor}
@@ -781,15 +787,15 @@ Since a good model category is locally cartesian closed, it has \emph{pseudo-sta
 \begin{proof}
   Let $F_{\W A B}$ be the endofunctor of $\sM/\Gamma$ sending $X \to \Gamma$ to the local exponential $(A^*X)^B_A$, equipped with the composite projection $(A^*X)^B_A \to A\to \Gamma$.
   Since this is a composite of left or right adjoints between accessible categories, it is an accessible endofunctor, and $\sM/\Gamma$ is locally presentable, so $F_{\W A B}$ generates an algebraically-free monad $\dT_{\W A B}$.
-  Let $\W$ be the initial algebra of $\dT_{\W A B} + \dR_{\Gamma}$, where $\dR_\Gamma$ is the restriction of $\dR$ to morphisms with target $\Gamma$.
-  Then $\W\to \Gamma$ is a fibration, since it is a $\dR$-algebra, and its $F_{\W A B}$-endofunctor-algebra structure is exactly the map $\fold$ required of a \W-type.
+  Let $\Gamma.\W$ be the initial algebra of $\dT_{\W A B} + \dR_{\Gamma}$, where $\dR_\Gamma$ is the restriction of $\dR$ to morphisms with target $\Gamma$.
+  Then $\Gamma.\W\to \Gamma$ is a fibration, since it is an $\dR$-algebra, and its $F_{\W A B}$-endofunctor-algebra structure is exactly the map $\fold$ required of a \W-type.
 
-  The input to the eliminator consists, as usual, of a fibration $p:C\fib W$ that is a $F_{\W A B}$-algebra morphism.
-  (This is not completely obvious as stated in~\cite[Definition 3.4.4.7]{lw:localuniv}; the point is that $\Gamma.A.\Pi[B,\W].\Pi[B,C[\mathsf{app}'_{B,W}]] \cong \Gamma.A.\Pi[B,\Sigma[\W,C]]$ by the mapping-in universal property of $\Sigma$-types.\footnote{Also, I think there is a typo in~\cite[Definition 3.4.4.7]{lw:localuniv}; the $\Gamma.\W.\dots$ in the diagrams should be $\Gamma.A.\dots$.})
-  As before, we choose an $\dR$-algebra structure on, making the composite $C\fib \W \fib \Gamma$ a $\dR$-algebra and the square
+  The input to the eliminator consists, as usual, of a fibration $p:\Gamma.\W.C\fib \Gamma.W$ that is a $F_{\W A B}$-algebra morphism.
+  This is not completely obvious as stated in~\cite[Definition 3.4.4.7]{lw:localuniv}; the point is that $\Gamma.A.\Pi[B,\W].\Pi[B,C[\mathsf{app}'_{B,W}]] \cong \Gamma.A.\Pi[B,\Sigma[\W,C]]$ by the mapping-in universal property of $\Sigma$-types; and by construction of $\Sigma$-types in $\sM$, the comprehension $\Gamma.\Sigma[\W,C]\fib\Gamma$ is just the composite $\Gamma.\W.C \fib \Gamma.W\fib \Gamma$.\footnote{Also, I think there is a typo in~\cite[Definition 3.4.4.7]{lw:localuniv}; the $\Gamma.\W.\dots$ in the diagrams should be $\Gamma.A.\dots$.})
+  As before, we choose an $\dR$-algebra structure on $p$, making this composite $\Gamma.\W.C \fib \Gamma.W\fib \Gamma$ an $\dR$-algebra and the square
   \[
   \begin{tikzcd}
-    C \ar[d] \ar[r] & \W \ar[d] \\ \Gamma \ar[r,"1",swap]& \Gamma
+    \Gamma.\W.C \ar[d,->>] \ar[r,->>] & \Gamma.\W \ar[d,->>] \\ \Gamma \ar[r,idmap]& \Gamma
   \end{tikzcd}
   \]
   an $\dR$-algebra map, hence also a $(\dT_{\W A B} + \dR_{\Gamma})$-algebra map.
@@ -800,22 +806,37 @@ Since a good model category is locally cartesian closed, it has \emph{pseudo-sta
   If $\sM$ is an excellent model category, then $\fibmf$ has weakly stable \W-types.
 \end{thm}
 \begin{proof}
-  Let $\W$ be a $\W$-type constructed as above for $\Gamma\in\sM$, $A\in\F(\Gamma)$, and $B\in\F(\Gamma.A)$; we must show that its pullback along any $\sigma:\Delta\to\Gamma$ is also a \W-type.
+  Let $\W\fib\Gamma$ be a $\W$-type constructed as above for $\Gamma\in\sM$, $A\in\F(\Gamma)$, and $B\in\F(\Gamma.A)$; we must show that its pullback along any $\sigma:\Delta\to\Gamma$ is also a \W-type.
   We consider separately the cases when $\sigma$ is an acyclic cofibration or a fibration; by factorization this suffices for the general case.
 
   If $\sigma$ is a fibration, the argument is similar to that of \cref{thm:nat-stable}.
-  Given a fibration $C\fib \sigma^*\W$ over $\Delta$ with structure map $d$ as in the eliminator, the induced map $\sigma_* C \to \sigma_* \sigma^* \W$ over $\Gamma$ is a fibration (since $\sigma$ is a fibration).
-  Moreover, by the following adjoint transpose it inherits the necessary structure to define a section of $\sigma_* C$ over $\W$.
+  Suppose given a fibration $C\fib \sigma^*\W$ over $\Delta$ with structure map $d$ over $\sigma^*(\fold)$:
   \[
-  \begin{array}{ccc}
-    \Gamma.A.\Pi[B,\W].\Pi[B,C[\mathsf{app}'_{B,\W}]] &\to& \sigma_* C \\\hline
-    \Delta.A[\sigma].\Pi[B,\W][\sigma].\Pi[B,C[\mathsf{app}'_{B,\W}]][\sigma] &\to& C \\\hline
-    \Delta.A[\sigma].\Pi[B[\sigma],\W[\sigma]].\Pi[B[\sigma],C[\sigma][\mathsf{app}'_{B[\sigma],\W[\sigma]}]] &\to& C
-  \end{array}
+  \begin{tikzcd}
+    (\sigma^* A)_! (\sigma^* f)_* (\sigma^*B)^* C \ar[rr,"d"] \ar[d] && C \ar[d] \\
+    (\sigma^* A)_! (\sigma^* f)_* (\sigma^*B)^* \sigma^* \W \ar[r,"\cong"] & \sigma^*(f_* B^* \W) \ar[r,"{\sigma^*(\fold)}",swap] & \sigma^*\W
+  \end{tikzcd}
   \]
-  This section then transposes back to a section of $C$ over $\sigma^*\W$, with the desired computational behavior.
+  Then using several Beck-Chevalley transformations, we have a composite map
+  \begin{multline*}
+    A_! f_* B^* \sigma_* C
+    \toiso A_! f_* (B^*\sigma)_* (\sigma^*B)^* C
+    \toiso A_! (A^*\sigma)_* (\sigma^* f)_* (\sigma^*B)^* C\\
+    \to \sigma_* (\sigma^* A)_! (\sigma^* f)_* (\sigma^*B)^* C
+    \xto{\sigma_* d} \sigma_* C
+  \end{multline*}
+  that lies over the corresponding map for $\sigma^*\W$ constructed from $\sigma^*(\fold)$.
+  Now if we pull this back along the unit $\eta_\W : \W \to \sigma_* \sigma^* \W$ we get a map $d'$ satisfying
+  \[
+  \begin{tikzcd}
+    A_! f_* B^* \eta_\W^* \sigma_* C \ar[r,"d'"] \ar[d] & \eta_\W^* \sigma_* C \ar[d] \\
+    A_! f_* B^* \W \ar[r,"\fold"] & \W
+  \end{tikzcd}
+  \]
+  and thus a section $\wrec:\W\to \eta_\W^* \sigma_* C$ commuting with $d'$ and $\fold$.
+  Transposing this back across the adjunction $\sigma^* \adj \sigma_*$, we obtain a section of $C$ commuting with $d$ and $\sigma^*(\fold)$, as desired.
 
-  If $\sigma$ is an acyclic cofibration, then so is its pullback $\W^*\sigma : \sigma^*\W \to \W$ along the fibration $\W\fib\Gamma$.
+  On the other hand, if $\sigma$ is an acyclic cofibration, then so is its pullback $\W^*\sigma : \sigma^*\W \to \W$ along the fibration $\W\fib\Gamma$.
   Moreover, since $\Delta$ is fibrant, so is the object $\sigma^*\W$.
   Therefore, the acyclic cofibration $\W^*\sigma$ admits a retraction $r$.
   Since $(\W^*\sigma)^* r^* C \cong C$, it suffices to extend the given structure $d$ on the fibration $C\fib\sigma^*\W$ to a corresponding structure on $r^* C\fib\W$ whose pullback to $\sigma^*\W$ is $d$.
