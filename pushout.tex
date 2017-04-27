@@ -2,13 +2,18 @@
 
 \input{decls}
 \input{macros}
-\autodefs{\fPush\sFib\cCat\cAlg}
+\autodefs{\fPush\sFib\cCat\cAlg\cFam\cInst\cMnd}
 \def\name#1{\ulcorner #1\urcorner}
 \let\J\iJ
 \let\W\iW
 \let\F\cF
 \let\N\iN
+\let\sec\S
 \let\S\cS
+\let\I\cI
+\let\P\cP
+\def\f{_\mathbf{f}}
+\newcommand{\oplim}[2]{\llbracket #1,#2 \rrbracket}
 \def\alg{\text{-}\cAlg}
 \def\algf{\alg_{\mathbf{f}}}
 \mdef\dId{\mathbb{I}\mathsf{d}}
@@ -47,6 +52,16 @@
 \hyphenation{pseu-do-func-tor-ial}
 \tikzset{idmap/.style={double equal sign distance,-}}
 \usetikzlibrary{decorations.pathmorphing}
+
+% Display format for sections
+\crefformat{section}{\sec#2#1#3}
+\Crefformat{section}{Section~#2#1#3}
+\crefrangeformat{section}{\sec\sec#3#1#4--#5#2#6}
+\Crefrangeformat{section}{Sections~#3#1#4--#5#2#6}
+\crefmultiformat{section}{\sec\sec#2#1#3}{ and~#2#1#3}{, #2#1#3}{ and~#2#1#3}
+\Crefmultiformat{section}{Sections~#2#1#3}{ and~#2#1#3}{, #2#1#3}{ and~#2#1#3}
+\crefrangemultiformat{section}{\sec\sec#3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}{, #3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}
+\Crefrangemultiformat{section}{Sections~#3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}{, #3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}
 
 \title{Semantics of pushouts in homotopy type theory}
 
@@ -120,7 +135,7 @@ We summarize the above discussion as follows.
 % \end{thm}
 % \begin{proof}
 %   It suffices to show that the ``universal case'' constructions on local universes all preserve fibrancy.
-%   The product of fibrant objects is certainly fibrant, and the construction $V_A \triangleleft V_B$ from~\cite[\S3.3]{lw:localuniv} is fibrant if all inputs are since the dependent product of a fibration along a fibration is a fibration.
+%   The product of fibrant objects is certainly fibrant, and the construction $V_A \triangleleft V_B$ from~\cite[\sec3.3]{lw:localuniv} is fibrant if all inputs are since the dependent product of a fibration along a fibration is a fibration.
 %   This suffices for the formation rules of dependent sums and products, and the other rules are automatically stable since they are unique (in our context these objects have strict universal properties).
 
 %   For the identity type, the local universe of the formation and introduction rules is just the domain of a composite of fibrations over a fibrant object, hence fibrant.
@@ -133,7 +148,7 @@ We summarize the above discussion as follows.
 \label{sec:coproducts}
 
 We warm up for pushouts by considering the case of coproducts.
-To start with, we specialize the definitions from~\cite[\S3.4.1]{lw:localuniv} to our context of a good model category.
+To start with, we specialize the definitions from~\cite[\sec3.4.1]{lw:localuniv} to our context of a good model category.
 We qualify these definitions with ``typal'' (the adjective of ``type'') to distinguish them from the ordinary categorical constructions in \sM.
 
 \begin{defn}\label{defn:sum}
@@ -248,7 +263,7 @@ In \cref{sec:coherence-pushouts} we will rephrase this in type-theoretic languag
 
 Inside of (ordinary, Martin-L\"of) type theory, of course, we do not have a ``$\ivl$'', so \cref{defn:ivl-pushout} does not correspond directly to anything type-theoretic the way \cref{defn:sum} does.
 Instead we need a version of this definition that refers only to identity types, which categorically means path-objects.
-This is an instance of ``one type constructor stacked on top of another'', like the case of $\mathsf{W}$-types considered in~\cite[\S3.4.4]{lw:localuniv}; hence we need to start by defining good classes of identity types.
+This is an instance of ``one type constructor stacked on top of another'', like the case of $\mathsf{W}$-types considered in~\cite[\sec3.4.4]{lw:localuniv}; hence we need to start by defining good classes of identity types.
 
 Let $(\C,\T)$ be a comprehension category.
 As in~\cite{lw:localuniv}, if $A\in\T(\Gamma)$ we denote its comprehension by $\Gamma.A\to\Gamma$, and its reindexing along $\sigma:\Delta\to\Gamma$ by $A[\sigma]$.
@@ -603,8 +618,8 @@ They will indeed be \emph{equivalent}, and we can transfer the structure of a pu
 
 Of course, typal pushouts are also weak typal pushouts, since if $\ap_s\circ \mu = m$ we can compose this map with $\r$ to get $v$.
 The corresponding modified elimination rule in syntactic type theory is shown in~\cref{fig:wk-pushout}.
-In the case when the dependent identity types and identity applications are defined from the ordinary identity types as on page~\pageref{idover}, this yields exactly the notion of pushout type used in~\cite[\S6.8]{hottbook}.
-Some reasons for choosing a weak computation rule for the path-constructor are adumbrated in~\cite[\S6.2 and Chapter 6 Notes]{hottbook}, one of which (non-strictness of the equivalence between left and right homotopies) is roughly the same reason such a rule appears here.
+In the case when the dependent identity types and identity applications are defined from the ordinary identity types as on page~\pageref{idover}, this yields exactly the notion of pushout type used in~\cite[\sec6.8]{hottbook}.
+Some reasons for choosing a weak computation rule for the path-constructor are adumbrated in~\cite[\sec6.2 and Chapter 6 Notes]{hottbook}, one of which (non-strictness of the equivalence between left and right homotopies) is roughly the same reason such a rule appears here.
 
 \begin{figure}
   \centering
@@ -1085,7 +1100,7 @@ We start with a very general notion of ``typal initial algebra'' in the comprehe
 
 \begin{defn}
   For any category $\C$, a \textbf{fibred category of structures} over $\C$ is a comprehension category structure $(\C,\S)$ such that the functor $\S\to\C^\to$ is a faithful amnestic isofibration.
-  We call an object of $\S$ an \textbf{\S-algebra}, and we call a lifting of $(X\to \Gamma)\in\C^\to$ an \textbf{\S-structure} on it.
+  We call an object of $\S$ an \textbf{\S-algebra}, and we call a lifting of $(X\to \Gamma)\in\C^\to$ to \S an \textbf{\S-structure} on it.
   We call a morphism in \S an \textbf{\S-morphism}.
 \end{defn}
 
@@ -1096,11 +1111,11 @@ Note that by the assumptions on $\S$, the collection of \S-structures on any $X\
   A \textbf{typal initial $\S$-algebra} over $\Gamma$ is a type $H\in \T(\Gamma)$ together with an \S-structure on its comprehension $\Gamma.H\to\Gamma$, such that for any $C\in\T(\Gamma.H)$ together with an \S-algebra structure on the composite $\Gamma.H.C\to\Gamma.H\to\Gamma$ such that $\Gamma.H.C\to\Gamma.H$ is an \S-morphism, there exists a section $\Gamma.H \to \Gamma.H.C$ of $\Gamma.H.C\to\Gamma.H$ that is also an \S-morphism.
 
   We say $\C$ has \textbf{weakly stable typal initial \S-algebras} if for any $\Gamma$ there exists a typal initial $\S$-algebra over $\Gamma$ whose reindexing along any $\sigma:\Delta\to\Gamma$ is again a typal initial $\S$-algebra.
-  If $\C$ is split, we say it has \textbf{strictly stable typal initial \cA-algebras} if we have an operation assigning to each $\Gamma$ a typal initial $\S$-algebra over $\Gamma$ with specified $\S$-algebra sections, in a way that is strictly preserved by the split reindexing functors.
+  If $\C$ is split, we say it has \textbf{strictly stable typal initial \S-algebras} if we have an operation assigning to each $\Gamma$ a typal initial $\S$-algebra over $\Gamma$ with specified $\S$-algebra sections, in a way that is strictly preserved by the split reindexing functors.
 \end{defn}
 
-\begin{defn}
-  Let \S be a fibred category of structures over a comprehension category $(\C,\T)$.
+\begin{defn}\label{defn:replift}
+  Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures over \C.
   Given $A\in\T(\Gamma)$ and $B\in\T(\Gamma.A)$ and any \S-structure $\sA$ on $\Gamma.A\to\Gamma$, an \textbf{\S-lift} of $\sA$ to $B$ is an \S-structure on the composite $\Gamma.A.B\to\Gamma.A\to\Gamma$ such that $\Gamma.A.B\to\Gamma.A$ becomes an \S-morphism over $\Gamma$.
   We say that \S has \textbf{representable lifts} if for any $A,B,\sA$, the functor $(\C/\Gamma)\op \to \mathbf{Set}$ defined by
   \begin{equation*}
@@ -1121,11 +1136,11 @@ Note that the notion of representable lift \emph{does} involve both \S and \T, a
   Then assign to each $\Gamma$ the algebra $(V_H,E_H,!)$; this is strictly stable by composition of names, as usual.
   That is, since the ``formation'' and ``introduction'' rules (which jointly correspond to a choice of \S-structure on the comprehension of a type) have no premises, their local universe is the terminal object.
 
-  For the elimination rule, given a type $C\in \T_!(\Gamma.H[\Gamma])$ determined by $(V_C,E_C,\name{C})$, consider first the object $V = V_H\triangleleft V_C$ constructed as in~\cite{lw:localuniv}, which classifies maps $\Delta \to V_H = 1$ (which are unique) together with maps $H[\Delta] \to V_C$.
+  For the elimination rule, given a type $C\in \T_!(\Gamma.H[\Gamma])$ determined by $(V_C,E_C,\name{C})$, consider first the object $V = V_H\triangleleft V_C$ constructed as in~\cite{lw:localuniv}, which classifies maps $\Delta \to V_H = 1$ (which are unique) together with maps $\Delta.H[\Delta] \to V_C$.
   In particular, we have a universal map $c:V.H[V]\to V_C$ giving $E_C[c]\in \T(V.H[V])$.
 
   Now, by representable lifts, we have a map $V_{\sH[V],E_C[c]} \to V$ representing lifts of the \S-structure $\sH[V]$ of $H[V]$ to $E_C[c]$.
-  Combining universal properties, we see that maps $\Gamma\to V_{\sH[V],E_C[c]}$ correspond to choices of a map $\name{C}:\Gamma\to V_C$ together with a lift of $\sH[\Gamma]$ to $E_C[\name{C}]$.
+  Combining universal properties, we see that maps $\Gamma\to V_{\sH[V],E_C[c]}$ correspond to choices of a map $\name{C}:\Gamma.H[\Gamma]\to V_C$ together with a lift of $\sH[\Gamma]$ to $E_C[\name{C}]$.
   This is exactly the input to the ``elimination and computation rules'' of a typal initial \S-algebra, so we take $V_{\sH[V],E_C[c]}$ as the local universe for that.
   The weak stability of $H$ implies that the universal lift over $V_{\sH[V],E_C[c]}$ has a section that is an \S-morphism, which we can then reindex to $\Gamma$ to obtain a strictly stable eliminator.
 \end{proof}
@@ -1152,7 +1167,7 @@ We record:
 \end{lem}
 
 \begin{lem}
-  If \dT is a fibred monad on a model category \sM, then the full subcategory $\dT\algf$ of $\dT\alg$ consisting of \dT-algebra structures on fibrations is a fibred category of structures over the full subcategory of fibrant objects \Mf.\qed
+  If \dT is a fibred monad on a model category \sM, then the full subcategory $\dT\algf$ of $\dT\alg$ consisting of \dT-algebra structures on fibrations over fibrant objects is a fibred category of structures over the full subcategory of fibrant objects \Mf.\qed
 \end{lem}
 
 The question, therefore, is what conditions we can impose on \dT to ensure that
@@ -1247,11 +1262,11 @@ For the acyclic cofibration case, the relevant lemma will be the following analo
   But the left-hand map is now the pushout product of $(\sigma^*f)_* (\sigma^*B)^* C \otimes L \to f_* B^* D$, which we showed in \cref{thm:W-cofmnd} to be an acyclic cofibration, and the cofibration $K\to L$ of simplicial sets; thus it is also an acyclic cofibration.
 \end{proof}
 
-\begin{thm}
+\begin{thm}\label{thm:cell-wkstab}
   If \dT is a cell monad on an excellent model category \sM, then \fibmf has weakly stable typal initial $\dT\algf$-algebras.
 \end{thm}
 \begin{proof}
-  As usualy, for any $\Gamma$, let $H\fib\Gamma$ be the initial $(\dT_\Gamma+\dR_\Gamma)$-algebra.
+  As usual, for any $\Gamma$, let $H\fib\Gamma$ be the initial $(\dT_\Gamma+\dR_\Gamma)$-algebra.
   Then it is a fibration and a $\dT_\Gamma$-algebra.
   And given any fibration $C\fib H$ that is a $\dT_\Gamma$-morphism, choose a \dR-structure on it to make $C\to\Gamma$ a $(\dT_\Gamma+\dR_\Gamma)$-algebra and $C\to H$ a $(\dT_\Gamma+\dR_\Gamma)$-morphism, so that it has a $(\dT_\Gamma+\dR_\Gamma)$-section.
   Thus, $H$ is a typal initial $\dT\algf$-algebra.
@@ -1270,7 +1285,7 @@ For the acyclic cofibration case, the relevant lemma will be the following analo
 
 Finally, we also have:
 
-\begin{thm}
+\begin{thm}\label{thm:cell-replift}
   If \dT is a cell monad on an excellent model category \sM, then $\dT\algf$ has representable lifts.
 \end{thm}
 \begin{proof}
@@ -1312,9 +1327,153 @@ Finally, we also have:
 \end{proof}
 
 \begin{cor}
-  For any cell monad \dT on an excellent model category \sM, $\fibmfbang$ has strictly stable typal initial $\dT\algf$-algebras.
+  If \sM is an excellent model category and \dT is a cell monad on it, then $\fibmfbang$ has strictly stable typal initial $\dT\algf$-algebras.\qed
 \end{cor}
 
+TODO: remark on correspondence to syntax, constructors are cells, homotopies become identity types (can do formally in the 1-dimensional case?), give examples
+
+
+\section{Cell monads with parameters}
+\label{sec:cell-monads-param}
+
+Now we generalize the constructions of \cref{sec:cell-monads} to allow parameters, i.e.\ premises for the formation and introduction rules.
+Because our type theory has no universes, we have to treat type parameters separately from term parameters.
+We simplify things further by assuming that none of the type parameters depend on any of the term parameters, as is frequently the case.
+With $\Pi$-types and $\Sigma$-types, this allows us to wrap up all the term parameters into a term belonging to a single type.
+For instance, the parameters of a pushout (\cref{sec:pushouts-type-theory}) are equivalent to three types $A,B_1,B_2$ together with a single term of type $(A\to B_1)\times(A\to B_2)$.
+
+However, we do allow type parameters to depend on previous type parameters, as for instance with $\W$-types, whose parameters are a type $A$ and a type $x:A \types B\type$ dependent on $A$.
+We encode the ``shape'' of dependency among the type parameters by a \textbf{finite inverse category} \I (equivalently, a skeletal finite category with no nonidentity endomorphisms), whose objects represent types and whose morphisms represent dependencies.
+For instance, the type parameters of a pushout are described by the discrete category with three objects, while those of a $\W$-type are described by the arrow category $(\cdot\to\cdot)$.
+
+For any diagram $\Theta:\I\to\C$ with \I finite and inverse, the \textbf{matching object} at $x\in\I$ is the limit $M_x\Theta = \lim_{y\in x\sslash\I} \Theta(y)$ (if it exists), where $x\sslash \I$ is the full subcategory of the co-slice $x/\I$ that omits the identity $1_x$.
+If $(\C,\T)$ is moreover a comprehension category, then $\Theta:\I\to\C$ is \textbf{Reedy fibrant} if for each $x\in\I$, the matching object $M_x\Theta$ exists and there is a specified $\Theta_x \in \T(M_x\Theta)$ whose comprehension is equal to the canonical map $\Theta(x) \to M_x\Theta$.
+% It is \textbf{Reedy fibrant} if we only assume that $\Theta_x \in \T(M_x\Theta)$ is a display map (a finite composite of unspecified comprehensions).
+The existence of matching objects is not actually an extra condition; as soon as $\Theta$ is Reedy fibrant ``below $x$'', then $M_x\Theta$ automatically exists.
+More generally, the limit of any Reedy fibrant diagram always exists.
+See~\cite{shulman:invdia} for more details about Reedy fibrant diagrams in comprehension-category-like structures.
+
+Let $\C^\I\f$ denote the category of Reedy fibrant \I-diagrams in slice categories $\C/\Gamma$ (with its comprehension category structure induced by pullback along the domain projection $\C/\Gamma\to\C$), with only cartesian morphisms between them.
+Then the projection $\C^\I\f \to\C$ is a fibration of groupoids.
+
+\begin{defn}
+  Let $(\C,\T)$ be a comprehension category.
+  A \textbf{parameter scheme} over \C consists of a finite inverse category \I and a cartesian functor $\P:\C^\I\f \to \T$ over $\C$.
+\end{defn}
+
+The idea is that \P assigns to each collection of type parameters the type whose terms collect all the term parameters.
+For instance, for pushouts we have $P(A,B_1,B_2) = (A\to B_1)\times (A\to B_2)$.
+
+\begin{defn}
+  An \textbf{instantiation} of a parameter scheme $(\I,\P)$ over $\Gamma\in\C$ consists of a diagram $\Theta \in (\C^\I\f)_\Gamma$ and a section $\theta$ of $\Gamma.\P(\Theta)\to\Gamma$.
+  As $\Gamma$ varies, such instantiations form another fibration of groupoids $\cInst(\P) \to \C$.
+\end{defn}
+
+\begin{defn}
+  A \textbf{fibred category of structures with parameters} over a comprehension category $(\C,\T)$ consists of a parameter scheme $(\I,\P)$, a fibration $\S\to \C$, and a faithful amnestic isofibration $\S \to \cInst(\P)\times_C C^\to$ over \C.
+\end{defn}
+
+The objects of the fiber over $(\Theta,\theta,X\to\Gamma)$ will be called \textbf{$\S(\Theta,\theta)$-structures on $X$}; as before they form a partially ordered set.
+
+\begin{defn}
+  Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures with parameters over \C.
+  For any instantiation $(\Theta,\theta)$ of the parameter scheme of \S over $\Gamma\in \C$, a \textbf{typal initial $\S(\Theta,\theta)$-algebra} consists of a type $H\in\T(\Gamma)$ and an $\S(\Theta,\theta)$-structure on $\Gamma.H\to \Gamma$, such that for any $C\in\T(\Gamma.H)$ together with an $\S(\Theta,\theta)$-structure on the composite $\Gamma.H.C\to\Gamma.H\to\Gamma$ such that $\Gamma.H.C\to\Gamma.H$ is an $\S(\Theta,\theta)$-morphism, there exists a section $\Gamma.H \to \Gamma.H.C$ of $\Gamma.H.C\to\Gamma.H$ that is also an \S-morphism.
+
+  We say $\C$ has \textbf{weakly stable typal initial \S-algebras} if for any $\Gamma$ and $(\Theta,\theta)$ there exists a typal initial $\S(\Theta,\theta)$-algebra whose reindexing along any $\sigma:\Delta\to\Gamma$ is a typal initial $\S(\Theta[\sigma],\theta[\sigma])$-algebra.
+  If $\C$ is split, we say it has \textbf{strictly stable typal initial \S-algebras} if we have an operation assigning to each $\Gamma$ and $(\Theta,\theta)$ a typal initial $\S(\Theta,\theta)$-algebra over $\Gamma$ with specified $\S$-algebra sections, in a way that is strictly preserved by the split reindexing functors.
+\end{defn}
+
+\begin{defn}\label{defn:replift-param}
+  Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures with parameters over \C.
+  Given $A\in\T(\Gamma)$ and $B\in\T(\Gamma.A)$ and an instantiation $(\Theta,\theta)$ of the parameter scheme over $\Gamma$, and any $\S(\Theta,\theta)$-structure $\sA$ on $\Gamma.A\to\Gamma$, an \textbf{\S-lift} of $\sA$ to $B$ is an $\S(\Theta,\theta)$-structure on the composite $\Gamma.A.B\to\Gamma.A\to\Gamma$ such that $\Gamma.A.B\to\Gamma.A$ becomes an $\S(\Theta,\theta)$-morphism over $\Gamma$.
+  We say that \S has \textbf{representable lifts} if for any $A,B,\Theta,\theta,\sA$, the functor $(\C/\Gamma)\op \to \mathbf{Set}$ defined by
+  \begin{equation*}
+    (\sigma:\Delta\to\Gamma) \mapsto \{ \S(\Th[\si],\th[\si])\text{-lifts of $\sA[\sigma]$ to $B[\sigma]$}\}
+  \end{equation*}
+  is representable.
+  In other words, there exists a map $\varpi:V_{\sA,B}\to\Gamma$ and an $\S$-lift $\sB$ of $\sA[\varpi]$ to $B[\varpi]$, such that for any $\sigma:\Delta\to\Gamma$ and any $\S$-lift $\sB'$ of $\sA[\sigma]$ to $B[\sigma]$, there is a unique map $\tau:\Delta\to V_{\sA,B}$ such that $\varpi \circ \tau = \sigma$ and $\sB' = \sB[\tau]$.
+\end{defn}
+
+\begin{lem}
+  Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures with parameters over \C.
+  If \C has weakly stable typal initial \S-algebras, \C satisfies~\eqref{eq:lf}, and \S has representable lifts, then $\C_!$ has strictly stable typal initial \S-algebras.
+\end{lem}
+\begin{proof}
+  Suppose given $\Gamma\in\C$ and an instantiation $(\Th,\th)$ over $\Gamma$ of the parameter scheme $(\I,\P)$ of \S with respect to $\T_!$.
+  Since $\Th$ is a Reedy fibrant $\I$-diagram in $\C/\Gamma$, each map $\Th(x) \to M_x\Th$ is the comprehension of some $\Th_x \in \T_!(M_x\Th)$, which has the form $(V_{\Th_x},E_{\Th_x},\name{\Th_x})$.
+
+  Now the category of Reedy fibrant \I-diagrams in $\C$ is equivalently the ``Reedy fibrant oplax limit'' ${\oplim \I {\C}} \f$, in the sense of~\cite[\sec12]{shulman:invdia}, of the constant functor at $\C$.
+  For each $x\in\I$, consider $V_{\Th_x}$ to be a ``universe'' in the copy of $\C$ that is the image of $x$ under this constant functor.
+  Of course, since it is only a \emph{local} universe, it need not be closed under any type constructors; but the construction in~\cite[\sec12]{shulman:invdia} of a universe $V$ in ${\oplim \I {\C}} \f$ from one universe in each image category still works as long as the relevant limits and exponentials exist.
+  [TODO: Does~\eqref{eq:lf} in a comprehension category suffice for that?  Or do we need the full fibration category structure?]  
+
+  This $V$ is itself an \I-diagram in \C that is Reedy fibrant with respect to the display maps.
+  It has the universal property that maps $A\to V$ of \I-diagrams classify ``Reedy small-fibrations'' with respect to the universes $V_{\Th_x}$, i.e.\ transformations $B\to A$ such that $B_x \to M_x B \times_{M_x A} A_x$ is the comprehension of $(V_{\Th_x},E_{\Th_x},\name{V_x})$ for some map $\name{V_x}$.
+  Thus, if we let $\Vhat$ be the limit of $V$ (which exists by Reedy fibrancy), then $\Vhat$ is an object of \C with the universal property that maps $\Gamma\to \Vhat$ (which are the same as maps from the constant \I-diagram at $\Gamma$ into $V$) classify \I-diagrams over $\Gamma$ that are Reedy fibrant in $\T_!$ with the local universe at $x\in\I$ being $V_{\Th_x}$.
+
+  In particular, there is a universal such diagram $\Xi$ over $\Vhat$, which is \emph{a fortiori} also Reedy fibrant in $\T$.
+  Thus, the parameter scheme \P takes $\Xi$ to a type $\P(\Xi)\in\T(\Vhat)$, whose comprehension has the universal property that maps $\Gamma\to \Vhat.\P(\Xi)$ classify instantiations of \P over $\Gamma$, with a universal instantiation $(\Xi,\xi)$ over $\Vhat.\P(\Xi)$.
+  Thus, we take $V_H = \Vhat.\P(\Xi)$ as the local universe for the formation and introduction rules.
+
+  Specifically, let $E_H\in\T(V_H)$ be a weakly stable typal initial $\S(\Xi,\xi)$-algebra, with $\S(\Xi,\xi)$-structure $\sH$.
+  Our given instantiation $(\Th,\th)$ is classified by a map $\name{H}:\Gamma\to V_H$, and we take $(V_H,E_H,\name{H})\in\T_!(\Gamma)$ as the specified typal initial $\S(\Th,\th)$-algebra in our intended strictly stable structure for $\T_!$.
+  As usual, this is strictly stable by composition of names.
+
+  For the elimination and computation rules, given $C\in \T_!(\Gamma.H)$ determined by $(V_C,E_C,\name{C})$, consider first the object $\Vtil = V_H\triangleleft V_C$ constructed as in~\cite{lw:localuniv}, which classifies maps $\si : \Delta \to V_H$ together with maps $E_H[\si] \to V_C$.
+  In particular, we have universal maps $v:\Vtil\to V_H$ and $c:\Vtil.E_H[v]\to V_C$ giving $E_C[c]\in \T(\Vtil.E_H[v])$.
+
+  Now since \S has representable lifts, we have a map $V_{\sH[v],E_C[c]} \to \Vtil$ representing lifts of the \S-structure $\sH[v]$ of $E_H[v]$ to $E_C[c]$.
+  Combining universal properties, we see that maps $\Gamma\to V_{\sH[v],E_C[c]}$ correspond to choices of maps $\name{H}:\Gamma\to V_H$ and $\name{C}:\Gamma.E_H[\name{H}]\to V_C$ together with a lift of $\sH[\name{H}]$ to $E_C[\name{C}]$.
+  Thus, we can we take $V_{\sH[V],E_C[c]}$ as the local universe for the elimination and computation rules.
+  The weak stability of $H$ implies that the universal lift over $V_{\sH[V],E_C[c]}$ has a section that is an \S-morphism, which we can then reindex to $\Gamma$ to obtain a strictly stable eliminator.
+\end{proof}
+
+Now we move on to monads with parameters.
+For any category \C with pullbacks and $\Gamma\in\C$, let $\cMnd(\C)_\Gamma$ denote the category of fibred monads on $\C/\Gamma$.
+A fibred monad can be restricted along the projection $\C/\Delta\to\C/\Gamma$ for any $\sigma:\Delta\to\Gamma$, so these categories assemble into a fibration $\cMnd(\C) \to \C$.
+
+\begin{defn}
+  If $(\C,\T)$ is a comprehension category with pullbacks, a \textbf{fibred monad with parameters} on \C is a parameter scheme $(\I,\P)$ together with a cartesian morphism $\dT:\cInst(\P) \to \cMnd(\C)$ over \C.
+\end{defn}
+
+Thus, for any instantiation $(\Th,\th)$ over $\Gm$, we have an indexed monad $\dT(\Th,\th)$ on $\C/\Gm$, whose fiber over $1_\Gm$ is an ordinary monad $\dT(\Th,\th)_\Gm$ on $\C/\Gm$.
+We write $\dT\alg_{(\Th,th)}$ for the category of algebras of $\dT(\Th,\th)_\Gm$, each of which has an underlying object of $\C/\Gamma$, i.e.\ of $\C^\to$ over $\Gm$.
+These categories vary functorially with respect to cartesian morphisms of $(\Th,\th)$ (in particular, isomorphisms and reindexing along morphisms in \C), so we have a fibration $\dT\alg \to \C$ with a projection $\dT\alg \to \cInst(\P)\times_\C \C^\to$ over \C.
+
+\begin{lem}
+  For any fibred monad with parameters \dT on a comprehension category \C with pullbacks, $\dT\alg$ is a fibred category of structures with parameters over \C (with the same parameter scheme).\qed
+\end{lem}
+
+\begin{lem}
+  If \dT is a fibred monad with parameters on a model category \sM, then the full subcategory $\dT\algf$ of $\dT\alg$ consisting of \dT-algebra structures on fibrations over fibrant objects is a fibred category of structures with parameters over \Mf.\qed
+\end{lem}
+
+\begin{defn}
+  If \sM is an excellent model category, then a \textbf{(finite) cell monad with parameters} on \sM is a fibred monad with parameters such that each fibred monad $\dT(\Th,\th)$ is a (finite) cell monad on $\sM/\Gamma$.
+\end{defn}
+
+\begin{thm}
+  If \dT is a cell monad with parameters on an excellent model category \sM, then \fibmf has weakly stable typal initial $\dT\algf$-algebras.
+\end{thm}
+\begin{proof}
+  Note that for any $\sigma:\Delta\to\Gamma$ and any instantiation $(\Th,\th)$ over $\Gm$, the monad $\dT(\Th[\si],\th[si])_\De$ (the value of the fibred monad $\dT(\Th[\si],\th[si])$ on $\C/\Delta$ at $1_\Delta$) coincides with the monad $\dT(\Th,\th)_{\si}$ (the value of the fibred monad $\dT(\Th,\th)$ on $\C/\Gamma$ at $\si$).
+  This is because $\dT: \cInst(\P) \to \cMnd(\C)$ preserves cartesian arrows, and definition of the reindexing of a fibred monad and the fact that $(\C/\Gm)/(\si:\De\to\Gm) \simeq \C/\De$.
+  Therefore, we can essentially repeat the proof of \cref{thm:cell-wkstab} once for each instantiation.
+\end{proof}
+
+\begin{thm}
+  If \dT is a cell monad with parameters on an excellent model category \sM, then $\dT\algf$ has representable lifts.
+\end{thm}
+\begin{proof}
+  Inspecting \cref{defn:replift,defn:replift-param}, we see that \dT has representable lifts just when each fibred monad $\dT(\Th,\th)$ on $\C/\Gamma$ does.
+  Thus, this follows directly from \cref{thm:cell-replift}.
+\end{proof}
+
+\begin{cor}
+  If \sM is an excellent model category and \dT is a cell monad with parameters on it, then $\fibmfbang$ has strictly stable typal initial $\dT\algf$-algebras.\qed
+\end{cor}
+
+TODO: examples
 
 
 \bibliographystyle{alpha}
