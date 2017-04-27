@@ -1276,14 +1276,13 @@ Finally, we also have:
 \begin{proof}
   To make the induction go through, we will prove the following stronger result.
   Let $\dS\to\dT$ be a \emph{relative} cell monad.
-  For any fibrations $B\fib A\fib \Gamma$ such that $A\fib \Gamma$ is a $\dT_\Gamma$-algebra and $B\fib\Gamma$ is an $\dS_\Gamma$-algebra and $B\to A$ is a $\dS_\Gamma$-algebra map, we will show that there is a representing object for extensions of the \dS-algebra structure on $B$ to a \dT-algebra structure making $B\to A$ into a \dT-algebra map.
+  For any fibrations $B\fib A\fib \Gamma$ such that $A\fib \Gamma$ is a $\dT_\Gamma$-algebra and $B\fib\Gamma$ is an $\dS_\Gamma$-algebra and $B\to A$ is a $\dS_\Gamma$-algebra map, we will show that there is a representing object $V$ for extensions of the \dS-algebra structure on $B$ to a \dT-algebra structure making $B\to A$ into a \dT-algebra map, and that moreover the map $V\to\Gamma$ is a fibration.
 
-  (We restrict to fibrations because we are considering $\dT\algf$ rather than $\dT\alg$.
-  But because $\dT\algf$ is fibred over \Mf rather than \sM, this also means that the representing object will have to be fibrant.
-  In fact, we will show that the representing object is a fibration over $\Gamma$.)
+  In particular, this property implies that $V$ is fibrant, as it must be since we are considering $\dT\algf$ rather than $\dT\alg$.
+  But the stronger assumption that $V\to\Gamma$ is a fibration ensures that the property is preserved by both algebraic pushouts and (possibly transfinite) composites of monad morphisms.
+  In the latter case we take a (possible transfinite) inverse composite of the representing fibrations.
 
-  This property is easily shown to be preserved by algebraic pushouts and (possibly transfinite) composites of monad morphisms; in the latter case we take a (possible transfinite) inverse composite of the representing morphisms.
-  Thus, it suffices to show that it holds for monad cells $\dT^{f,K} \to \dT^{f,L}$.
+  Thus, it suffices to show that the property holds for monad cells $\dT^{f,K} \to \dT^{f,L}$.
   In other words, we must show that if $A\fib \Gamma$ is an $(F^f\otimes L)$-algebra and $B\fib\Gamma$ is an $(F^f\otimes K)$-algebra and $B\to A$ is a $(F^f\otimes K)$-algebra map, there is a representing object for extensions of the $(F^f\otimes K)$-algebra structure on $B$ to a $(F^f\otimes L)$-algebra structure making $B\to A$ into a $(F^f\otimes L)$-algebra map.
 
   Such an extension is a dotted arrow filling in the following diagram:
