@@ -2,13 +2,16 @@
 
 \input{decls}
 \input{macros}
-\autodefs{\fPush\sFib}
+\autodefs{\fPush\sFib\cCat\cAlg}
 \def\name#1{\ulcorner #1\urcorner}
 \let\J\iJ
 \let\W\iW
 \let\F\cF
 \let\N\iN
-\def\dId{\mathbb{I}\mathsf{d}}
+\let\S\cS
+\def\alg{\text{-}\cAlg}
+\def\algf{\alg_{\mathbf{f}}}
+\mdef\dId{\mathbb{I}\mathsf{d}}
 \def\dtprop{\dT_{\mathsf{Prop}}}
 \mdef\Mf{\sM_{\mathbf{f}}}
 \mdef\fibm{(\sM,\cF)}
@@ -81,7 +84,7 @@ Therefore, any right proper simplicial Cisinski model category is a good model c
 Assumption~\ref{item:m0} tells us that \sM is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product and pullback-corner axioms.
 This enables us to construct path objects (which model identity types) as simplicial powers.
 Specifically, if $\ivl$ denotes the 1-simplex (the simplicial interval), then for any fibrant object $A$, the power $A^\ivl$ is a path-object for $A$.
-Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``local power'' $B^\ivl_A = A^\ivl \times_{\Gamma^\ivl} \Gamma$ is a path-object for $A$ regarded as a type over $\Gamma$; see \cref{thm:stable-id}.
+Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``local power'' $A^\ivl_\Gamma = A^\ivl \times_{\Gamma^\ivl} \Gamma$ is a path-object for $A$ regarded as a type over $\Gamma$; see \cref{thm:stable-id}.
 
 This is important for us because it means that homotopies can be represented in adjoint form: a map $A\to B^\ivl$ is equivalent to a map $A\ten \ivl \to B$, where $A\ten \ivl$ is the simplicial copower.
 Note that like other colimits, the simplicial copower of $p:A\fib \Gamma$ in the slice category over $\Gamma$ is just $A\ten\ivl$ with the projection $A\ten\ivl \to A \to \Gamma$.
@@ -1070,6 +1073,249 @@ The following proof introduces one more new idea: algebraic pushouts of monads t
   Therefore, by \cref{thm:prop-over}, we can give it the structure of a proposition such that $r^*C \to \brck A$ is a map of propositions.
   So we can apply $\trrec$ to obtain a section of it, which pulls back to the desired section of $C$.
 \end{proof}
+
+
+\section{Cell monads}
+\label{sec:cell-monads}
+
+At this point we have enough examples to motivate and formulate a general notion of higher inductive type on the semantic side, although it remains an open problem to give a syntactic presentation of equal generality.
+In this section we consider ``higher inductive types'' without parameters; in the next section we generalize to allow at least a certain kind of parameters.
+
+We start with a very general notion of ``typal initial algebra'' in the comprehension category context for which we can isolate the conditions necessary to prove the local universes coherence theorem.
+
+\begin{defn}
+  For any category $\C$, a \textbf{fibred category of structures} over $\C$ is a comprehension category structure $(\C,\S)$ such that the functor $\S\to\C^\to$ is a faithful amnestic isofibration.
+  We call an object of $\S$ an \textbf{\S-algebra}, and we call a lifting of $(X\to \Gamma)\in\C^\to$ an \textbf{\S-structure} on it.
+  We call a morphism in \S an \textbf{\S-morphism}.
+\end{defn}
+
+Note that by the assumptions on $\S$, the collection of \S-structures on any $X\to \Gamma$ is a partially ordered set (not just a preordered set).
+
+\begin{defn}
+  Let $(\C,\T)$ be a comprehension category, and let \S be a fibred category of structures over \C (note that there is no relation between \S and \T).
+  A \textbf{typal initial $\S$-algebra} over $\Gamma$ is a type $H\in \T(\Gamma)$ together with an \S-structure on its comprehension $\Gamma.H\to\Gamma$, such that for any $C\in\T(\Gamma.H)$ together with an \S-algebra structure on the composite $\Gamma.H.C\to\Gamma.H\to\Gamma$ such that $\Gamma.H.C\to\Gamma.H$ is an \S-morphism, there exists a section $\Gamma.H \to \Gamma.H.C$ of $\Gamma.H.C\to\Gamma.H$ that is also an \S-morphism.
+
+  We say $\C$ has \textbf{weakly stable typal initial \S-algebras} if for any $\Gamma$ there exists a typal initial $\S$-algebra over $\Gamma$ whose reindexing along any $\sigma:\Delta\to\Gamma$ is again a typal initial $\S$-algebra.
+  If $\C$ is split, we say it has \textbf{strictly stable typal initial \cA-algebras} if we have an operation assigning to each $\Gamma$ a typal initial $\S$-algebra over $\Gamma$ with specified $\S$-algebra sections, in a way that is strictly preserved by the split reindexing functors.
+\end{defn}
+
+\begin{defn}
+  Let \S be a fibred category of structures over a comprehension category $(\C,\T)$.
+  Given $A\in\T(\Gamma)$ and $B\in\T(\Gamma.A)$ and any \S-structure $\sA$ on $\Gamma.A\to\Gamma$, an \textbf{\S-lift} of $\sA$ to $B$ is an \S-structure on the composite $\Gamma.A.B\to\Gamma.A\to\Gamma$ such that $\Gamma.A.B\to\Gamma.A$ becomes an \S-morphism over $\Gamma$.
+  We say that \S has \textbf{representable lifts} if for any $A,B,\sA$, the functor $(\C/\Gamma)\op \to \mathbf{Set}$ defined by
+  \begin{equation*}
+    (\sigma:\Delta\to\Gamma) \mapsto \{ \text{\S-lifts of $\sA[\sigma]$ to $B[\sigma]$}\}
+  \end{equation*}
+  is representable.
+  In other words, there exists a map $\varpi:V_{\sA,B}\to\Gamma$ and an $\S$-lift $\sB$ of $\sA[\varpi]$ to $B[\varpi]$, such that for any $\sigma:\Delta\to\Gamma$ and any $\S$-lift $\sB'$ of $\sA[\sigma]$ to $B[\sigma]$, there is a unique map $\tau:\Delta\to V_{\sA,B}$ such that $\varpi \circ \tau = \sigma$ and $\sB' = \sB[\tau]$.
+\end{defn}
+
+Note that the notion of representable lift \emph{does} involve both \S and \T, and also that the assumptions on \S ensure that this functor really does sensibly take values in (partially ordered) \emph{sets} (rather than groupoids or categories).
+
+\begin{lem}
+  Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures over \C.
+  If \C has weakly stable typal initial \S-algebras, \C has a terminal object, and \S has representable lifts, then $\C_!$ has strictly stable typal initial \S-algebras.
+\end{lem}
+\begin{proof}
+  Choose a weakly stable typal initial \S-algebra $H\in\T(1)$ with \S-structure \sH, and let $V_H = 1$ and $E_H = H$ with $\name{H}= 1$.
+  Then assign to each $\Gamma$ the algebra $(V_H,E_H,!)$; this is strictly stable by composition of names, as usual.
+  That is, since the ``formation'' and ``introduction'' rules (which jointly correspond to a choice of \S-structure on the comprehension of a type) have no premises, their local universe is the terminal object.
+
+  For the elimination rule, given a type $C\in \T_!(\Gamma.H[\Gamma])$ determined by $(V_C,E_C,\name{C})$, consider first the object $V = V_H\triangleleft V_C$ constructed as in~\cite{lw:localuniv}, which classifies maps $\Delta \to V_H = 1$ (which are unique) together with maps $H[\Delta] \to V_C$.
+  In particular, we have a universal map $c:V.H[V]\to V_C$ giving $E_C[c]\in \T(V.H[V])$.
+
+  Now, by representable lifts, we have a map $V_{\sH[V],E_C[c]} \to V$ representing lifts of the \S-structure $\sH[V]$ of $H[V]$ to $E_C[c]$.
+  Combining universal properties, we see that maps $\Gamma\to V_{\sH[V],E_C[c]}$ correspond to choices of a map $\name{C}:\Gamma\to V_C$ together with a lift of $\sH[\Gamma]$ to $E_C[\name{C}]$.
+  This is exactly the input to the ``elimination and computation rules'' of a typal initial \S-algebra, so we take $V_{\sH[V],E_C[c]}$ as the local universe for that.
+  The weak stability of $H$ implies that the universal lift over $V_{\sH[V],E_C[c]}$ has a section that is an \S-morphism, which we can then reindex to $\Gamma$ to obtain a strictly stable eliminator.
+\end{proof}
+
+Note that we did not need to explicitly assume all of~\eqref{eq:lf}; the assumption of representable lifts encodes all of this that's relevant to \S.
+
+Now we move on to good model categories.
+In this case, our work in previous sections suggests that we should consider structures defined as the algebras for a monad.
+To obtain a \emph{fibred} category of algebras, we need to consider fibred monads as well.
+
+\begin{defn}
+  A \textbf{fibred monad} on a category \C with pullbacks is a monad $\dT$ on $\C^\to$ in the category of fibrations over \C.
+  That is, $\dT$ and its unit $\eta$ and multiplication $\mu$ live in the (strict) slice 2-category of \cCat over $\C$, meaning that $\dT$ preserves codomains and the codomain-part of $\eta$ and $\mu$ are the identity, and also $\dT$ preserves cartesian morphisms.
+\end{defn}
+
+In particular, such a \dT induces a monad $\dT_\Gamma$ on each slice category $\C/\Gamma$, and each pullback functor $\sigma^* : \C/\Gamma \to \C/\Delta$ is a \emph{strong monad morphism}, i.e.\ it satisfies $\sigma^* \dT_\Gamma \cong \dT_\Delta \sigma^*$ coherently.
+That is, a fibred monad is equivalently an \emph{indexed} monad.
+
+Let $\dT\alg$ denote the category of \dT-algebras, which is again fibred over \C; the fiberwiseness of $\eta$ means that its fiber over $\Gamma$ is $\dT_\Gamma\alg$.
+We record:
+
+\begin{lem}
+  For any fibred monad \dT on a category \C with pullbacks, $\dT\alg$ is a fibred category of structures over \C.\qed
+\end{lem}
+
+\begin{lem}
+  If \dT is a fibred monad on a model category \sM, then the full subcategory $\dT\algf$ of $\dT\alg$ consisting of \dT-algebra structures on fibrations is a fibred category of structures over the full subcategory of fibrant objects \Mf.\qed
+\end{lem}
+
+The question, therefore, is what conditions we can impose on \dT to ensure that
+\begin{enumerate}[label=(\arabic*)]
+\item \fibmf has weakly stable initial $\dT\algf$-structures, and
+\item $\dT\algf$ has representable lifts.
+\end{enumerate}
+It is familiar from homotopy theory that an algebraic theory (such as an operad or, in this case, a monad) must be sufficiently ``cofibrant'' to have good homotopical behavior.
+Cofibrant objects, in turn, are generally constructed as ``cell complexes''.
+Inspecting our proofs of weak stability in the preceding sections leads us to the following definitions.
+
+\begin{lem}
+  Let \sM be a locally presentable category, and $F$ a fibred endofunctor of \sM such that each fiber $F_\Gamma$ is accessible.
+  Let $\dT_\Gamma$ be the algebraically-free monad on $F_\Gamma$.
+  Then these monads $\dT_\Gamma$ are also indexed, i.e.\ we have coherent isomorphisms $\dT_\Delta \circ \sigma^* \cong \sigma^* \circ \dT_\Gamma$ commuting with the monad structures, and hence induce a fibred monad $\dT$.
+\end{lem}
+\begin{proof}
+  As explained in~\cite{kelly:transfinite,nlab:transfinite}, $\dT_\Gamma$ is constructed out of colimits in \sM using a general method that depends on $F_\Gamma$ only insofar as we have to carry it out to some stage $\kappa$ such that $F_\Gamma$ is $\kappa$-accessible.
+  It doesn't matter whether we go ``too far'', since the construction converges: once we reach a $\kappa$ such that $F_\Gamma$ is $\kappa$-accessible, continuing to larger values of $\kappa$ doesn't change the result.
+  Therefore, given $\sigma:\Delta\to\Gamma$, we can choose $\kappa$ such that $F_\Gamma$ and $F_\Delta$ are \emph{both} $\kappa$-accessible, and then both $\dT_\Gamma$ and $\dT_\Delta$ can be constructed by \emph{exactly the same colimit}.
+  Since $\sigma^*$ preserves all colimits, the isomorphisms $F_\Delta \circ \sigma^* \cong \sigma^* \circ F_\Gamma$ therefore yield isomorphisms $\dT_\Delta \circ \sigma^* \cong \sigma^* \circ \dT_\Gamma$, and so on.
+\end{proof}
+
+Now let \sM be an excellent model category.
+For any fibration $f:B\to A$ of fibrant objects in \sM and any $\Gamma\in\sM$, let $F^f_\Gamma$ be the polynomial endofunctor of $\sM/\Gamma$ determined by $\Gamma^*(f)$, i.e.\ the composite
+\[ \sM/\Gamma \xto{\Gamma^*(B)^*} \sM/\Gamma^*(B) \xto{\Gamma^*(f)_*} \sM/\Gamma^*(A) \xto{\Gamma^*(A)_!} \sM/\Gamma \]
+By the Beck-Chevalley condition for dependent exponentials, $F^f_\Gamma$ is an indexed endofunctor, hence we have an fibred endofunctor $F^f$, which is moreover (fiberwise) accessible.
+Finally, for any simplicial set $K$ we have a further fibred endofunctor $F^f \otimes K$, which is again accessible; we denote the free fibred monad it generates by $\dT^{f,K}$.
+
+\begin{defn}
+  Let \sM be an excellent model category.
+  \begin{itemize}
+  \item A \textbf{monad cell} is a fibred monad morphism $\dT^{f,K} \to \dT^{f,L}$ induced by some fibration $f:B\to A$ of fibrant objects in \sM and some cofibration $K\to L$ of simplicial sets.
+  \item A \textbf{(finite) relative cell monad} is a fibred monad morphism obtained as a (finite) composite of pushouts of monad cells.
+  \item A \textbf{(finite) cell monad} is a fibred monad \dT such that the unique map from the initial fibred monad (which is the identity $\dId$) is a (finite) relative cell monad.
+  \end{itemize}
+\end{defn}
+
+As in previous sections, the proof of weak stability for typal initial \dT-algebras will proceed by considering separately the cases when $\sigma$ is a fibration or an acyclic cofibration.
+For the fibration case, the relevant lemma will be the following.
+
+\begin{lem}\label{thm:fibmnd-radj}
+  For any fibred monad \dT on a good model category \sM, and any morphism $\sigma:\Delta\to\Gamma$, the adjunction $\sigma^*: \sM/\Gamma \toot \sM/\Delta : \sigma_*$ lifts to an adjunction $\sigma^*:\dT_\Gamma\alg \to \dT_\Delta\alg: \sigma_*$.
+\end{lem}
+\begin{proof}
+  Since $\sigma^*$ is a strong monad morphism, by doctrinal adjunction~\cite{kelly:doc-adjn} the entire adjunction $\sigma^*\dashv\sigma_*$ lifts to the 2-category of categories-with-monads and lax monad morphisms.
+  But the construction of categories of algebras is functorial on this 2-category, hence takes this adjunction to the desired adjunction between categories of algebras.
+\end{proof}
+
+For the acyclic cofibration case, the relevant lemma will be the following analogue of \cref{thm:W-cofmnd}.
+
+\begin{lem}\label{thm:cell-cofmnd}
+  Let $\dS\to\dT$ be a relative cell monad on an excellent model category, and suppose given a pair of pullback squares:
+  \[
+  \begin{tikzcd}
+    C \ar[r,>->,squiggly,"i"] \ar[d,->>,"p",swap] \ar[dr,phantom,near start,"\lrcorner"] & D \ar[d,->>,"q"] \\
+    V \ar[r,>->,squiggly,"j"] \ar[d,->>] \ar[dr,phantom,near start,"\lrcorner"] & W \ar[d,->>] \\
+    \Delta \ar[r,>->,squiggly,"\sigma",swap] & \Gamma
+  \end{tikzcd}
+  \]
+  in which all objects are fibrant, the downward-pointing arrows are fibrations, and the rightward-pointing arrows are acyclic cofibrations.
+  Suppose moreover that:
+  \begin{enumerate}
+  \item $C$ and $V$ are $\dT_\Delta$-algebras and $p$ is a $\dT_\Delta$-morphism,
+  \item $W$ is a $\dT_\Gamma$-algebra and $j$ is a cartesian morphism in $\dT\alg$,
+  \item $D$ is an $\dS_\Gamma$-algebra and $q$ is an $\dS_\Gamma$-morphism (where $W$ has its induced $\dS_\Gamma$-structure), and
+  \item $i$ is a cartesian morphism in $\dS\alg$ (where $C$ has its induced $\dS_\Delta$-structure).
+  \end{enumerate}
+  Then there is a $\dT_\Gamma$-structure on $D$ such that $q$ is a $\dT_\Gamma$-morphism and $i$ is a cartesian morphism in $\dT\alg$.
+\end{lem}
+\begin{proof}
+  It is easy to check that this property is preserved by algebraic pushouts and (possibly transfinite) composites of monad morphisms.
+  Thus, it suffices to show that monad cells $\dT^{f,K} \to \dT^{f,L}$ have this property.
+  In this case, generalizing the argument of \cref{thm:W-cofmnd}, we have the following commutative diagram of solid arrows and we want to construct a dashed arrow making the other squares commute:
+  \[
+  \begin{tikzcd}
+    (\sigma^*f)_* (\sigma^*B)^* C \otimes K \ar[rrr] \ar[dr] \ar[ddd] &&& f_* B^* D \otimes K \ar[dr] \ar[ddd] \ar[ddrr,bend left]\\
+    &(\sigma^*f)_* (\sigma^*B)^* C \otimes L \ar[rrr,crossing over] \ar[dr] &&& f_* B^* D \otimes L \ar[dr,dashed] \ar[ddd]\\
+    && C \ar[rrr,->,near end,crossing over] &&& D \ar[ddd,->>] \\
+    (\sigma^*f)_* (\sigma^*B)^* V \otimes K \ar[rrr] \ar[dr] &&& f_* B^* W \otimes K \ar[dr] \\
+    &(\sigma^*f)_* (\sigma^*B)^* V \otimes L \ar[rrr] \ar[dr] \ar[from=uuu,crossing over] &&& f_* B^* W \otimes L \ar[dr] \\
+    && V \ar[rrr,->] \ar[from=uuu,crossing over] &&& W
+  \end{tikzcd}
+  \]
+  This is equivalent to solving the following lifting problem:
+  \[
+  \begin{tikzcd}
+    ((\sigma^*f)_* (\sigma^*B)^* C \otimes L) \sqcup_{((\sigma^*f)_* (\sigma^*B)^* C \otimes K)} (f_* B^* D \otimes K) \ar[r] \ar[d] & D \ar[d,->>] \\
+    f_* B^* D \otimes L \ar[ur,dashed] \ar[r] & W
+  \end{tikzcd}
+  \]
+  But the left-hand map is now the pushout product of $(\sigma^*f)_* (\sigma^*B)^* C \otimes L \to f_* B^* D$, which we showed in \cref{thm:W-cofmnd} to be an acyclic cofibration, and the cofibration $K\to L$ of simplicial sets; thus it is also an acyclic cofibration.
+\end{proof}
+
+\begin{thm}
+  If \dT is a cell monad on an excellent model category \sM, then \fibmf has weakly stable typal initial $\dT\algf$-algebras.
+\end{thm}
+\begin{proof}
+  As usualy, for any $\Gamma$, let $H\fib\Gamma$ be the initial $(\dT_\Gamma+\dR_\Gamma)$-algebra.
+  Then it is a fibration and a $\dT_\Gamma$-algebra.
+  And given any fibration $C\fib H$ that is a $\dT_\Gamma$-morphism, choose a \dR-structure on it to make $C\to\Gamma$ a $(\dT_\Gamma+\dR_\Gamma)$-algebra and $C\to H$ a $(\dT_\Gamma+\dR_\Gamma)$-morphism, so that it has a $(\dT_\Gamma+\dR_\Gamma)$-section.
+  Thus, $H$ is a typal initial $\dT\algf$-algebra.
+
+  To show that it is weakly stable, by factorization we consider separately the cases when $\sigma:\Delta\to\Gamma$ is a fibration or an acyclic cofibration.
+  If $\sigma$ is a fibration, then for any $\dT_\Delta$-algebra fibration $C\fib \sigma^*H$, by \cref{thm:fibmnd-radj} we have a $\dT_\Gamma$-algebra map $\sigma_*C\fib \sigma_*\sigma^*H$, which is a fibration since $\sigma$ is a fibration.
+  Thus, pulling it back along the unit $H\to \sigma_*\sigma^* H$, we obtain a $\dT_\Gamma$-algebra fibration over $H$, which therefore has a $\dT_\Gamma$-algebra section.
+  This gives a map $H\to \sigma_* C$, whose transpose under the adjunction of \cref{thm:fibmnd-radj} is the desired $\dT_\Delta$-algebra section $\sigma^*H \to C$.
+
+  If $\sigma$ is an acyclic cofibration, then so is its pullback $H^*(\sigma) : \sigma^*H \to H$ along the fibration $H\fib \Gamma$.
+  Since $\Delta$ is fibrant, so is $\sigma^*H$, and thus $H^*(\sigma)$ has a retraction $r$.
+  Now for any $\dT_\Delta$-algebra fibration $C\fib \sigma^*H$, let $D = r^*C$, so that $C \cong (H^*(\sigma))^*(D)$.
+  By \cref{thm:cell-cofmnd} applied to the relative cell monad $\dId\to\dT$, we can find a $\dT_\Gamma$-algebra structure on $D$ making $D\to H$ a $\dT_\Gamma$-algebra fibration whose pullback is $C\to\sigma^* H$.
+  Thus, applying the eliminator for $H$ we get a $\dT_\Gamma$-algebra section of $D$, which pulls back to a $\dT_\Delta$-algebra section of $C$.
+\end{proof}
+
+Finally, we also have:
+
+\begin{thm}
+  If \dT is a cell monad on an excellent model category \sM, then $\dT\algf$ has representable lifts.
+\end{thm}
+\begin{proof}
+  To make the induction go through, we will prove the following stronger result.
+  Let $\dS\to\dT$ be a \emph{relative} cell monad.
+  For any fibrations $B\fib A\fib \Gamma$ such that $A\fib \Gamma$ is a $\dT_\Gamma$-algebra and $B\fib\Gamma$ is an $\dS_\Gamma$-algebra and $B\to A$ is a $\dS_\Gamma$-algebra map, we will show that there is a representing object for extensions of the \dS-algebra structure on $B$ to a \dT-algebra structure making $B\to A$ into a \dT-algebra map.
+
+  (We restrict to fibrations because we are considering $\dT\algf$ rather than $\dT\alg$.
+  But because $\dT\algf$ is fibred over \Mf rather than \sM, this also means that the representing object will have to be fibrant.
+  In fact, we will show that the representing object is a fibration over $\Gamma$.)
+
+  This property is easily shown to be preserved by algebraic pushouts and (possibly transfinite) composites of monad morphisms; in the latter case we take a (possible transfinite) inverse composite of the representing morphisms.
+  Thus, it suffices to show that it holds for monad cells $\dT^{f,K} \to \dT^{f,L}$.
+  In other words, we must show that if $A\fib \Gamma$ is an $(F^f\otimes L)$-algebra and $B\fib\Gamma$ is an $(F^f\otimes K)$-algebra and $B\to A$ is a $(F^f\otimes K)$-algebra map, there is a representing object for extensions of the $(F^f\otimes K)$-algebra structure on $B$ to a $(F^f\otimes L)$-algebra structure making $B\to A$ into a $(F^f\otimes L)$-algebra map.
+
+  Such an extension is a dotted arrow filling in the following diagram:
+  \[
+  \begin{tikzcd}
+    F^f_\Gamma(B) \otimes K \ar[rr] \ar[dr] \ar[dd] && B \ar[dd,->>]\\
+    & F^f_\Gamma(B) \otimes L \ar[ur,dashed] \\
+    F^f_\Gamma(A) \otimes K \ar[rr] \ar[dr] && A\\
+    & F^f_\Gamma(A) \otimes L \ar[ur] \ar[from=uu,crossing over]
+  \end{tikzcd}
+  \]
+  We define the representing object to be the following pullback:
+  \[
+  \begin{tikzcd}[column sep=huge]
+    V \ar[r] \ar[d,->>] \ar[dr,phantom,near start,"\lrcorner"] & \left(B^{F^f_\Gamma(B)}_\Gamma\right)^L_\Gamma \ar[d,->>]\\
+    \Gamma \ar[r] &
+    \left(B^{F^f_\Gamma(B)}_\Gamma\right)^K_\Gamma \times_{\left(A^{F^f_\Gamma(B)}_\Gamma\right)^K_\Gamma} \left(A^{F^f_\Gamma(B)}_\Gamma\right)^L_\Gamma
+  \end{tikzcd}
+  \]
+  Here $B^{F^f_\Gamma(B)}_\Gamma$ and $A^{F^f_\Gamma(B)}_\Gamma$ denote exponentials in $\sM/\Gamma$, while $(-)^K_\Gamma$ and $(-)^L_\Gamma$ denote simplicial powers in $\sM/\Gamma$.
+  Of course, $(X^Y_\Gamma)^K_\Gamma \cong X^{Y\otimes K}_\Gamma$, but we have written it using the former notation to make it clear that the right-hand map is the pullback corner map for the cofibration $K\to L$ and the map $B^{F^f_\Gamma(B)}_\Gamma \to A^{F^f_\Gamma(B)}_\Gamma$, which is a fibration since $B\fib A$ and $F^f_\Gamma(B) \fib \Gamma$ are.
+  Hence the right-hand map is a fibration, and thus so is its pullback on the left; and in particular $V$ is fibrant.
+
+  The bottom map is determined by the solid arrows in the previous diagram, and a choice of dotted arrow in the previous diagram would be equivalently a lift of this map to $\left(B^{F^f_\Gamma(B)}_\Gamma\right)^L_\Gamma$, and hence also equivalently a section of $V\fib\Gamma$.
+  Moreover, the entire diagram lives in $\sM/\Gamma$ and is preserved by pullback; thus a choice of such a lift after pullback along $\sigma$ is the same as a factorization of $\sigma$ through $V$.
+  This says exactly that $V$ has the desired universal property.
+\end{proof}
+
+\begin{cor}
+  For any cell monad \dT on an excellent model category \sM, $\fibmfbang$ has strictly stable typal initial $\dT\algf$-algebras.
+\end{cor}
+
 
 
 \bibliographystyle{alpha}
