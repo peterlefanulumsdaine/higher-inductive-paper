@@ -1346,7 +1346,53 @@ However, we do allow type parameters to depend on previous type parameters, as f
 We encode the ``shape'' of dependency among the type parameters by a \textbf{finite inverse category} \I (equivalently, a skeletal finite category with no nonidentity endomorphisms), whose objects represent types and whose morphisms represent dependencies.
 For instance, the type parameters of a pushout are described by the discrete category with three objects, while those of a $\W$-type are described by the arrow category $(\cdot\to\cdot)$.
 
-For any diagram $\Theta:\I\to\C$ with \I finite and inverse, the \textbf{matching object} at $x\in\I$ is the limit $M_x\Theta = \lim_{y\in x\sslash\I} \Theta(y)$ (if it exists), where $x\sslash \I$ is the full subcategory of the co-slice $x/\I$ that omits the identity $1_x$.
+Recall that for any diagram $\Theta:\I\to\C$ with \I finite and inverse, the \textbf{matching object} at $x\in\I$ is the limit $M_x\Theta = \lim_{y\in x\sslash\I} \Theta(y)$ (if it exists), where $x\sslash \I$ is the full subcategory of the co-slice $x/\I$ that omits the identity $1_x$.
+If $\cM$ is a class of morphisms in \C closed under pullbacks, we say that a natural transformation $A\to B$ of \I-diagrams is a \textbf{Reedy \cM-morphism} if for all $x\in \I$ the matching objects $M_x A$ and $M_x B$ exist and the induced map $A_x \to B_x\times_{M_x B} M_x A$ is in \cM.
+Assuming \C has a terminal object, we say $A$ is \textbf{Reedy \cM-object} if $A\to 1$ is a Reedy \cM-morphism.
+Important choices of \cM include:
+\begin{itemize}
+\item If \C is a model category (or more generally a fibration category), we can take \cM to be the fibrations.
+\item If \C is a comprehension category, we can take \cM to be the \emph{dependent projections}: maps that are isomorphic to the comprehension $\Gamma.A\to \Gamma$ of some type.
+\item If \C is a comprehension category, we can also take \cM to be the \emph{display maps}: composites of finite strings of dependent projections.
+\item If \C is any category at all, we can take \cM to be the \emph{pullbackable maps}: those of which all pullbacks exist.
+\end{itemize}
+Thus we have Reedy fibrations, Reedy dependent projections, Reedy display maps, and Reedy pullbackable maps.
+The following lemmas are well-known for Reedy fibrations in a fibration category, but we re-prove them to make it clear that they depend on no properties of \cM other than its closure under pullbacks.
+
+% The \textbf{height} of a finite inverse category is the number of objects in the longest string of composable nonidentity arrows.
+% In particular, the height of a discrete category is 1 and the height of the empty category is 0.
+
+\begin{lem}
+  If \C is a category with a terminal object and $A$ is a Reedy \cM-object in \C, then $\lim A$ exists.
+\end{lem}
+\begin{proof}
+  By induction on the number of objects in \I.
+  % If \I has height 0, then it is empty and $\lim A = 1$.
+  % Otherwise, induct on the number of objects in \I.
+  If \I has no objects, then $\lim A = 1$.
+  Otherwise, let $x\in\I$ be an object that is not the target of any nonidentity morphism (such an object exists since \I is finite, inverse, and nonempty).
+  Then $\I\setminus\{x\}$ has fewer objects than \I, and restriction to it preserves matching objects, so $A|_{\I\setminus\{x\}}$ is also a Reedy \cM-object and hence has a limit.
+  % And $x\sslash \I$ has smaller height than \I, so $\lim A|_{x\sslash \I}$ also exists.
+  Moreover, since $A$ is a Reedy \cM-object, $\lim A|_{x\sslash \I} = M_x A$ also exists and $A_x \to M_x A$ is in \cM.
+  Now $\lim A$ is the following pullback:
+  \[
+  \begin{tikzcd}
+    \lim A \ar[r] \ar[d] & A_x \ar[d] \\
+    A|_{\I\setminus\{x\}} \ar[r] & M_x A
+  \end{tikzcd}
+  \]
+  which exists since \cM is closed under pullbacks.
+\end{proof}
+
+In particular, the existence of matching objects is not really an extra hypothesis in the definition of Reedy \cM-objects, since as soon as $A$ is Reedy ``below $x$'' then $M_x A$ is a limit of a Reedy object and hence exists.
+
+\begin{lem}
+  If $f:A\to B$ is a Reedy $\cM_f$-morphism, $A$ and $B$ are Reedy \cM-objects), then $\lim f: \lim A \to \lim B$ is a composite of morphisms in \cM (hence in \cM itself, if \cM is closed under composition).
+\end{lem}
+\begin{proof}
+  Cogluing lemma.
+\end{proof}
+
 If $(\C,\T)$ is moreover a comprehension category, then $\Theta:\I\to\C$ is \textbf{Reedy fibrant} if for each $x\in\I$, the matching object $M_x\Theta$ exists and there is a specified $\Theta_x \in \T(M_x\Theta)$ whose comprehension is equal to the canonical map $\Theta(x) \to M_x\Theta$.
 % It is \textbf{Reedy fibrant} if we only assume that $\Theta_x \in \T(M_x\Theta)$ is a display map (a finite composite of unspecified comprehensions).
 The existence of matching objects is not actually an extra condition; as soon as $\Theta$ is Reedy fibrant ``below $x$'', then $M_x\Theta$ automatically exists.
