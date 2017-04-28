@@ -67,7 +67,7 @@
 \crefrangemultiformat{section}{\sec\sec#3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}{, #3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}
 \Crefrangemultiformat{section}{Sections~#3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}{, #3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}
 
-\title{Semantics of pushouts in homotopy type theory}
+\title{Semantics of higher inductive types}
 
 \author{Peter LeFanu Lumsdaine}
 \author{Michael Shulman}
@@ -1095,11 +1095,11 @@ The following proof introduces one more new idea: algebraic pushouts of monads t
 \end{proof}
 
 
-\section{Cell monads}
-\label{sec:cell-monads}
+\section{Typal initial structures}
+\label{sec:init-struct}
 
 At this point we have enough examples to motivate and formulate a general notion of higher inductive type on the semantic side, although it remains an open problem to give a syntactic presentation of equal generality.
-In this section we consider ``higher inductive types'' without parameters; in the next section we generalize to allow at least a certain kind of parameters.
+In this section and the next we consider ``higher inductive types'' without parameters; in later sections we generalize to allow parameters.
 
 We start with a very general notion of ``typal initial algebra'' in the comprehension category context for which we can isolate the conditions necessary to prove the local universes coherence theorem.
 
@@ -1151,6 +1151,10 @@ Note that the notion of representable lift \emph{does} involve both \S and \T, a
 \end{proof}
 
 Note that we did not need to explicitly assume all of~\eqref{eq:lf}; the assumption of representable lifts encodes all of this that's relevant to \S.
+
+
+\section{Cell monads}
+\label{sec:cell-monads}
 
 Now we move on to good model categories.
 In this case, our work in previous sections suggests that we should consider structures defined as the algebras for a monad.
@@ -1338,53 +1342,51 @@ Finally, we also have:
 TODO: remark on correspondence to syntax, constructors are cells, homotopies become identity types (can do formally in the 1-dimensional case?), give examples
 
 
-\section{Cell monads with parameters}
-\label{sec:cell-monads-param}
+\section{Typal initial structures with parameters}
+\label{sec:init-struct-param}
 
-Now we generalize the constructions of \cref{sec:cell-monads} to allow parameters, i.e.\ premises for the formation and introduction rules.
+Now we generalize the constructions of \cref{sec:init-struct,sec:cell-monads} to allow parameters, i.e.\ premises for the formation and introduction rules.
 Because our type theory has no universes, we have to treat type parameters separately from term parameters.
 Intuitively, a ``parameter scheme'' is a list of hypothized judgments in type theory; but in this section we take a semantic point of view instead.
 
-Recall that in a comprehension category $(\C,\T)$, a \textbf{display map} is a finite composite of maps that are isomorphic to comprehensions of types $\Gamma.A\to\Gamma$.
-All pullbacks of display maps exist and are display maps.
+Recall that in a comprehension category $(\C,\T)$, a \textbf{dependent projection} is a map that is isomorphic to the comprehension of some (unspecified) type $\Gamma.A\to\Gamma$, and a \textbf{display map} is a finite composite of dependent projections.
+All pullbacks of dependent projections and display maps exist and are again of the same sort.
 We view a display map as a semantic version of a \emph{context extension}.
-Let $\D$ be the category whose objects are display maps and whose morphisms are pullback squares; then the codomain projection $\D\to\C$ is a fibration of groupoids.
+Let $\D_1$ and $\D$ be the categories whose objects are dependent projections and display maps, respectively, and whose morphisms are pullback squares; then the codomain projections $\D_1\to\C$ and $\D\to\C$ are fibrations of groupoids.
 
 Let $\T_{\cong}$ be the subcategory of $\T$ containing only the cartesian arrows; then $\T_{\cong}\to\C$ is also a fibration of groupoids.
-And let $\T_{*}$ be the category whose objects are types equipped with a section of their comprehension $\Gamma.A\to\Gamma$, and whose morphisms are cartesian ones commuting with the sections.
-The forgetful functor $\T_{*} \to \T_{\cong}$ is a discrete fibration.
+Finally, let $\D_{1,*}$ be the category whose objects are dependent projections equipped with a section, and whose morphisms are cartesian ones commuting with the sections.
+The forgetful functor $\D_{1,*} \to \D_1$ is a discrete fibration.
 
 \begin{defn}
-  Let $(\C,\T)$ and $(\C,\T')$ be two comprehension structures on the same category
-  (think of $\T'=\T$ or $\T'=\T_!$.)
-  We define the set of \textbf{parameter schemes over $(\C,\T)$} together with, for every such parameter scheme $\P$, a fibration $\cInst_{\T'}(\P)\to\C$ of \textbf{instantiations of \P with respect to $\T_!$}, by mutual induction as follows.
+  Let $(\C,\T)$ be a comprehension category.
+  We define the set of \textbf{parameter schemes over $(\C,\T)$} together with, for every such parameter scheme $\P$, a fibration $\cInst(\P)\to\C$ of \textbf{instantiations of \P}, by mutual induction as follows.
   \begin{itemize}
-  \item There is an \textbf{empty parameter scheme} $\emptyps$, and $\cInst_{\T'}(\emptyps) = \C$ (i.e.\ there is a unique instantiation of $\emptyps$ over every $\Gamma\in\C$).
-  \item If \P is a parameter scheme, an \textbf{extension of \P by a type parameter} is a new parameter scheme $\typeps{\P}{\cA}$ determined by a cartesian functor $\cA:\cInst_{\T'}(\P)\to\D$ over \C.
+  \item There is an \textbf{empty parameter scheme} $\emptyps$, and $\cInst(\emptyps) = \C$ (i.e.\ there is a unique instantiation of $\emptyps$ over every $\Gamma\in\C$).
+  \item If \P is a parameter scheme, an \textbf{extension of \P by a type parameter} is a new parameter scheme $\typeps{\P}{\al}$ determined by a cartesian functor $\al:\cInst(\P)\to\D$ over \C.
     Its instantiations are determined by the following pullback:
     \[
     \begin{tikzcd}
-      \cInst_{\T'}(\typeps{\P}{\cA}) \ar[rr] \ar[d] \pullback{dr} && (\T')_{\cong} \ar[d,"\mathrm{cod}"] \\
-      \cInst_{\T'}(\P) \ar[r,"\cA"] \ar[d] & \D \ar[r,"\mathrm{dom}"] & \C\\
+      \cInst(\typeps{\P}{\al}) \ar[rr] \ar[d] \pullback{dr} && \T_{\cong} \ar[d,"\mathrm{cod}"] \\
+      \cInst(\P) \ar[r,"\al"] \ar[d] & \D \ar[r,"\mathrm{dom}"] & \C\\
       \C
     \end{tikzcd}
     \]
-  \item If \P is a parameter scheme, an \textbf{extension of \P by a term parameter} is a new parameter scheme $\termps\P\cA\cB$ determined by a cartesian functor $\cA:\cInst_{\T'}(\P)\to\D$ over \C and a cartesian functor $\cB:\cInst_{\T'}(\P) \to (\T')_{\cong}$ over $\cInst_{\T'}(\P) \xto{\cA} \D \xto{\mathrm{dom}} \C$.
-    Its instantiations are determined by the following pullbacks:
+  \item If \P is a parameter scheme, an \textbf{extension of \P by a term parameter} is a new parameter scheme $\termps\P\al\be$ determined by a cartesian functor $\al:\cInst(\P)\to\D$ over \C and a cartesian functor $\be:\cInst(\P) \to \D_1$ over $\cInst(\P) \xto{\al} \D \xto{\mathrm{dom}} \C$.
+    Its instantiations are determined by the following pullback:
     \[
     \begin{tikzcd}
-      \cInst_{\T'}(\termps{\P}{\cA}{\cB}) \ar[rr] \ar[d] \pullback{dr} & & (\T')_{*} \ar[d] \\
-      \cInst_{\T'}(\P) \ar[dr,"\cA"] \ar[d] \ar[rr,"\cB"] & \phantom{.} & (\T')_{\cong} \ar[d,"\mathrm{cod}"]\\
+      \cInst(\termps{\P}{\al}{\be}) \ar[rr] \ar[d] \pullback{dr} & & \D_{1,*} \ar[d] \\
+      \cInst(\P) \ar[dr,"\al"] \ar[d] \ar[rr,"\be"] & \phantom{.} & \D_1 \ar[d,"\mathrm{cod}"]\\
       \C & \D \ar[r,"\mathrm{dom}"] & \C
     \end{tikzcd}
     \]
   \end{itemize}
-  If $\T'=\T$, we omit it from the notation.
 \end{defn}
 
-Intuitively, $\cA$ assigns the context extension in which a type or term parameter lives, while $\cB$ assigns the type to which a term parameter belongs (which can depend on the context extension).
-For instance, if a type parameter is just $\Gamma\types B\type$, then \cA will assign to every instantiation over $\Gamma$ the terminal display map $1_\Gamma$.
-On the other hand, if the parameter scheme \P already contains a type parameter $A$, then the additional type parameter $\Gamma,x:A \types B\type$ will have a functor $\cA$ that assigns to each instantiation over $\Gamma$ the comprehension of the corresponding type $A$.
+Intuitively, $\al$ assigns the context extension in which a type or term parameter lives, while $\be$ assigns the type to which a term parameter belongs (which can depend on the context extension).
+For instance, if a type parameter is just $\Gamma\types B\type$, then \al will assign to every instantiation over $\Gamma$ the terminal display map $1_\Gamma$.
+On the other hand, if the parameter scheme \P already contains a type parameter $A$, then the additional type parameter $\Gamma,x:A \types B\type$ will have a functor $\al$ that assigns to each instantiation over $\Gamma$ the comprehension of the corresponding type $A$.
 
 \begin{defn}
   A \textbf{fibred category of structures with parameters} over a comprehension category $(\C,\T)$ consists of a parameter scheme $\P$, a fibration $\S\to \C$, and a faithful amnestic isofibration $\S \to \cInst(\P)\times_C C^\to$ over \C.
@@ -1411,43 +1413,75 @@ If $\Theta$ is an instantiation of \P over $\Gamma$, the objects of the fiber ov
   In other words, there exists a map $\varpi:V_{\sA,B}\to\Gamma$ and an $\S$-lift $\sB$ of $\sA[\varpi]$ to $B[\varpi]$, such that for any $\sigma:\Delta\to\Gamma$ and any $\S$-lift $\sB'$ of $\sA[\sigma]$ to $B[\sigma]$, there is a unique map $\tau:\Delta\to V_{\sA,B}$ such that $\varpi \circ \tau = \sigma$ and $\sB' = \sB[\tau]$.
 \end{defn}
 
-Now we can prove the local universes coherence theorem.
-The morphism $\T_!\to\T$ induces (by composition at every level) morphisms $\cInst_{\T'}(\P) \to \cInst_{\T}(\P)$ for any parameter scheme \P over $(\C,\T)$
+We are almost ready to prove the local universes coherence theorem, but first we need to address the difference between parameters over $\C$ and parameters over $\C_!$.
+Note that the dependent projections and display maps of $\C_!$ are exactly the same as those of \C.
 
-Note that the notion of parameter scheme, instantiation, and fibred category of structures with parameters depend only on the dependent projections and display maps of a comprehension category, and that the dependent projections and display maps of $\C_!$ are exactly those of $\C$.
-(This is why we used $\D_1$ instead of $\T$ in these definitions.)
-Thus, any fibred category of structures with parameters over $\C$ is also one over $\C_!$.
+\begin{prob}
+  Every parameter scheme \P over $(\C,\T)$ gives rise to a parameter scheme $\P_!$ over $(\C,\T_!)$ together with a cartesian functor $\rho:\cInst(\P_!)\to\cInst(\P)$ over \C.
+\end{prob}
+\begin{constr}
+  By induction on \P.
+  Of course, $\emptyps_!=\emptyps$.
+  We define $\typeps{\P}{\al}_! = \typeps{\P_!}{\al\circ \rho}$ and $\termps{\P}{\al}{\be}_! = \termps{\P_!}{\al\circ \rho}{\be\circ \rho}$.
+  The well-typedness of the latter for $\T_!$ is why we defined $\be$ to take values in $\D_1$ rather than $\T_{\cong}$.
+  The maps $\rho$ in the two inductive steps are defined by the following diagrams:
+    \[
+    \begin{tikzcd}
+      \cInst(\typeps{\P}{\al}_!) \ar[dr] \ar[rr] \ar[dd] && (\T_!)_{\cong} \ar[dr] \ar[ddr] \\
+      & \cInst(\typeps{\P}{\al}) \ar[rr,crossing over] \ar[d] \pullback{dr} && \T_{\cong} \ar[d,"\mathrm{cod}"] \\
+      \cInst(\P_!) \ar[r,"\rho"] \ar[dr] & \cInst(\P) \ar[r,"\al"] \ar[d] & \D \ar[r,"\mathrm{dom}"] & \C\\
+      & \C
+    \end{tikzcd}
+    \]
+    \[
+    \begin{tikzcd}
+      \cInst(\termps{\P}{\al}{\be}_!) \ar[r] \ar[d] & \cInst(\termps{\P}{\al}{\be}) \ar[rr] \ar[d] \pullback{dr} & & \D_{1,*} \ar[d] \\
+      \cInst(\P_!) \ar[r,"\rho"] \ar[dr] & \cInst(\P) \ar[dr,"\al"] \ar[d] \ar[rr,"\be"] & \phantom{.} & \D_1 \ar[d,"\mathrm{cod}"]\\
+      & \C & \D \ar[r,"\mathrm{dom}"] & \C
+    \end{tikzcd}
+    \]
+\end{constr}
 
-\begin{lem}
+\begin{defn}
+  If \S is a fibred category of structures with parameters over $\C$, with parameter scheme \P, we define $\S_!$ to be the fibred category of structures with parameters $\P'$ over $C_!$ obtained by pullback along $\rho:$
+  \[
+  \begin{tikzcd}
+    \S_! \ar[r] \ar[d] \pullback{dr} & \S \ar[d] \\
+    \cInst(\P_!)\times_C \C^\to \ar[r,"\rho\times 1"] & \cInst(\P)\times_C \C^\to
+  \end{tikzcd}
+  \]
+\end{defn}
+
+\begin{thm}\label{thm:lu-str-param}
   Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures with parameters over \C.
-  If \C has weakly stable typal initial \S-algebras, \C satisfies~\eqref{eq:lf}, and \S has representable lifts, then $\C_!$ has strictly stable typal initial \S-algebras.
-\end{lem}
+  If \C has weakly stable typal initial \S-algebras, \C satisfies~\eqref{eq:lf}, and \S has representable lifts, then $\C_!$ has strictly stable typal initial $\S_!$-algebras.
+\end{thm}
 \begin{proof}
-  Suppose given $\Gamma\in\C$ and an instantiation $\Th$ over $\Gamma$ of the parameter scheme $\P$ of \S.
-  We construct a local universe $V_\Th$ for the formation and introduction rules (i.e.\ the type $H\in\T(\Gamma)$ and its $\S(\Th)$-structure), an instantiation $\Xi$ over it, and a map $\name{\Th} : \Gamma\to V_\Th$ such that $\Th = \Xi[\name{\Th}]$, by induction on $\P$.
+  Suppose given $\Gamma\in\C$ and an instantiation $\Th$ over $\Gamma$ of the parameter scheme $\P_!$ of $\S_!$.
+  By induction on $\P$, we construct a local universe $V_\Th$ for the formation and introduction rules (i.e.\ the type $H\in\T(\Gamma)$ and its $\S(\Th)$-structure), an instantiation $\Xi\in\cInst(\P_!)_{V_\Th}$, and a map $\name{\Th} : \Gamma\to V_\Th$ such that $\Th = \Xi[\name{\Th}]$.
 
-  In the chase of $\emptyps$, then $V_\Th = 1$, and $\Xi$ and $\name{\Th}$ are unique.
+  In the case of $\emptyps$, we take $V_\Th = 1$, and $\Xi$ and $\name{\Th}$ are unique.
 
-  In the case of $\typeps{\P}{\cA}$, we have inductively $\Th\in\cInst(\P)$ along with $V_\Th$, $\Xi$, and $\name{\Th}$, and also $\cA:\cInst(\P)\to\D$ and a dependent projection $\delta : X \to \mathrm{dom}(\cA(\Th))$.
+  In the case of $\typeps{\P}{\al}$, we have inductively $\Th\in\cInst(\P_!)$ along with $V_\Th$, $\Xi$, and $\name{\Th}$, and also $\al:\cInst(\P)\to\D$ over \C and (as the additional data extending $\Th$ to a $\T_!$-instantiation of $\typeps{\P}{\al}_!$) a type $A\in\T_!(\mathrm{dom}(\al(\rho(\Th))))$, determined as usual by $(V_A,E_A,\name{A})$.
+  Let $\pi_A : V_{(\Th,A)}\to V_\Th$ be the local exponential 
+  \[ (V_\Th \times V_A \to V_\Th)^{\al(\rho(\Xi))} \]
+  in $\C/V_\Th$, which exists by~\eqref{eq:lf}.
+  Its comes with a universal evaluation map $V_{(\Th,A)} \times_{V_\Th} \al(\rho(\Xi)) \to V_A$.
+  But $V_{(\Th,A)} \times_{V_\Th} \al(\rho(\Xi))$ is (isomorphic to) the domain of $\al(\rho(\Xi[\pi_A]))$, so together with $V_A$ and $E_A$ this evaluation map determines a type in $T_!$ over this domain, which is exactly what we need to extend $\Xi[\pi_A]$ to an instantiation of $\typeps{\P}{\al}_!$ over $V_{(\Th,A)}$.
+  Finally, the universal property of $V_{(\Th,A)}$ says that $\name{(\Th,A)} : \Gamma \to V_{(\Th,A)}$ can be determined by a map $\Gamma \times_{V_\Th} \al(\rho(\Xi)) \to V_A$, but
+  \[\Gamma \times_{V_\Th} \al(\rho(\Xi)) \cong \mathrm{dom}(\al(\rho(\Xi)))[\name{\Th}] \cong \mathrm{dom}(\al(\rho(\Xi[\name{\Th}]))) \cong \mathrm{dom}(\al(\rho(\Th)))  \]
+  so $\name{A}$ is exactly such a map.
 
-
-  Since $\Th$ is a Reedy fibrant $\I$-diagram in $\C/\Gamma$, each map $\Th(x) \to M_x\Th$ is the comprehension of some $\Th_x \in \T_!(M_x\Th)$, which has the form $(V_{\Th_x},E_{\Th_x},\name{\Th_x})$.
-
-  Now the category of Reedy fibrant \I-diagrams in $\C$ is equivalently the ``Reedy fibrant oplax limit'' ${\oplim \I {\C}} \f$, in the sense of~\cite[\sec12]{shulman:invdia}, of the constant functor at $\C$.
-  For each $x\in\I$, consider $V_{\Th_x}$ to be a ``universe'' in the copy of $\C$ that is the image of $x$ under this constant functor.
-  Of course, since it is only a \emph{local} universe, it need not be closed under any type constructors; but the construction in~\cite[\sec12]{shulman:invdia} of a universe $V$ in ${\oplim \I {\C}} \f$ from one universe in each image category still works as long as the relevant limits and exponentials exist.
-  [TODO: Does~\eqref{eq:lf} in a comprehension category suffice for that?  Or do we need the full fibration category structure?]  
-
-  This $V$ is itself an \I-diagram in \C that is Reedy fibrant with respect to the display maps.
-  It has the universal property that maps $A\to V$ of \I-diagrams classify ``Reedy small-fibrations'' with respect to the universes $V_{\Th_x}$, i.e.\ transformations $B\to A$ such that $B_x \to M_x B \times_{M_x A} A_x$ is the comprehension of $(V_{\Th_x},E_{\Th_x},\name{V_x})$ for some map $\name{V_x}$.
-  Thus, if we let $\Vhat$ be the limit of $V$ (which exists by Reedy fibrancy), then $\Vhat$ is an object of \C with the universal property that maps $\Gamma\to \Vhat$ (which are the same as maps from the constant \I-diagram at $\Gamma$ into $V$) classify \I-diagrams over $\Gamma$ that are Reedy fibrant in $\T_!$ with the local universe at $x\in\I$ being $V_{\Th_x}$.
-
-  In particular, there is a universal such diagram $\Xi$ over $\Vhat$, which is \emph{a fortiori} also Reedy fibrant in $\T$.
-  Thus, the parameter scheme \P takes $\Xi$ to a type $\P(\Xi)\in\T(\Vhat)$, whose comprehension has the universal property that maps $\Gamma\to \Vhat.\P(\Xi)$ classify instantiations of \P over $\Gamma$, with a universal instantiation $(\Xi,\xi)$ over $\Vhat.\P(\Xi)$.
-  Thus, we take $V_H = \Vhat.\P(\Xi)$ as the local universe for the formation and introduction rules.
-
-  Specifically, let $E_H\in\T(V_H)$ be a weakly stable typal initial $\S(\Xi,\xi)$-algebra, with $\S(\Xi,\xi)$-structure $\sH$.
-  Our given instantiation $(\Th,\th)$ is classified by a map $\name{H}:\Gamma\to V_H$, and we take $(V_H,E_H,\name{H})\in\T_!(\Gamma)$ as the specified typal initial $\S(\Th,\th)$-algebra in our intended strictly stable structure for $\T_!$.
+  In the case of $\termps{\P}{\al}{\be}$, we have again inductively $\Th$, $V_\Th$, $\Xi$, and $\name{\Th}$, and also $\al:\cInst(\P)\to\D$ over \C and $\be:\cInst(\P)\to\D_1$ over $\mathrm{dom}\circ \al$, and (as the additional data extending $\Th$ to a $\T_!$-instantiation of $\termps{\P}{\al}{\be}_!$) a section $a$ of $\be(\rho(\Th))$.
+  Let $\pi_a : V_{(\Th,a)} \to V_\Th$ to be the dependent exponential
+  \[ {\al(\rho(\Xi))}_*(\be(\rho(\Xi))) \]
+  which exists by~\eqref{eq:lf}.
+  It comes with a universal evaluation map $V_{(\Th,a)} \times_{V_\Th} \al(\rho(\Xi)) \to \be(\rho(\Xi))$ over $\mathrm{dom}(\al(\rho(\Xi))) = \mathbf{cod}(\be(\rho(\Xi)))$, i.e.\ a section of $\be(\rho(\Xi))[\pi_a]$, which is exactly what we need to extend $\Xi[\pi_a]$ to an instantiation of $\termps{\P}{\al}{\be}_!$ over $V_{(\Th,a)}$.
+  Finally, the universal property of $V_{(\Th,a)}$ says that $\name{(\Th,a)} : \Gamma \to V_{(\Th,a)}$ can be determined by a map $\al(\rho(\Xi))[\name{\Th}] \to \be(\rho(\Xi))$, but $\al(\rho(\Xi))[\name{\Th}] \cong \al(\rho(\Xi[\name{\Th}])) \cong \al(\rho(\Th))$ and similarly for $\be(\rho(\Xi))$, so $a$ is itself such a map.
+  
+  This completes the definition of $V_\Th$, $\Xi\in\cInst(\P_!)_{V_\Th}$, and $\name{\Th} : \Gamma\to V_\Th$ such that $\Th = \Xi[\name{\Th}]$.
+  Now let $V_H = V_\Th$ and $\name{H} = \name{\Th}$, and let $E_H\in\T(V_H)$ be a weakly stable typal initial $\S(\Xi)$-algebra, with $\S(\Xi)$-structure $\sH$.
+  Then $(V_H,E_H,\name{H})\in\T_!(\Gamma)$ is the specified typal initial $\S(\Th)$-algebra in our intended strictly stable structure for $\T_!$.
   As usual, this is strictly stable by composition of names.
 
   For the elimination and computation rules, given $C\in \T_!(\Gamma.H)$ determined by $(V_C,E_C,\name{C})$, consider first the object $\Vtil = V_H\triangleleft V_C$ constructed as in~\cite{lw:localuniv}, which classifies maps $\si : \Delta \to V_H$ together with maps $E_H[\si] \to V_C$.
@@ -1459,17 +1493,22 @@ Thus, any fibred category of structures with parameters over $\C$ is also one ov
   The weak stability of $H$ implies that the universal lift over $V_{\sH[V],E_C[c]}$ has a section that is an \S-morphism, which we can then reindex to $\Gamma$ to obtain a strictly stable eliminator.
 \end{proof}
 
+
+\section{Cell monads with parameters}
+\label{sec:cell-monads-param}
+
 Now we move on to monads with parameters.
 For any category \C with pullbacks and $\Gamma\in\C$, let $\cMnd(\C)_\Gamma$ denote the category of fibred monads on $\C/\Gamma$.
 A fibred monad can be restricted along the projection $\C/\Delta\to\C/\Gamma$ for any $\sigma:\Delta\to\Gamma$, so these categories assemble into a fibration $\cMnd(\C) \to \C$.
 
 \begin{defn}
-  If $(\C,\T)$ is a comprehension category with pullbacks, a \textbf{fibred monad with parameters} on \C is a parameter scheme $(\I,\P)$ together with a cartesian morphism $\dT:\cInst(\P) \to \cMnd(\C)$ over \C.
+  If $(\C,\T)$ is a comprehension category with pullbacks, a \textbf{fibred monad with parameters} on \C is a parameter scheme $\P$ together with a cartesian morphism $\dT:\cInst(\P) \to \cMnd(\C)$ over \C.
 \end{defn}
 
-Thus, for any instantiation $(\Th,\th)$ over $\Gm$, we have an indexed monad $\dT(\Th,\th)$ on $\C/\Gm$, whose fiber over $1_\Gm$ is an ordinary monad $\dT(\Th,\th)_\Gm$ on $\C/\Gm$.
-We write $\dT\alg_{(\Th,th)}$ for the category of algebras of $\dT(\Th,\th)_\Gm$, each of which has an underlying object of $\C/\Gamma$, i.e.\ of $\C^\to$ over $\Gm$.
-These categories vary functorially with respect to cartesian morphisms of $(\Th,\th)$ (in particular, isomorphisms and reindexing along morphisms in \C), so we have a fibration $\dT\alg \to \C$ with a projection $\dT\alg \to \cInst(\P)\times_\C \C^\to$ over \C.
+Thus, for any instantiation $\Th$ over $\Gm$, we have an indexed monad $\dT(\Th)$ on $\C/\Gm$, whose fiber over $1_\Gm$ is an ordinary monad $\dT(\Th)_\Gm$ on $\C/\Gm$.
+We write $\dT\alg_{\Th}$ for the category of algebras of $\dT(\Th)_\Gm$, each of which has an underlying object of $\C/\Gamma$, i.e.\ of $\C^\to$ over $\Gm$.
+These categories vary functorially with respect to cartesian morphisms of $\Th$ (in particular, isomorphisms and reindexing along morphisms in \C), so we have a fibration $\dT\alg \to \C$ with a projection $\dT\alg \to \cInst(\P)\times_\C \C^\to$ over \C.
+The following are easy to verify.
 
 \begin{lem}
   For any fibred monad with parameters \dT on a comprehension category \C with pullbacks, $\dT\alg$ is a fibred category of structures with parameters over \C (with the same parameter scheme).\qed
@@ -1479,30 +1518,37 @@ These categories vary functorially with respect to cartesian morphisms of $(\Th,
   If \dT is a fibred monad with parameters on a model category \sM, then the full subcategory $\dT\algf$ of $\dT\alg$ consisting of \dT-algebra structures on fibrations over fibrant objects is a fibred category of structures with parameters over \Mf.\qed
 \end{lem}
 
-\begin{defn}
-  If \sM is an excellent model category, then a \textbf{(finite) cell monad with parameters} on \sM is a fibred monad with parameters such that each fibred monad $\dT(\Th,\th)$ is a (finite) cell monad on $\sM/\Gamma$.
+\begin{defn}\label{defn:cell-param}
+  If \sM is an excellent model category, then a \textbf{(finite) cell monad with parameters} on \sM is a fibred monad with parameters such that each fibred monad $\dT(\Th)$ is a (finite) cell monad on $\sM/\Gamma$.
 \end{defn}
 
-\begin{thm}
+\begin{thm}\label{thm:cell-wkstab-param}
   If \dT is a cell monad with parameters on an excellent model category \sM, then \fibmf has weakly stable typal initial $\dT\algf$-algebras.
 \end{thm}
 \begin{proof}
-  Note that for any $\sigma:\Delta\to\Gamma$ and any instantiation $(\Th,\th)$ over $\Gm$, the monad $\dT(\Th[\si],\th[si])_\De$ (the value of the fibred monad $\dT(\Th[\si],\th[si])$ on $\C/\Delta$ at $1_\Delta$) coincides with the monad $\dT(\Th,\th)_{\si}$ (the value of the fibred monad $\dT(\Th,\th)$ on $\C/\Gamma$ at $\si$).
+  Note that for any $\sigma:\Delta\to\Gamma$ and any instantiation $\Th$ over $\Gm$, the monad $\dT(\Th[\si])_\De$ (the value of the fibred monad $\dT(\Th[\si])$ on $\C/\Delta$ at $1_\Delta$) coincides with the monad $\dT(\Th)_{\si}$ (the value of the fibred monad $\dT(\Th)$ on $\C/\Gamma$ at $\si$).
   This is because $\dT: \cInst(\P) \to \cMnd(\C)$ preserves cartesian arrows, and definition of the reindexing of a fibred monad and the fact that $(\C/\Gm)/(\si:\De\to\Gm) \simeq \C/\De$.
   Therefore, we can essentially repeat the proof of \cref{thm:cell-wkstab} once for each instantiation.
 \end{proof}
 
-\begin{thm}
+\begin{thm}\label{thm:cell-replift-param}
   If \dT is a cell monad with parameters on an excellent model category \sM, then $\dT\algf$ has representable lifts.
 \end{thm}
 \begin{proof}
-  Inspecting \cref{defn:replift,defn:replift-param}, we see that \dT has representable lifts just when each fibred monad $\dT(\Th,\th)$ on $\C/\Gamma$ does.
+  Inspecting \cref{defn:replift,defn:replift-param}, we see that \dT has representable lifts just when each fibred monad $\dT(\Th)$ on $\C/\Gamma$ does.
   Thus, this follows directly from \cref{thm:cell-replift}.
 \end{proof}
 
 \begin{cor}
   If \sM is an excellent model category and \dT is a cell monad with parameters on it, then $\fibmfbang$ has strictly stable typal initial $\dT\algf$-algebras.\qed
 \end{cor}
+
+The proofs of \cref{thm:cell-wkstab-param,thm:cell-replift-param} may seem almost too slick, as if something is being swept under the rug.
+In particular, note that in \cref{defn:cell-param} we did not assume any compatibility between the \emph{cell structures} of the monads $\dT(\Th)$!
+However, we did assume that the resulting monads fit together into a cartesian morphism from instantiations to \emph{fibred} monads, which implies that \emph{however} the parameters are being used in the construction of the monads $\dT(\Th)$ \emph{must} be stable under reindexing, and this is all that is required for \cref{thm:cell-wkstab-param,thm:cell-replift-param}.
+
+In fact, nothing we said in this section depends on the particular definition of $\cInst(\P)$ from \cref{sec:init-struct-param}; it could just as well be \emph{any} fibration over $\C$.
+The internals of $\cInst(\P)$ are only needed to prove the local universes coherence theorem, \cref{thm:lu-str-param}.
 
 TODO: examples
 
