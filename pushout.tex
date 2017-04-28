@@ -12,6 +12,9 @@
 \let\S\cS
 \let\I\cI
 \let\P\cP
+\def\emptyps{\diamond}
+\def\typeps#1#2{\langle #1,#2\rangle}
+\def\termps#1#2#3{\llbracket #1,#2,#3\rrbracket}
 \def\f{_\mathbf{f}}
 \newcommand{\oplim}[2]{\llbracket #1,#2 \rrbracket}
 \def\alg{\text{-}\cAlg}
@@ -52,6 +55,7 @@
 \hyphenation{pseu-do-func-tor-ial}
 \tikzset{idmap/.style={double equal sign distance,-}}
 \usetikzlibrary{decorations.pathmorphing}
+\def\pullback#1{\ar[#1,phantom,near start,"\lrcorner"]}
 
 % Display format for sections
 \crefformat{section}{\sec#2#1#3}
@@ -428,6 +432,7 @@ Recall the basic condition on a comprehension category $(\C,\T)$ that makes loca
   \label{eq:lf}
   \tag{LF} \parbox{10cm}{$\C$ has finite products, and dependent exponentials of display maps and product projections along display maps.}
 \end{equation}
+(A \textbf{display map} is a finite composite of the dependent projections $\Gamma.A\to\Gamma$ associated to the comprehensions of types.)
 
 Of course, since a good model category $\sM$ is locally cartesian closed, $\fibm$ always satisfies condition~\eqref{eq:lf}.
 
@@ -1338,114 +1343,94 @@ TODO: remark on correspondence to syntax, constructors are cells, homotopies bec
 
 Now we generalize the constructions of \cref{sec:cell-monads} to allow parameters, i.e.\ premises for the formation and introduction rules.
 Because our type theory has no universes, we have to treat type parameters separately from term parameters.
-We simplify things further by assuming that none of the type parameters depend on any of the term parameters, as is frequently the case.
-With $\Pi$-types and $\Sigma$-types, this allows us to wrap up all the term parameters into a term belonging to a single type.
-For instance, the parameters of a pushout (\cref{sec:pushouts-type-theory}) are equivalent to three types $A,B_1,B_2$ together with a single term of type $(A\to B_1)\times(A\to B_2)$.
+Intuitively, a ``parameter scheme'' is a list of hypothized judgments in type theory; but in this section we take a semantic point of view instead.
 
-However, we do allow type parameters to depend on previous type parameters, as for instance with $\W$-types, whose parameters are a type $A$ and a type $x:A \types B\type$ dependent on $A$.
-We encode the ``shape'' of dependency among the type parameters by a \textbf{finite inverse category} \I (equivalently, a skeletal finite category with no nonidentity endomorphisms), whose objects represent types and whose morphisms represent dependencies.
-For instance, the type parameters of a pushout are described by the discrete category with three objects, while those of a $\W$-type are described by the arrow category $(\cdot\to\cdot)$.
+Recall that in a comprehension category $(\C,\T)$, a \textbf{display map} is a finite composite of maps that are isomorphic to comprehensions of types $\Gamma.A\to\Gamma$.
+All pullbacks of display maps exist and are display maps.
+We view a display map as a semantic version of a \emph{context extension}.
+Let $\D$ be the category whose objects are display maps and whose morphisms are pullback squares; then the codomain projection $\D\to\C$ is a fibration of groupoids.
 
-Recall that for any diagram $\Theta:\I\to\C$ with \I finite and inverse, the \textbf{matching object} at $x\in\I$ is the limit $M_x\Theta = \lim_{y\in x\sslash\I} \Theta(y)$ (if it exists), where $x\sslash \I$ is the full subcategory of the co-slice $x/\I$ that omits the identity $1_x$.
-If $\cM$ is a class of morphisms in \C closed under pullbacks, we say that a natural transformation $A\to B$ of \I-diagrams is a \textbf{Reedy \cM-morphism} if for all $x\in \I$ the matching objects $M_x A$ and $M_x B$ exist and the induced map $A_x \to B_x\times_{M_x B} M_x A$ is in \cM.
-Assuming \C has a terminal object, we say $A$ is \textbf{Reedy \cM-object} if $A\to 1$ is a Reedy \cM-morphism.
-Important choices of \cM include:
-\begin{itemize}
-\item If \C is a model category (or more generally a fibration category), we can take \cM to be the fibrations.
-\item If \C is a comprehension category, we can take \cM to be the \emph{dependent projections}: maps that are isomorphic to the comprehension $\Gamma.A\to \Gamma$ of some type.
-\item If \C is a comprehension category, we can also take \cM to be the \emph{display maps}: composites of finite strings of dependent projections.
-\item If \C is any category at all, we can take \cM to be the \emph{pullbackable maps}: those of which all pullbacks exist.
-\end{itemize}
-Thus we have Reedy fibrations, Reedy dependent projections, Reedy display maps, and Reedy pullbackable maps.
-The following lemmas are well-known for Reedy fibrations in a fibration category, but we re-prove them to make it clear that they depend on no properties of \cM other than its closure under pullbacks.
-
-% The \textbf{height} of a finite inverse category is the number of objects in the longest string of composable nonidentity arrows.
-% In particular, the height of a discrete category is 1 and the height of the empty category is 0.
-
-\begin{lem}
-  If \C is a category with a terminal object and $A$ is a Reedy \cM-object in \C, then $\lim A$ exists.
-\end{lem}
-\begin{proof}
-  By induction on the number of objects in \I.
-  % If \I has height 0, then it is empty and $\lim A = 1$.
-  % Otherwise, induct on the number of objects in \I.
-  If \I has no objects, then $\lim A = 1$.
-  Otherwise, let $x\in\I$ be an object that is not the target of any nonidentity morphism (such an object exists since \I is finite, inverse, and nonempty).
-  Then $\I\setminus\{x\}$ has fewer objects than \I, and restriction to it preserves matching objects, so $A|_{\I\setminus\{x\}}$ is also a Reedy \cM-object and hence has a limit.
-  % And $x\sslash \I$ has smaller height than \I, so $\lim A|_{x\sslash \I}$ also exists.
-  Moreover, since $A$ is a Reedy \cM-object, $\lim A|_{x\sslash \I} = M_x A$ also exists and $A_x \to M_x A$ is in \cM.
-  Now $\lim A$ is the following pullback:
-  \[
-  \begin{tikzcd}
-    \lim A \ar[r] \ar[d] & A_x \ar[d] \\
-    A|_{\I\setminus\{x\}} \ar[r] & M_x A
-  \end{tikzcd}
-  \]
-  which exists since \cM is closed under pullbacks.
-\end{proof}
-
-In particular, the existence of matching objects is not really an extra hypothesis in the definition of Reedy \cM-objects, since as soon as $A$ is Reedy ``below $x$'' then $M_x A$ is a limit of a Reedy object and hence exists.
-
-\begin{lem}
-  If $f:A\to B$ is a Reedy $\cM_f$-morphism, $A$ and $B$ are Reedy \cM-objects), then $\lim f: \lim A \to \lim B$ is a composite of morphisms in \cM (hence in \cM itself, if \cM is closed under composition).
-\end{lem}
-\begin{proof}
-  Cogluing lemma.
-\end{proof}
-
-If $(\C,\T)$ is moreover a comprehension category, then $\Theta:\I\to\C$ is \textbf{Reedy fibrant} if for each $x\in\I$, the matching object $M_x\Theta$ exists and there is a specified $\Theta_x \in \T(M_x\Theta)$ whose comprehension is equal to the canonical map $\Theta(x) \to M_x\Theta$.
-% It is \textbf{Reedy fibrant} if we only assume that $\Theta_x \in \T(M_x\Theta)$ is a display map (a finite composite of unspecified comprehensions).
-The existence of matching objects is not actually an extra condition; as soon as $\Theta$ is Reedy fibrant ``below $x$'', then $M_x\Theta$ automatically exists.
-More generally, the limit of any Reedy fibrant diagram always exists.
-See~\cite{shulman:invdia} for more details about Reedy fibrant diagrams in comprehension-category-like structures.
-
-Let $\C^\I\f$ denote the category of Reedy fibrant \I-diagrams in slice categories $\C/\Gamma$ (with its comprehension category structure induced by pullback along the domain projection $\C/\Gamma\to\C$), with only cartesian morphisms between them.
-Then the projection $\C^\I\f \to\C$ is a fibration of groupoids.
+Let $\T_{\cong}$ be the subcategory of $\T$ containing only the cartesian arrows; then $\T_{\cong}\to\C$ is also a fibration of groupoids.
+And let $\T_{*}$ be the category whose objects are types equipped with a section of their comprehension $\Gamma.A\to\Gamma$, and whose morphisms are cartesian ones commuting with the sections.
+The forgetful functor $\T_{*} \to \T_{\cong}$ is a discrete fibration.
 
 \begin{defn}
-  Let $(\C,\T)$ be a comprehension category.
-  A \textbf{parameter scheme} over \C consists of a finite inverse category \I and a cartesian functor $\P:\C^\I\f \to \T$ over $\C$.
+  Let $(\C,\T)$ and $(\C,\T')$ be two comprehension structures on the same category
+  (think of $\T'=\T$ or $\T'=\T_!$.)
+  We define the set of \textbf{parameter schemes over $(\C,\T)$} together with, for every such parameter scheme $\P$, a fibration $\cInst_{\T'}(\P)\to\C$ of \textbf{instantiations of \P with respect to $\T_!$}, by mutual induction as follows.
+  \begin{itemize}
+  \item There is an \textbf{empty parameter scheme} $\emptyps$, and $\cInst_{\T'}(\emptyps) = \C$ (i.e.\ there is a unique instantiation of $\emptyps$ over every $\Gamma\in\C$).
+  \item If \P is a parameter scheme, an \textbf{extension of \P by a type parameter} is a new parameter scheme $\typeps{\P}{\cA}$ determined by a cartesian functor $\cA:\cInst_{\T'}(\P)\to\D$ over \C.
+    Its instantiations are determined by the following pullback:
+    \[
+    \begin{tikzcd}
+      \cInst_{\T'}(\typeps{\P}{\cA}) \ar[rr] \ar[d] \pullback{dr} && (\T')_{\cong} \ar[d,"\mathrm{cod}"] \\
+      \cInst_{\T'}(\P) \ar[r,"\cA"] \ar[d] & \D \ar[r,"\mathrm{dom}"] & \C\\
+      \C
+    \end{tikzcd}
+    \]
+  \item If \P is a parameter scheme, an \textbf{extension of \P by a term parameter} is a new parameter scheme $\termps\P\cA\cB$ determined by a cartesian functor $\cA:\cInst_{\T'}(\P)\to\D$ over \C and a cartesian functor $\cB:\cInst_{\T'}(\P) \to (\T')_{\cong}$ over $\cInst_{\T'}(\P) \xto{\cA} \D \xto{\mathrm{dom}} \C$.
+    Its instantiations are determined by the following pullbacks:
+    \[
+    \begin{tikzcd}
+      \cInst_{\T'}(\termps{\P}{\cA}{\cB}) \ar[rr] \ar[d] \pullback{dr} & & (\T')_{*} \ar[d] \\
+      \cInst_{\T'}(\P) \ar[dr,"\cA"] \ar[d] \ar[rr,"\cB"] & \phantom{.} & (\T')_{\cong} \ar[d,"\mathrm{cod}"]\\
+      \C & \D \ar[r,"\mathrm{dom}"] & \C
+    \end{tikzcd}
+    \]
+  \end{itemize}
+  If $\T'=\T$, we omit it from the notation.
 \end{defn}
 
-The idea is that \P assigns to each collection of type parameters the type whose terms collect all the term parameters.
-For instance, for pushouts we have $P(A,B_1,B_2) = (A\to B_1)\times (A\to B_2)$.
+Intuitively, $\cA$ assigns the context extension in which a type or term parameter lives, while $\cB$ assigns the type to which a term parameter belongs (which can depend on the context extension).
+For instance, if a type parameter is just $\Gamma\types B\type$, then \cA will assign to every instantiation over $\Gamma$ the terminal display map $1_\Gamma$.
+On the other hand, if the parameter scheme \P already contains a type parameter $A$, then the additional type parameter $\Gamma,x:A \types B\type$ will have a functor $\cA$ that assigns to each instantiation over $\Gamma$ the comprehension of the corresponding type $A$.
 
 \begin{defn}
-  An \textbf{instantiation} of a parameter scheme $(\I,\P)$ over $\Gamma\in\C$ consists of a diagram $\Theta \in (\C^\I\f)_\Gamma$ and a section $\theta$ of $\Gamma.\P(\Theta)\to\Gamma$.
-  As $\Gamma$ varies, such instantiations form another fibration of groupoids $\cInst(\P) \to \C$.
+  A \textbf{fibred category of structures with parameters} over a comprehension category $(\C,\T)$ consists of a parameter scheme $\P$, a fibration $\S\to \C$, and a faithful amnestic isofibration $\S \to \cInst(\P)\times_C C^\to$ over \C.
 \end{defn}
 
-\begin{defn}
-  A \textbf{fibred category of structures with parameters} over a comprehension category $(\C,\T)$ consists of a parameter scheme $(\I,\P)$, a fibration $\S\to \C$, and a faithful amnestic isofibration $\S \to \cInst(\P)\times_C C^\to$ over \C.
-\end{defn}
-
-The objects of the fiber over $(\Theta,\theta,X\to\Gamma)$ will be called \textbf{$\S(\Theta,\theta)$-structures on $X$}; as before they form a partially ordered set.
+If $\Theta$ is an instantiation of \P over $\Gamma$, the objects of the fiber over $(\Theta,X\to\Gamma)$ will be called \textbf{$\S(\Th)$-structures on $X$}; as before they form a partially ordered set.
 
 \begin{defn}
   Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures with parameters over \C.
-  For any instantiation $(\Theta,\theta)$ of the parameter scheme of \S over $\Gamma\in \C$, a \textbf{typal initial $\S(\Theta,\theta)$-algebra} consists of a type $H\in\T(\Gamma)$ and an $\S(\Theta,\theta)$-structure on $\Gamma.H\to \Gamma$, such that for any $C\in\T(\Gamma.H)$ together with an $\S(\Theta,\theta)$-structure on the composite $\Gamma.H.C\to\Gamma.H\to\Gamma$ such that $\Gamma.H.C\to\Gamma.H$ is an $\S(\Theta,\theta)$-morphism, there exists a section $\Gamma.H \to \Gamma.H.C$ of $\Gamma.H.C\to\Gamma.H$ that is also an \S-morphism.
+  For any instantiation $\Th$ of the parameter scheme of \S over $\Gamma\in \C$, a \textbf{typal initial $\S(\Th)$-algebra} consists of a type $H\in\T(\Gamma)$ and an $\S(\Th)$-structure on $\Gamma.H\to \Gamma$, such that for any $C\in\T(\Gamma.H)$ together with an $\S(\Th)$-structure on the composite $\Gamma.H.C\to\Gamma.H\to\Gamma$ such that $\Gamma.H.C\to\Gamma.H$ is an $\S(\Th)$-morphism, there exists a section $\Gamma.H \to \Gamma.H.C$ of $\Gamma.H.C\to\Gamma.H$ that is also an \S-morphism.
 
-  We say $\C$ has \textbf{weakly stable typal initial \S-algebras} if for any $\Gamma$ and $(\Theta,\theta)$ there exists a typal initial $\S(\Theta,\theta)$-algebra whose reindexing along any $\sigma:\Delta\to\Gamma$ is a typal initial $\S(\Theta[\sigma],\theta[\sigma])$-algebra.
-  If $\C$ is split, we say it has \textbf{strictly stable typal initial \S-algebras} if we have an operation assigning to each $\Gamma$ and $(\Theta,\theta)$ a typal initial $\S(\Theta,\theta)$-algebra over $\Gamma$ with specified $\S$-algebra sections, in a way that is strictly preserved by the split reindexing functors.
+  We say $\C$ has \textbf{weakly stable typal initial \S-algebras} if for any $\Gamma$ and $\Th$ there exists a typal initial $\S(\Th)$-algebra whose reindexing along any $\sigma:\Delta\to\Gamma$ is a typal initial $\S(\Theta[\sigma],\theta[\sigma])$-algebra.
+  If $\C$ is split, we say it has \textbf{strictly stable typal initial \S-algebras} if we have an operation assigning to each $\Gamma$ and $\Th$ a typal initial $\S(\Th)$-algebra over $\Gamma$ with specified $\S$-algebra sections, in a way that is strictly preserved by the split reindexing functors.
 \end{defn}
 
 \begin{defn}\label{defn:replift-param}
   Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures with parameters over \C.
-  Given $A\in\T(\Gamma)$ and $B\in\T(\Gamma.A)$ and an instantiation $(\Theta,\theta)$ of the parameter scheme over $\Gamma$, and any $\S(\Theta,\theta)$-structure $\sA$ on $\Gamma.A\to\Gamma$, an \textbf{\S-lift} of $\sA$ to $B$ is an $\S(\Theta,\theta)$-structure on the composite $\Gamma.A.B\to\Gamma.A\to\Gamma$ such that $\Gamma.A.B\to\Gamma.A$ becomes an $\S(\Theta,\theta)$-morphism over $\Gamma$.
-  We say that \S has \textbf{representable lifts} if for any $A,B,\Theta,\theta,\sA$, the functor $(\C/\Gamma)\op \to \mathbf{Set}$ defined by
+  Given $A\in\T(\Gamma)$ and $B\in\T(\Gamma.A)$ and an instantiation $\Th$ of the parameter scheme over $\Gamma$, and any $\S(\Th)$-structure $\sA$ on $\Gamma.A\to\Gamma$, an \textbf{\S-lift} of $\sA$ to $B$ is an $\S(\Th)$-structure on the composite $\Gamma.A.B\to\Gamma.A\to\Gamma$ such that $\Gamma.A.B\to\Gamma.A$ becomes an $\S(\Th)$-morphism over $\Gamma$.
+  We say that \S has \textbf{representable lifts} if for any $A,B,\Th,\sA$, the functor $(\C/\Gamma)\op \to \mathbf{Set}$ defined by
   \begin{equation*}
-    (\sigma:\Delta\to\Gamma) \mapsto \{ \S(\Th[\si],\th[\si])\text{-lifts of $\sA[\sigma]$ to $B[\sigma]$}\}
+    (\sigma:\Delta\to\Gamma) \mapsto \{ \S\text{-lifts of $\sA[\sigma]$ to $B[\sigma]$}\}
   \end{equation*}
   is representable.
   In other words, there exists a map $\varpi:V_{\sA,B}\to\Gamma$ and an $\S$-lift $\sB$ of $\sA[\varpi]$ to $B[\varpi]$, such that for any $\sigma:\Delta\to\Gamma$ and any $\S$-lift $\sB'$ of $\sA[\sigma]$ to $B[\sigma]$, there is a unique map $\tau:\Delta\to V_{\sA,B}$ such that $\varpi \circ \tau = \sigma$ and $\sB' = \sB[\tau]$.
 \end{defn}
+
+Now we can prove the local universes coherence theorem.
+The morphism $\T_!\to\T$ induces (by composition at every level) morphisms $\cInst_{\T'}(\P) \to \cInst_{\T}(\P)$ for any parameter scheme \P over $(\C,\T)$
+
+Note that the notion of parameter scheme, instantiation, and fibred category of structures with parameters depend only on the dependent projections and display maps of a comprehension category, and that the dependent projections and display maps of $\C_!$ are exactly those of $\C$.
+(This is why we used $\D_1$ instead of $\T$ in these definitions.)
+Thus, any fibred category of structures with parameters over $\C$ is also one over $\C_!$.
 
 \begin{lem}
   Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures with parameters over \C.
   If \C has weakly stable typal initial \S-algebras, \C satisfies~\eqref{eq:lf}, and \S has representable lifts, then $\C_!$ has strictly stable typal initial \S-algebras.
 \end{lem}
 \begin{proof}
-  Suppose given $\Gamma\in\C$ and an instantiation $(\Th,\th)$ over $\Gamma$ of the parameter scheme $(\I,\P)$ of \S with respect to $\T_!$.
+  Suppose given $\Gamma\in\C$ and an instantiation $\Th$ over $\Gamma$ of the parameter scheme $\P$ of \S.
+  We construct a local universe $V_\Th$ for the formation and introduction rules (i.e.\ the type $H\in\T(\Gamma)$ and its $\S(\Th)$-structure), an instantiation $\Xi$ over it, and a map $\name{\Th} : \Gamma\to V_\Th$ such that $\Th = \Xi[\name{\Th}]$, by induction on $\P$.
+
+  In the chase of $\emptyps$, then $V_\Th = 1$, and $\Xi$ and $\name{\Th}$ are unique.
+
+  In the case of $\typeps{\P}{\cA}$, we have inductively $\Th\in\cInst(\P)$ along with $V_\Th$, $\Xi$, and $\name{\Th}$, and also $\cA:\cInst(\P)\to\D$ and a dependent projection $\delta : X \to \mathrm{dom}(\cA(\Th))$.
+
+
   Since $\Th$ is a Reedy fibrant $\I$-diagram in $\C/\Gamma$, each map $\Th(x) \to M_x\Th$ is the comprehension of some $\Th_x \in \T_!(M_x\Th)$, which has the form $(V_{\Th_x},E_{\Th_x},\name{\Th_x})$.
 
   Now the category of Reedy fibrant \I-diagrams in $\C$ is equivalently the ``Reedy fibrant oplax limit'' ${\oplim \I {\C}} \f$, in the sense of~\cite[\sec12]{shulman:invdia}, of the constant functor at $\C$.
