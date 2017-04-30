@@ -29,6 +29,8 @@
 \let\C\cC
 \let\T\cT
 \let\r\ir
+\def\inl{\mathsf{inl}}
+\def\inr{\mathsf{inr}}
 \def\zero{\mathsf{zero}}
 \def\succ{\mathsf{succ}}
 \def\nrec{\mathsf{nrec}}
@@ -91,7 +93,8 @@ We will work throughout in the following context.
   A \textbf{good model category} is a model category \sM with the following additional properties.
   \begin{enumerate}
   \item \sM is simplicial.\label{item:m0}
-  \item The cofibrations in \sM are exactly the monomorphisms.\label{item:m1}
+  \item Every monomorphism in \sM is a cofibration.\label{item:m1}
+  \item Cofibrations in \sM are stable under arbitrary limits.\label{item:m1a}
   \item \sM is right proper, i.e.\ weak equivalences are preserved by pullback along fibrations.\label{item:m2}
   \item As a category, \sM is locally cartesian closed.\label{item:m3}
   \end{enumerate}
@@ -99,6 +102,9 @@ We will work throughout in the following context.
 
 In particular, a \emph{Cisinski model category}~\cite{cisinski:topos,cisinski:presheaves} is a model structure on a Grothendieck topos whose cofibrations are the monomorphisms.
 Therefore, any right proper simplicial Cisinski model category is a good model category.
+
+On the other hand, any complete and cocomplete locally cartesian closed category with its trivial model structure (the weak equivalences are the isomorphisms and all morphisms are cofibrations and fibrations) is also a good model category.
+Thus, we also include the standard examples of semantics for extensional type theory.
 
 Assumption~\ref{item:m0} tells us that \sM is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product and pullback-corner axioms.
 This enables us to construct path objects (which model identity types) as simplicial powers.
@@ -108,6 +114,12 @@ Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``local power'' $A^\ivl_\
 This is important for us because it means that homotopies can be represented in adjoint form: a map $A\to B^\ivl$ is equivalent to a map $A\ten \ivl \to B$, where $A\ten \ivl$ is the simplicial copower.
 Note that like other colimits, the simplicial copower of $p:A\fib \Gamma$ in the slice category over $\Gamma$ is just $A\ten\ivl$ with the projection $A\ten\ivl \to A \to \Gamma$.
 Moreover, each slice category of \sM is a simplicial model category, and pullback preserves both simplicial powers and copowers.
+Given $A\in\sM/\Gamma$, we write $A^K_\Gamma$ for the simplicial power in $\sM/\Gamma$.
+
+\begin{anfxnote}{}
+  It would be nice to have each $\sM/\Gamma$ enriched over \sM itself as a cartesian monoidal model category, so that the cofibrations in a cell monad could be cofibrations in \sM.
+  However, right now I don't see whether a right proper Cisinski model category is necessarily a cartesian monoidal model category.
+\end{anfxnote}
 
 Every good model category is a type-theoretic model category in the sense of~\cite{shulman:invdia}, and hence the subcategory of fibrant objects is a type-theoretic fibration category.
 In particular, cofibrations are stable under pullback, so acyclic cofibrations are stable under pullback along fibrations, and hence dependent products of fibrations along fibrations are fibrations.
@@ -310,7 +322,7 @@ Note that the underlying data of a good identity type and a good reflexivity ter
   Note that unlike for many other type constructors such as $\Sigma$- and $\Pi$-types, although these identity types are determined by a 1-categorical universal property, the type-theoretic data we consider (the reflexivity term) is not sufficient to describe this universal property.
 
   Similarly, the inclusion $\Gamma.A\to (\Gamma.A)^\ivl_\Gamma$ is the pullback corner map for $A$ and the projection $\ivl \to \mathbf{1}$.
-  Since $\Gamma.A$ is fibrant in $\sM/\Gamma$ and $\ivl \to \mathbf{1}$ is a weak equivalence between fibrant objects, this is a weak equivalence.
+  Since $\Gamma.A$ is fibrant in $\sM/\Gamma$ and $\ivl \to \mathbf{1}$ is a weak equivalence between cofibrant objects, this is a weak equivalence.
   Moreover, it is a split monomorphism, hence a cofibration, and thus an acyclic cofibration.
   It follows that given any $C$ and $c$ there exists such an extension, i.e.\ the family of good extensions is non-empty.
   Of course the reindexing of any extension is again an extension, and pseudofunctoriality is automatic.
@@ -1095,11 +1107,11 @@ The following proof introduces one more new idea: algebraic pushouts of monads t
 \end{proof}
 
 
-\section{Typal initial structures}
-\label{sec:init-struct}
+\section{Cell monads}
+\label{sec:cell-monads}
 
 At this point we have enough examples to motivate and formulate a general notion of higher inductive type on the semantic side, although it remains an open problem to give a syntactic presentation of equal generality.
-In this section and the next we consider ``higher inductive types'' without parameters; in later sections we generalize to allow parameters.
+In this section we consider ``higher inductive types'' without parameters; in the next section we will generalize to allow parameters.
 
 We start with a very general notion of ``typal initial algebra'' in the comprehension category context for which we can isolate the conditions necessary to prove the local universes coherence theorem.
 
@@ -1150,11 +1162,7 @@ Note that the notion of representable lift \emph{does} involve both \S and \T, a
   The weak stability of $H$ implies that the universal lift over $V_{\sH[V],E_C[c]}$ has a section that is an \S-morphism, which we can then reindex to $\Gamma$ to obtain a strictly stable eliminator.
 \end{proof}
 
-Note that we did not need to explicitly assume all of~\eqref{eq:lf}; the assumption of representable lifts encodes all of this that's relevant to \S.
-
-
-\section{Cell monads}
-\label{sec:cell-monads}
+Note that we did not yet need to explicitly assume all of~\eqref{eq:lf}; the assumption of representable lifts encodes all of this that's relevant to \S.
 
 Now we move on to good model categories.
 In this case, our work in previous sections suggests that we should consider structures defined as the algebras for a monad.
@@ -1196,7 +1204,7 @@ Inspecting our proofs of weak stability in the preceding sections leads us to th
 \begin{proof}
   As explained in~\cite{kelly:transfinite,nlab:transfinite}, $\dT_\Gamma$ is constructed out of colimits in \sM using a general method that depends on $F_\Gamma$ only insofar as we have to carry it out to some stage $\kappa$ such that $F_\Gamma$ is $\kappa$-accessible.
   It doesn't matter whether we go ``too far'', since the construction converges: once we reach a $\kappa$ such that $F_\Gamma$ is $\kappa$-accessible, continuing to larger values of $\kappa$ doesn't change the result.
-  Therefore, given $\sigma:\Delta\to\Gamma$, we can choose $\kappa$ such that $F_\Gamma$ and $F_\Delta$ are \emph{both} $\kappa$-accessible, and then both $\dT_\Gamma$ and $\dT_\Delta$ can be constructed by \emph{exactly the same colimit}.
+  Therefore, given $\sigma:\Delta\to\Gamma$, we can choose $\kappa$ such that $F_\Gamma$ and $F_\Delta$ are \emph{both} $\kappa$-accessible, and then both $\dT_\Gamma$ and $\dT_\Delta$ can be constructed by \emph{exactly the same colimits}, only involving $F_\Gamma$ and $F_\Delta$ respectively.
   Since $\sigma^*$ preserves all colimits, the isomorphisms $F_\Delta \circ \sigma^* \cong \sigma^* \circ F_\Gamma$ therefore yield isomorphisms $\dT_\Delta \circ \sigma^* \cong \sigma^* \circ \dT_\Gamma$, and so on.
 \end{proof}
 
@@ -1339,13 +1347,13 @@ Finally, we also have:
   If \sM is an excellent model category and \dT is a cell monad on it, then $\fibmfbang$ has strictly stable typal initial $\dT\algf$-algebras.\qed
 \end{cor}
 
-TODO: remark on correspondence to syntax, constructors are cells, homotopies become identity types (can do formally in the 1-dimensional case?), give examples
+We refrain from discussing examples until after the generalization to monads with parameters in the next section.
 
 
-\section{Typal initial structures with parameters}
-\label{sec:init-struct-param}
+\section{Cell monads with parameters}
+\label{sec:cell-monads-param}
 
-Now we generalize the constructions of \cref{sec:init-struct,sec:cell-monads} to allow parameters, i.e.\ premises for the formation and introduction rules.
+Now we generalize the construction of \cref{sec:cell-monads} to allow parameters, i.e.\ premises for the formation and introduction rules.
 Because our type theory has no universes, we have to treat type parameters separately from term parameters.
 Intuitively, a ``parameter scheme'' is a list of hypothized judgments in type theory; but in this section we take a semantic point of view instead.
 
@@ -1358,7 +1366,7 @@ Let $\T_{\cong}$ be the subcategory of $\T$ containing only the cartesian arrows
 Finally, let $\D_{1,*}$ be the category whose objects are dependent projections equipped with a section, and whose morphisms are cartesian ones commuting with the sections.
 The forgetful functor $\D_{1,*} \to \D_1$ is a discrete fibration.
 
-\begin{defn}
+\begin{defn}\label{defn:param-scheme}
   Let $(\C,\T)$ be a comprehension category.
   We define the set of \textbf{parameter schemes over $(\C,\T)$} together with, for every such parameter scheme $\P$, a fibration $\cInst(\P)\to\C$ of \textbf{instantiations of \P}, by mutual induction as follows.
   \begin{itemize}
@@ -1493,10 +1501,6 @@ Note that the dependent projections and display maps of $\C_!$ are exactly the s
   The weak stability of $H$ implies that the universal lift over $V_{\sH[V],E_C[c]}$ has a section that is an \S-morphism, which we can then reindex to $\Gamma$ to obtain a strictly stable eliminator.
 \end{proof}
 
-
-\section{Cell monads with parameters}
-\label{sec:cell-monads-param}
-
 Now we move on to monads with parameters.
 For any category \C with pullbacks and $\Gamma\in\C$, let $\cMnd(\C)_\Gamma$ denote the category of fibred monads on $\C/\Gamma$.
 A fibred monad can be restricted along the projection $\C/\Delta\to\C/\Gamma$ for any $\sigma:\Delta\to\Gamma$, so these categories assemble into a fibration $\cMnd(\C) \to \C$.
@@ -1539,18 +1543,149 @@ The following are easy to verify.
   Thus, this follows directly from \cref{thm:cell-replift}.
 \end{proof}
 
-\begin{cor}
+\begin{cor}\label{thm:cellmndparam}
   If \sM is an excellent model category and \dT is a cell monad with parameters on it, then $\fibmfbang$ has strictly stable typal initial $\dT\algf$-algebras.\qed
 \end{cor}
 
 The proofs of \cref{thm:cell-wkstab-param,thm:cell-replift-param} may seem almost too slick, as if something is being swept under the rug.
 In particular, note that in \cref{defn:cell-param} we did not assume any compatibility between the \emph{cell structures} of the monads $\dT(\Th)$!
 However, we did assume that the resulting monads fit together into a cartesian morphism from instantiations to \emph{fibred} monads, which implies that \emph{however} the parameters are being used in the construction of the monads $\dT(\Th)$ \emph{must} be stable under reindexing, and this is all that is required for \cref{thm:cell-wkstab-param,thm:cell-replift-param}.
+In fact, the internals of $\cInst(\P)$ are only needed to prove the local universes coherence theorem, \cref{thm:lu-str-param}; for \cref{thm:cell-wkstab-param,thm:cell-replift-param}, $\cInst(\P)$ could just as well be \emph{any} fibration over $\C$.
 
-In fact, nothing we said in this section depends on the particular definition of $\cInst(\P)$ from \cref{sec:init-struct-param}; it could just as well be \emph{any} fibration over $\C$.
-The internals of $\cInst(\P)$ are only needed to prove the local universes coherence theorem, \cref{thm:lu-str-param}.
+Although \cref{thm:cellmndparam} is very general, unlike our results in \crefrange{sec:pushouts-type-theory}{sec:prop-trunc} it is missing more than just an initiality theorem to yield a result about models of syntactic type theory.
+Specifically, in order to apply it to any particular syntactic higher inductive type $\iH$, we have to do the following.
+\begin{enumerate}
+\item Manually translate the parameters of $\iH$ to a parameter scheme (\cref{defn:param-scheme}).
+  This is practically algorithmic along the lines discussed above: for each parameter, $\al$ corresponds to the extended context of that parameter, and in the case of a term parameter, $\be$ corresponds to the type of that parameter.
+  It's just that we don't have a general theorem that does the work for us.
+\item Manually construct a cell monad \dT (with parameters) from the constructors of $\iH$.
+  Although it may not be obvious from the examples we have seen so far, this is also pretty close to algorithmic, although there are certain limits on the constructors we can handle.
+  We will explain in more detail below.\label{item:hit-mnd}
+\item Manually generalize the notions of weakly and strictly stable typal initial $\dT\algf$-algebras to refer to stable classes of identity types, dependent identity types, and identity applications rather than the simplicial structure of $\sM$, and prove an analogue of \cref{thm:transfer-depid}.
+  This is also practically algorithmic: transpose the left homotopies to right homotopies, replace the simplicial path objects by the type-theoretic structures, and transfer by composing with the equivalences $h$ and $k$ from \cref{thm:transfer-depid}.
+\end{enumerate}
+Ideally, of course, we would like a general correspondence between syntax and semantics that does all this work for us.
+This would entail giving a precise \emph{syntactic} definition of what a ``higher inductive type'' is, which is already a significant task.
+We leave it for future work.
 
-TODO: examples
+The construction of a cell monad from a list of higher inductive constructors (item~\ref{item:hit-mnd}) goes roughly as follows.
+Each constructor of $\iH$ corresponds to a \emph{cell} of the monad \dT.
+The domain of that constructor, which we require to be ``strictly positive'' in $\iH$, determines the polynomial functor $F_{\W A B}$ in the same way as for ordinary inductive types.
+(It may be possible to generalize further, for instance by allowing identity types of $\iH$ to appear in such domains, but we ignore that possibility for now.)
+The ``dimension'' of the constructor determines the simplicial cofibration $K\to L$: ordinary point-constructors use the cofibration $\emptyset\to 1$, 1-dimensional path-constructors use $\mathbf{2}\to\ivl$, 2-path constructors use the ``inclusion of the boundary of a 2-globe'', and so on.
+Finally, in the case of path-constructors, the source and target of the path determine the ``attaching map'' of the cell.
+This is all made clearer by a discussion of examples.
+
+\begin{eg}
+  Ordinary inductive types are the special case of higher inductive types that have no path-constructors.
+  In this case, each cell is of the form $\emptyset \to \dT_{\W A B}$, so instead of a ``cell complex'' we are really just building a \emph{coproduct} of the monads $\dT_{\W A B}$ corresponding to each constructor.
+  In the case of only one constructor, we just get $\dT_{\W A B}$ itself, as we used in \cref{sec:w-types}.
+
+  An example with two constructors is the natural numbers, for which the constructor domains yield the maps $\emptyset\to 1$ and $1\to 1$ respectively.
+  The former yields the monad for pointed objects, the latter the monad for objects with an endomorphism; thus their algebraic coproduct is the monad for pointed objects with an endomorphism, the same one we used in \cref{sec:natural-numbers}.
+\end{eg}
+
+\begin{eg}
+  Any cell complex construction of a simplicial set $K$ (using ``globular'' cells) can be translated into a cell monad for a higher inductive version of $K$.
+  For instance, the circle has a 0-dimensional cell and a 1-dimensional cell:
+  \[
+  \begin{tikzcd}
+    \emptyset \ar[rrr] &&& 1 \ar[rrr] &&& S^1 \\
+    & \emptyset \ar[ul] \ar[r] \ar[urr,phantom,near end,"\llcorner"] & 1 \ar[ur] &
+    & \mathbf{2} \ar[ul] \ar[r] \ar[urr,phantom,near end,"\llcorner"] & \ivl \ar[ur]
+  \end{tikzcd}
+  \]
+  If we take simplicial copowers of this diagram with the constant endofunctor at $1\in \sM$, which is $F_{\W 1 \emptyset}$, we get a ``cell endofunctor''; and then taking free monads we obtain a cell monad.
+  The corresponding higher inductive type is the usual $S^1$.
+  Similarly, we can construct $S^2$, the torus $T^2$, and so on.
+  In such cases, of course, the technology of cell monads is overkill; we can simply take the simplicial copower $1\otimes K$ and fibrantly replace it, arguing as in \crefrange{sec:pushouts}{sec:pushouts-type-theory}.
+\end{eg}
+
+\begin{eg}
+  More general non-recursive higher inductive types are constructed in a similar way with nontrivial endofunctors.
+  For instance, given $f_i : A \to B_i$ as in \crefrange{sec:pushouts}{sec:pushouts-type-theory}, we have a cell endofunctor
+  \[
+  \begin{tikzcd}
+    \emptyset \ar[rrr] &&& F^{\emptyset\to(B_1+B_2)} \ar[rrr] &&& F \\
+    & \emptyset \ar[ul] \ar[r] \ar[urr,phantom,near end,"\llcorner"] & F^{\emptyset \to (B_1+B_2)} \ar[ur] &
+    & F^{\emptyset\to A} \otimes \mathbf{2} \ar[ul,"{[\inl\circ f_1,\inr\circ f_2]}"] \ar[r] \ar[urr,phantom,near end,"\llcorner"] & F^{\emptyset\to A} \otimes \ivl \ar[ur]
+  \end{tikzcd}
+  \]
+  Note that the endofunctor $F^{\emptyset\to B_1+B_2}$ is constant at $B_1+B_2$, while $F^{\emptyset\to A}\otimes \mathbf{2}$ is constant at $A\otimes \mathbf{2} \cong A+A$.
+  Thus the map marked $[\inl\circ f_1,\inr\circ f_2]$ really is just such a copairing.
+  Taking free monads then yields a cell monad whose higher inductive type is the pushout of $f_1$ and $f_2$.
+
+  This construction applies to a \emph{particular} $A,B_i,f_i$ in some slice $\sM/\Gamma$; in the general case we construct a parameter scheme as follows.
+  First there are three type parameters for which $\al:\cInst(\P)\to\D$ is fiberwise constant at $1_\Gamma$ (i.e.\ $A,B_1,B_2$ are all in the same arbitrary context $\Gamma$).
+  This yields a parameter scheme $\P_3$ whose instantiations consist of three types $A,B_1,B_2$ in the same context.
+  Then we have two term parameters for which $\al(A,B_1,B_2) = (\Gamma.A\to \Gamma)$ and for which $\be(A,B_1,B_2)$ is $\Gamma.A.B_1[A]\to \Gamma.A$ and $\Gamma.A.B_2[A]\to \Gamma.A$ respectively.
+  An instantiation of the resulting parameter scheme thus consists of three types $A,B_1,B_2$ and morphisms $A\to B_1$ and $A\to B_2$ over $\Gamma$.
+
+  We then need to verify that this construction is stable, up to isomorphism, under reindexing of these data when performed in arbitrary slices.
+  This is always obvious, so subsequently we omit to mention it.
+\end{eg}
+
+\begin{eg}
+  The propositional truncation (\cref{sec:prop-trunc}) expressed as a higher inductive type has two constructors:
+  \begin{itemize}
+  \item $\tr:A \to\brck{A}$
+  \item $\treq : \prod_{x,y:\brck A} \id[\brck A]{x}{y}$
+  \end{itemize}
+  The only parameter is $A$, so the parameter scheme has one type parameter with $\al$ fiberwise constant at $1_\Gamma$.
+  In each case we have a cell monad with two cells, but now it no longer arises from a cell endofunctor.
+  \[
+  \begin{tikzcd}
+    \emptyset \ar[rrr] &&& \dT_1 \ar[rrr] &&& \dT_2 \\
+    & \emptyset \ar[ul] \ar[r] \ar[urr,phantom,near end,"\llcorner"] & F^{\emptyset\to A} \ar[ur] &
+    & F^{2\to 1} \otimes \mathbf{2} \ar[ul] \ar[r] \ar[urr,phantom,near end,"\llcorner"] & F^{2\to 1} \otimes \ivl \ar[ur]
+  \end{tikzcd}
+  \]
+  By definition we have $F^{2\to 1}(X) = X\times X$, while it is easy to verify that $\dT_1(X) = X+A$ (the free monad on the constant endofunctor at $A$, whose algebras are objects under $A$).
+  The attaching map
+  \[F^{2\to 1}(X)\otimes \mathbf{2} \cong (X\times X) + (X\times X) \to \dT_0(X) = X+A\]
+  consists of the first and second product projections, injected into $X$.
+  This is the semantic version of the syntax $\prod_{x,y:\brck A} \id[\brck A]{x}{y}$, which says that we have two copies of the type being defined in the domain ($X\times X$) and the source and target of the path ($\id[\brck A]{x}{y}$) come from the first and the second copies respectively.
+  Note that this map does not land in $F^{\emptyset\to A}$, only in the free monad it generates.
+\end{eg}
+
+In general, when describing the attaching maps of a cell monad it is useful to know that monad morphisms $\dS\to\dT$ are equivalent to functors $\dT\alg\to\dS\alg$ over \sM, i.e.\ natural ways to assign an \dS-algebra structure to any \dT-algebra.
+In particular, if \dS is algebraically-free on an endofunctor $F$, then such a morphism is determined by a natural way to assign an $F$-endofunctor-algebra to any \dT-algebra.
+
+\begin{eg}
+  The \textbf{James construction} $JA$ of a type $A$ equipped with a point $\star : A$, as defined in~\cite{brunerie:thesis}, has three constructors:
+  \begin{itemize}
+  \item $\varepsilon : JA$
+  \item $\alpha : A \to JA \to JA$
+  \item $\delta : \prod_{x:JA} \id[JA]{x}{\alpha(\star,x)}$
+  \end{itemize}
+  The parameters are $A$ and $\star$, so our parameter scheme has one type parameter with $\al$ fiberwise constant at $1_\Gamma$, and one term parameter with $\al$ again constant at $1_\Gamma$ while $\be(A) = (\Gamma.A\to \Gamma)$.
+
+  The first cell is $\emptyset \to F^{0\to 1}$, yielding a monad whose algebras are pointed objects.
+  The second cell is $\emptyset \to F^{A\to A}$, yielding a monad whose algebras are objects with an ``$A$-indexed family of endomorphisms'' $A\times X\to X$.
+
+  The third cell is $F^{1\to 1}\otimes \mathbf{2}\to F^{1\to 1}\otimes \ivl$.
+  Since $F^{1\to 1}(X) = X$, an endofunctor-algebra for $F^{1\to 1}\otimes \mathbf{2}$ is an object equipped with two endomorphisms.
+  The nontrivial attaching map $F^{1\to 1}\otimes \mathbf{2} \to \dT_2$ therefore consists of a natural way to assign two endomorphisms to a pointed object equipped with a map $\alpha:A\times X\to X$.
+  The syntax tells us that first endomorphism is the identity $1_X$, while the second is $\alpha \circ (\star,1_X)$.
+  We leave it to the reader to translate from typal initial algebras to dependent identity types as in \cref{thm:transfer-depid}.
+\end{eg}
+
+\begin{eg}
+  Given a type $I$, two types $i:I\types S_i\type$ and $i:I\types T_i\type$, and a family of functions $i:I,s:S_i \types f_i(s) : T_i$, corresponding to a map $f:S\to T$ in $\sM/I$, the \textbf{$f$-localization} of a type $A$, as defined in~\cite{rss:modalities}, has five constructors:
+  \begin{itemize}
+  \item $\mathsf{loc}:A\to L_f A$
+  \item $\mathsf{ext}:\prod_{i:I} \prod_{g:S_i \to L_f A} T_i \to L_f A$
+  \item $\mathsf{rtr}:\prod_{i:I} \prod_{g:S_i \to L_f A} \prod_{s:S_i} \id[L_f A]{g(s)}{\mathsf{ext}(i,g,f_i(s))}$
+  \item $\mathsf{ext}':\prod_{i:I} \prod_{g:S_i \to L_f A} T_i \to L_f A$
+  \item $\mathsf{rtr}':\prod_{i:I} \prod_{h:T_i \to L_f A} \prod_{t:T_i} \id[L_f A]{h(s)}{\mathsf{ext}'(i,h\circ f_i,t)}$
+  \end{itemize}
+  The parameter scheme has one type parameter with $\al$ constant at $1_\Gamma$, two more type parameters with $\al(I) = (\Gamma.I\to\Gamma)$, and one term parameter with $\al(I,S,T) = (\Gamma.I.S\to \Gamma.I\to\Gamma)$ and $\be(I,S,T) = (\Gamma.I.S.T[S] \to \Gamma.I.S)$.
+  The first cell is $\emptyset \to F^{\emptyset\to A}$.
+  The second and fourth cells are both $\emptyset \to F^{T^*S \to T}$, where $T^*S$ denotes the pullback of $S\to I$ along $T\to I$.
+
+  The third cell is $F^{S^*S\to S} \otimes (\mathbf{2}\to \ivl)$ and the fifth cell is $F^{T^*T\to T} \otimes (\mathbf{2}\to \ivl)$.
+  TODO: Describe attaching maps.
+\end{eg}
 
 
 \bibliographystyle{alpha}
