@@ -94,7 +94,9 @@
 \newcommand{\bdry}[1]{\delta_{#1}}
 \newcommand{\ivl}{{\Delta^1}}
 \newcommand{\trunc}[2]{\mathopen{}\left\Vert #2\right\Vert_{#1}\mathclose{}}
+\newcommand{\tproj}[3][]{\mathopen{}\left|#3\right|_{#2}^{#1}\mathclose{}}
 \newcommand{\brck}[1]{\trunc{}{#1}}
+\newcommand{\bproj}[1]{\tproj{}{#1}}
 \newcommand{\freegroup}[1]{F #1}
 \newcommand{\local}[2]{L_{#1} #2}
 \newcommand{\susp}{\Sigma}
@@ -286,8 +288,9 @@
 \defthm{lem}{Lemma}{Lemmas}
 \defthm{axiom}{Axiom}{Axioms}
 \defthm{sch}{Scholium}{Scholia}
-% Since definitions and theorems in type theory are synonymous, should
-% we actually use the same theoremstyle for them?
+% Proof-relevant theorems, i.e. definitions that require a "proof"
+\defthm{prob}{Problem}{Problems}
+\newenvironment{constr}{\begin{proof}[Construction]}{\end{proof}}
 \theoremstyle{definition}
 \defthm{defn}{Definition}{Definitions}
 \theoremstyle{remark}
@@ -295,16 +298,6 @@
 \defthm{eg}{Example}{Examples}
 \defthm{egs}{Examples}{Examples}
 \defthm{notes}{Notes}{Notes}
-
-% Display format for sections
-\crefformat{section}{\S#2#1#3}
-\Crefformat{section}{Section~#2#1#3}
-\crefrangeformat{section}{\S\S#3#1#4--#5#2#6}
-\Crefrangeformat{section}{Sections~#3#1#4--#5#2#6}
-\crefmultiformat{section}{\S\S#2#1#3}{ and~#2#1#3}{, #2#1#3}{ and~#2#1#3}
-\Crefmultiformat{section}{Sections~#2#1#3}{ and~#2#1#3}{, #2#1#3}{ and~#2#1#3}
-\crefrangemultiformat{section}{\S\S#3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}{, #3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}
-\Crefrangemultiformat{section}{Sections~#3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}{, #3#1#4--#5#2#6}{ and~#3#1#4--#5#2#6}
 
 % Also number formulas with the theorem counter
 \let\c@equation\c@thm
