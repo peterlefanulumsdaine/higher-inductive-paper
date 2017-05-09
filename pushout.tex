@@ -1580,11 +1580,11 @@ The forgetful functor $\D_{1,*} \to \D_1$ is a discrete fibration.
   \end{itemize}
 \end{defn}
 
-\begin{anfxnote}{}
-  This could be more general, in the same way that pseudo-stable structure generalizes to weakly stable structure with a multi-valued map of fibrations.
-  The way it is works fine in most cases, but if the \emph{parameters} involve structure that is only weakly stable, then the more general notion would matter.
-  I can imagine some funny situations where this would occur; one natural one is in the definition of general HITs using functions into the previous-constructor ones, although at least in the 1-categorical case where we can make sense of it without pretypes, those types themselves (which are all that occurs in the parameters) are pseudo-stable in our models.
-\end{anfxnote}
+\begin{rmk}{}
+  The above definition could be made more general; as stated it essentially assumes that the parameters are defined using only ``pseudo-stable structure'', but we could in principle allow weakly stable structure as well.
+  However, it is hard to think of examples requiring the more general version, so we refrain from introducing the complication.
+  %One example is in the definition of general HITs using functions into the previous-constructor ones, although at least in the 1-categorical case where we can make sense of it without pretypes, those types themselves (which are all that occurs in the parameters) are pseudo-stable in our models.
+\end{rmk}
 
 Intuitively, $\al$ assigns the context extension in which a type or term parameter lives, while $\be$ assigns the type to which a term parameter belongs (which can depend on the context extension).
 For instance, if a type parameter is just $\Gamma\types B\type$, then \al will assign to every instantiation over $\Gamma$ the terminal display map $1_\Gamma$.
