@@ -1886,28 +1886,6 @@ In particular, if \dS is algebraically-free on an endofunctor $F$, then such a m
   TODO: Describe attaching maps.
 \end{eg}
 
-Another perspective on the attaching maps of a cell monad comes from the following observation.
-If $\dS$ is the free monad on an endofunctor $F$, then monad morphisms $\dS\to\dT$ are the same as natural transformations (endofunctor morphisms) from $F$ to (the underlying endofunctor of) $\dT$.
-Now, ``internally'', a polynomial endofunctor $F_{\W A B}(X) = \sum_{a:A}(B_a \to X)$ can be thought of as an $A$-indexed coproduct of representable functors $(B_a\to -)$.
-We know how to map out of a coproduct, by its universal property, and we know how to map out of a representable functor, by the Yoneda lemma.
-Making this precise yields the following.
-
-\begin{lem}
-  Let $f:B\to A$ be an exponentiable morphism in a category \C, let $F^f$ be the corresponding fibred polynomial endofunctor, and let \dT be an arbitrary fibred endofunctor on \C.
-  Then fibred natural transformations $F^f\to \dT$ are naturally bijective to sections of $\dT_A(f)$ over $A$.
-\end{lem}
-\begin{proof}
-  Given $\tau : F^f\to \dT$, we have in particular a map $F^f_A(f) \to \dT_A(f)$ over $A$.
-  Thus, any section of $F^f_A(f)$ yields a section of $\dT_A(f)$.
-  By definition, $F^f_A$ is the composite
-  \[ \C/A \xto{(\pi_1)^*} \C/(A\times B) \xto{(1\times f)_*} \C/(A\times A) \xto{(\pi_1)_!} \C/A \]
-  Thus, $F^f_A(f)$ is $(1\times f)_*(B\times B \to A\times B)$, composed with the first projection $A\times A\to A$.
-  To define a section of this over $A$, it suffices to define a map $\triangle_A \to (1\times f)_*(B\times B \to A\times B)$ over $A\times A$, or equivalently a map $(1\times f)^*\triangle_A \to B\times B$ over $A\times B$.
-  But $(1\times f)^*\triangle_A$ is just $(f,1):B\to A\times B$, so we can use $\triangle_B : B\to B\times B$.
-
-  In the other direction, given a section $t:A \to \dT_A(f)$, (TODO)
-\end{proof}
-
 TODO: Limitations, lack of fibrancy, torus, workaround.
 
 
