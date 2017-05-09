@@ -191,7 +191,7 @@ Open problems include the following.
   But often we can work around this using fancier cofibrations, as explained at the end of \cref{sec:cell-monads-param}.
 \item Of course, we would like a general syntactic notion of higher inductive type, and a general theorem interpreting any such syntax using our general semantics, rather than having to treat every case manually.
 \item Even better would be a general description of what it means for a type theory to ``have higher inductive types'' with a finite set of rules, rather than having to introduce a new set of rules for each new higher inductive type.
-\item Finally, there are various generalizations of (higher) inductive types that we have not addressed, such as indexed (higher) inductive families, (higher) inductive-inductive types (e.g.~\cite[Chapter 11]{hottbook} and~\cite{ak:tt-qit}), and (higher) inductive-recursive types (e.g.~\cite{shulman:hiru-tdd}).
+\item Finally, there are various generalizations of higher inductive types that we have not addressed, such as indexed higher inductive families, higher inductive-inductive types (e.g.~\cite[Chapter 11]{hottbook} and~\cite{ak:tt-qit}), and higher inductive-recursive types (e.g.~\cite{shulman:hiru-tdd}).
   A starting point would be to unify our approach with that of~\cite{acdf:qiits}.
 \end{itemize}
 
@@ -227,11 +227,6 @@ This is important for us because it means that homotopies can be represented in 
 Note that like other colimits, the simplicial copower of $p:A\fib \Gamma$ in the slice category over $\Gamma$ is just $A\ten\ivl$ with the projection $A\ten\ivl \to A \to \Gamma$.
 Moreover, each slice category of \sM is a simplicial model category, and pullback preserves both simplicial powers and copowers.
 Given $A\in\sM/\Gamma$, we write $A^K_\Gamma$ for the simplicial power in $\sM/\Gamma$.
-
-\begin{anfxnote}{}
-  It would be nice to have each $\sM/\Gamma$ enriched over \sM itself as a cartesian monoidal model category, so that the cofibrations in a cell monad could be cofibrations in \sM.
-  However, right now I don't see whether a right proper Cisinski model category is necessarily a cartesian monoidal model category.
-\end{anfxnote}
 
 Every good model category is a type-theoretic model category in the sense of~\cite{shulman:invdia}, and hence the subcategory of fibrant objects is a type-theoretic fibration category.
 In particular, cofibrations are stable under pullback, so acyclic cofibrations are stable under pullback along fibrations, and hence dependent products of fibrations along fibrations are fibrations.
@@ -1874,16 +1869,14 @@ In particular, if \dS is algebraically-free on an endofunctor $F$, then such a m
   \begin{itemize}
   \item $\mathsf{loc}:A\to L_f A$
   \item $\mathsf{ext}:\prod_{i:I} \prod_{g:S_i \to L_f A} T_i \to L_f A$
-  \item $\mathsf{rtr}:\prod_{i:I} \prod_{g:S_i \to L_f A} \prod_{s:S_i} \id[L_f A]{g(s)}{\mathsf{ext}(i,g,f_i(s))}$
   \item $\mathsf{ext}':\prod_{i:I} \prod_{g:S_i \to L_f A} T_i \to L_f A$
+  \item $\mathsf{rtr}:\prod_{i:I} \prod_{g:S_i \to L_f A} \prod_{s:S_i} \id[L_f A]{g(s)}{\mathsf{ext}(i,g,f_i(s))}$
   \item $\mathsf{rtr}':\prod_{i:I} \prod_{h:T_i \to L_f A} \prod_{t:T_i} \id[L_f A]{h(s)}{\mathsf{ext}'(i,h\circ f_i,t)}$
   \end{itemize}
   The parameter scheme has one type parameter with $\al$ constant at $1_\Gamma$, two more type parameters with $\al(I) = (\Gamma.I\to\Gamma)$, and one term parameter with $\al(I,S,T) = (\Gamma.I.S\to \Gamma.I\to\Gamma)$ and $\be(I,S,T) = (\Gamma.I.S.T[S] \to \Gamma.I.S)$.
   The first cell is $\emptyset \to F^{\emptyset\to A}$.
-  The second and fourth cells are both $\emptyset \to F^{T^*S \to T}$, where $T^*S$ denotes the pullback of $S\to I$ along $T\to I$.
-
-  The third cell is $F^{S^*S\to S} \otimes (\mathbf{2}\to \ivl)$ and the fifth cell is $F^{T^*T\to T} \otimes (\mathbf{2}\to \ivl)$.
-  TODO: Describe attaching maps.
+  The second and third cells are both $\emptyset \to F^{T^*S \to T}$, where $T^*S$ denotes the pullback of $S\to I$ along $T\to I$.
+  Finally, the fourth and fifth cells are $F^{S^*S\to S} \otimes (\mathbf{2}\to \ivl)$ and $F^{T^*T\to T} \otimes (\mathbf{2}\to \ivl)$, while the attaching maps can be obtained by interpreting the terms $g(s)$, ${\mathsf{ext}(i,g,f_i(s))}$, $h(s)$, and ${\mathsf{ext}'(i,h\circ f_i,t)}$ in the internal \emph{extensional} type theory of the locally cartesian closed category \sM.
 \end{eg}
 
 Hopefully these examples are convincing of the generality of our construction and the relative straightforwardness of its application to individual examples.
