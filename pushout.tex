@@ -54,6 +54,7 @@
 \newcommand{\rtwo}[2]{\widetilde{\r^{#1}_{#2}}}
 \newcommand{\idovertwo}[4][]{\widetilde{\fId^{#4}_{#1}}(#2,#3)}
 \newcommand{\aptwo}[1]{\widetilde{\ap_{#1}}}
+\usepackage{mathtools} % for \mathclap, for centering over-wide diagrams
 \setcounter{tocdepth}{1}
 \usepackage[utf8]{inputenc}
 \hyphenation{pseu-do-func-tor-ial}
@@ -103,9 +104,9 @@ The \emph{propositional truncation} of an arbitrary type $A$ is a proposition $\
 Other recursive higher induction types include the \emph{$n$-truncation} for all $n$ (a universal map into a homotopy $n$-types --- the propositional truncation is the case $n=-1$) and the \emph{localization} at a family of morphisms $\{f_i\}_{i\in I}$ (the universal map into a type that ``sees each $f_i$ as an isomorphism'').
 
 In particular, the $0$-truncation of a pushout of $0$-types (types satisfying Uniqueness of Identity Proofs, a.k.a.\ ``sets'') is a pushout in the category of $0$-types.
-If we also assume Voevodsky's univalence axiom (or at least its restriction to propositions), we can show that the latter category is a pretopos; see~\cite[Chapter 10]{hottbook}.
-Recursive higher inductive $0$-types (also known as ``quotient inductive types''~\cite{acdf:qiits}) have other applications, such as constructing free algebras for arbitrary algerbaic theories (which is not possible in a general elementary topos) and representing type theory inside itself~\cite{ak:tt-qit}.
-Thus, higher inductive types are useful even for the representation of ordinary set-based mathematics inside type theory.
+If we also assume Voevodsky's univalence axiom (or just its restriction to propositions), we can show that the latter category is a pretopos; see~\cite[Chapter 10]{hottbook}.
+Recursive higher inductive $0$-types (also known as ``quotient inductive types''~\cite{acdf:qiits}) have other applications, such as constructing free algebras for arbitrary algebraic theories (which is not possible in a general elementary topos \cite{blass:freealg}) and representing type theory inside itself~\cite{ak:tt-qit}.
+Thus, higher inductive types add power even for the representation of ordinary set-based mathematics inside type theory.
 
 A general discussion of the syntax of higher inductive types (though not going so far as to propose a general definition) can be found in~\cite[Chapter 6]{hottbook}.
 They have succeeded admirably at their original goal of providing types in homotopy type theory that behave like cell complexes in classical homotopy theory (see~\cite[Chapter 8]{hottbook} and also more recent work).
@@ -126,13 +127,13 @@ Roughly speaking, there are the following issues to overcome in constructing sem
   But fibrant replacement is not in general stable under pullback, even weakly.\label{item:p3}
 \item The constructors of an ordinary inductive type are unrelated to each other.
   But in a higher inductive type each constructor must be able to refer to the previous ones; specifically, the source and target of a path-constructor generally involve the previous point-constructors.
-  There is no accepted syntax for this that covers all imaginable cases, so the ``target'' of an interpretation theorem is not even precisely defined.\label{item:p4}
+  No syntactic scheme has yet been proposed for this that covers all cases of interest while remaining meaningful and consistent, so the ``target'' of an interpretation theorem is not even precisely defined.\label{item:p4}
 \end{enumerate}
 As we will see, problem~\ref{item:p2} only arises in the recursive case; but on the other hand, it is not specific to \emph{higher} inductive types, being a problem even for interpreting ordinary recursive inductive types such as natural numbers and \W-types.
 
 We present (in \cref{sec:cell-monads-param}) a general context that solves problems~\ref{item:p1}--\ref{item:p3}, and partially solves~\ref{item:p4} in the following sense.
 We describe a \emph{semantic} construction (a ``cell monad'') that enables subsequent ``constructors'' to refer to previous ones, and determines a precise \emph{semantic} meaning for what the source and target of a path-constructor can be.
-However, although in particular cases it is easy to see that the \emph{syntactic} source and targets in the specification of a higher inductive type give rise to the desired semantic structure, we do not give a general syntactic characterization of allowable ``source and target terms''.\footnote{In~\cite{acdf:qiits} a similar semantic characterization is internalized literally in the presence of UIP using universes; but with present technology this does not scale to homotopy type theory, since $(\infty,1)$-categories are not known to be definable internally.}
+However, although in particular cases it is easy to see that the \emph{syntactic} source and targets in the specification of a higher inductive type give rise to the desired semantic structure, we do not give a general syntactic characterization of allowable ``source and target terms''.\footnote{In~\cite{acdf:qiits} a similar semantic characterization is internalized literally, uing universes, under the assumption of UIP; but with present technology this does not generalize to type theory without UIP, since $(\infty,1)$-categories are not known to be definable internally.}
 Moreover, there are some kinds of source and target terms that seem natural syntactically but do not fit into our semantic framework.
 
 For expositional clarity, instead of jumping right to the general context of cell monads, we begin (after preliminaries in \cref{sec:model-categ-type} and a warm-up in \cref{sec:coproducts}) in \crefrange{sec:pushouts}{sec:pushouts-type-theory} by considering in detail the case of pushouts.
@@ -159,8 +160,9 @@ Each generating monad cell corresponds to one constructor of a higher inductive 
 
 In \cref{sec:cell-monads} we describe cell monads for higher inductive types without parameters, and in \cref{sec:cell-monads-param} we generalize to the parametrized case.
 Most of the work in these sections is just in setting up a sufficiently general context in which to prove the theorems.
-As mentioned above, we do not have a syntactic context of equal generality; but we explain in general terms, and with many examples, how to perform a syntax-to-semantics translation in any particular case.
-We also discuss some limitations of our construction, specifically the fact that source and target terms cannot contain ``fibrant structure'' such as eliminators for other inductive and higher inductive types; this includes concatenation of paths, such as appear in the torus constructor $\mathsf{sq}$, although in many cases (including the torus) there are workarounds.
+As mentioned above, we do not have a syntactic context of equal generality; but we explain heuristically, with many examples, how to perform a syntax-to-semantics translation in particular cases.
+We also discuss some limitations of our construction; most importantly, the fact that source and target terms cannot contain ``fibrant structure'' such as eliminations from other inductive and higher inductive types.
+This includes concatenation of paths, as used for instance in the standard presentaiton of the torus; however, for this and many other examples, we show how to work around the issue by using more general cofibrations.
 
 In all cases, we use the \emph{local universes coherence method}~\cite{lw:localuniv} to improve ``weakly stable'' structure to the strictly pullback-stable structure that is necessary to interpret type theory.
 We do not address the also-needed theorem about the initiality of syntax; we restrict ourselves to constructing strictly stable structure on split comprehension categories.
@@ -184,13 +186,12 @@ Open problems include the following.
   In some respects this is a feature rather than a bug, since it makes the semantics more general: our model categories include all locally presentable locally cartesian closed 1-categories and suffice to present all locally presentable locally cartesian closed $(\infty,1)$-categories.
   Of course, if a model category does have universes, such as simplicial sets~\cite{klv:ssetmodel} and others constructed from it~\cite{shulman:invdia,shulman:elreedy,cisinski:elegant,shulman:eiuniv}, then higher inductive types are more powerful due to ``large eliminations'', which are used frequently in synthetic homotopy theory.
 
-  However, there is an additional compatibility that our method does not produce even in models that have universes.
-  One expects to have universes that are \emph{closed under} parametrized higher inductive types, for instance that if $A,B_1,B_2$ all lie in some universe then so does the pushout of any $f_1:A\to B_1$ and $f_2:A\to B_2$.
+  However, there is an additional desirable feature that our method does not produce even in models that have universes.
+  One hopes to have universes that are \emph{closed under} parametrized higher inductive types, for instance that if $A,B_1,B_2$ all lie in some universe then so does some pushout of any $f_1:A\to B_1$ and $f_2:A\to B_2$.
   But our method does not give this, because it involves fibrant replacement, which does not preserve smallness of fibers.
-\item As mentioned above, although our method allows very general ``source and target terms'', it does not allow ``fibrant structure'' therein such as path-concatenation and eliminators of inductive types.
-  But often we can work around this using fancier cofibrations, as explained at the end of \cref{sec:cell-monads-param}.
-\item Of course, we would like a general syntactic notion of higher inductive type, and a general theorem interpreting any such syntax using our general semantics, rather than having to treat every case manually.
-\item Even better would be a general description of what it means for a type theory to ``have higher inductive types'' with a finite set of rules, rather than having to introduce a new set of rules for each new higher inductive type.
+\item As mentioned above, although our method allows very general ``source and target terms'', it does not allow ``fibrant structure'' therein, such as path-concatenation and eliminations from inductive types.
+  While we can work around this in many cases, it would be better to be able to drop the restriction.
+\item Of course, we would like a general syntactic scheme for higher inductive types, and a general theorem interpreting such syntax using our general semantics, rather than having to treat every case manually.
 \item Finally, there are various generalizations of higher inductive types that we have not addressed, such as indexed higher inductive families, higher inductive-inductive types (e.g.~\cite[Chapter 11]{hottbook} and~\cite{ak:tt-qit}), and higher inductive-recursive types (e.g.~\cite{shulman:hiru-tdd}).
   A starting point would be to unify our approach with that of~\cite{acdf:qiits}.
 \end{itemize}
@@ -221,7 +222,7 @@ Thus, we also include the standard examples of semantics for extensional type th
 Assumption~\ref{item:m0} tells us that \sM is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product and pullback-corner axioms.
 This enables us to construct path objects (which model identity types) as simplicial powers.
 Specifically, if $\ivl$ denotes the 1-simplex (the simplicial interval), then for any fibrant object $A$, the power $A^\ivl$ is a path-object for $A$.
-Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``local power'' $A^\ivl_\Gamma = A^\ivl \times_{\Gamma^\ivl} \Gamma$ is a path-object for $A$ regarded as a type over $\Gamma$; see \cref{thm:stable-id}.
+Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``fibred power'' $A^\ivl_\Gamma = A^\ivl \times_{\Gamma^\ivl} \Gamma$ is a path-object for $A$ regarded as a type over $\Gamma$; see \cref{thm:stable-id}.
 
 This is important for us because it means that homotopies can be represented in adjoint form: a map $A\to B^\ivl$ is equivalent to a map $A\ten \ivl \to B$, where $A\ten \ivl$ is the simplicial copower.
 Note that like other colimits, the simplicial copower of $p:A\fib \Gamma$ in the slice category over $\Gamma$ is just $A\ten\ivl$ with the projection $A\ten\ivl \to A \to \Gamma$.
@@ -246,6 +247,8 @@ We summarize the above discussion as follows.
 \begin{thm}
   Any good model category $\sM$ admits a natural structure of a comprehension category $\fibm$ where $\cF(\Gamma)$ is the category of fibrations with codomain $\Gamma$.
   Moreover, $\fibm$ has weakly stable dependent sums, unit type, dependent products, and identity types, and therefore $\fibmbang$ has strictly stable dependent sums, unit type, dependent products, and identity types.
+
+  Similarly, writing $\fibmf$ for the restriction of $\fibm$ to fibrant objects, $\fibmf$ carries the same weakly stable structure, and hence $\fibmfbang$ the same strictly stable structure.
 \end{thm}
 
 
@@ -544,7 +547,7 @@ Finally, we can define a type-theoretic notion of pushout.
 
 Finally, we move to strict stability and type theory.
 As in~\cite{lw:localuniv}, we do not formally make the connection all the way to syntactic type theory; we stop with strictly stable structure on a split comprehension category.
-(The gap requires an ``initiality theorem'' for syntax, which is straightforward but tedious and requires very different techniques.)
+(The gap requires an ``initiality theorem'' for syntax, which is expected to be straightforward but tedious, and involves very different techniques.)
 
 Recall the basic condition on a comprehension category $(\C,\T)$ that makes local universe theorems work:
 \begin{equation}
@@ -796,17 +799,18 @@ The following theorem could be stated for weakly stable structures in addition t
 \section{Natural numbers}
 \label{sec:natural-numbers}
 
-The natural numbers type, though a standard type constructor, is not considered explicitly in~\cite{lw:localuniv}; thus we begin with its local universes theory.
+As a warm-up for the recursive case, we consider the interpretation of the type of natural numbers.
+Though a standard type constructor, this is not considered explicitly in~\cite{lw:localuniv}; thus we begin with its local universes theory.
 
 \begin{defn}
   In a comprehension category $(\C,\T)$, a \textbf{natural numbers type} over $\Gamma\in\C$ is a type $\N\in\T(\Gamma)$ together with a section $\zero:\Gamma\to\Gamma.\N$ and a map $\succ:\Gamma.\N\to\Gamma.\N$ over $\Gamma$, plus an operation assigning to any type $C\in\T(\Gamma.\N)$ equipped with $z:\Gamma\to\Gamma.\N.C$ over $\zero$ and $s:\Gamma.\N.C \to \Gamma.\N.\C$ over $\succ$, a section $f$ of $C$ such that $f \circ \zero = z$ and $f\circ \succ = s \circ f$.
 
-  We say $\C$ has a \textbf{weakly stable natural numbers type} if for any $\Gamma$ there is a natural numbers type $\N\in\T(\Gamma)$ such that for any $\sigma:\Delta\to\Gamma$, $(\N[\sigma],\zero[\sigma],\succ[\sigma])$ is a natural numbers type over $\Delta$.
-  Similarly, if $\C$ is split, it has a \textbf{strictly stable natural numbers type} if it has an operation assigning to each $\Gamma$ a natural numbers type $\N\in\T(\Gamma)$ such that reindexing along any $\sigma:\Delta\to\Gamma$ preserves natural numbers types along with their data and specified sections.
+  We say $\C$ has \textbf{weakly stable natural numbers types} if for any $\Gamma$ there is a natural numbers type $\N\in\T(\Gamma)$ such that for any $\sigma:\Delta\to\Gamma$, $(\N[\sigma],\zero[\sigma],\succ[\sigma])$ is a natural numbers type over $\Delta$.
+  Similarly, if $\C$ is split, it has \textbf{strictly stable natural numbers types} if it has an operation assigning to each $\Gamma$ a natural numbers type $\N\in\T(\Gamma)$ such that reindexing along any $\sigma:\Delta\to\Gamma$ preserves natural numbers types along with their data and specified sections.
 \end{defn}
 
 Of course, if $\C$ has a terminal object (as it usually does), then the quantification over $\Gamma$ in the latter definition follows from the special case $\Gamma=1$.
-A strictly stable natural numbers type is the semantic version of the usual rules for a natural numbers type, shown in \cref{fig:nno}.
+Strictly stable natural numbers typesa are the semantic version of the usual rules for a natural numbers type, shown in \cref{fig:nno}.
 
 \begin{figure}
   \centering
@@ -821,11 +825,11 @@ A strictly stable natural numbers type is the semantic version of the usual rule
 \end{figure}
 
 \begin{thm}
-  If $\C$ satisfies~\eqref{eq:lf} and has a weakly stable natural numbers type, then $\C_!$ has a strictly stable natural numbers type.
+  If $\C$ satisfies~\eqref{eq:lf} and has weakly stable natural numbers types, then $\C_!$ has strictly stable natural numbers types.
 \end{thm}
 \begin{proof}
-  Note that condition~\eqref{eq:lf} includes the existence of a terminal object.
-  We take the terminal object to be the local universe for the formation and introduction rules, choosing a weakly stable natural numbers type over it.
+  Condition~\eqref{eq:lf} provides a terminal object.
+  We take this to be to be the local universe for the formation and introduction rules, choosing a weakly stable natural numbers type over it.
   For the elimination and computation rules, the local universe is
   \begin{align*}
     [&c: \prod x:E_{\N}. V_C,\\
@@ -851,7 +855,7 @@ This suggests that $\N$ is an ``initial fibrant $F_\N$-algebra''; we now make th
 For this we strengthen our standing assumptions as follows.
 
 \begin{defn}
-  An \textbf{excellent model category} $\sM$ is a good model category that is in addition \emph{combinatorial}, i.e.\ a locally presentable category and cofibrantly generated as a model category.
+  An \textbf{excellent model category} $\sM$ is a good model category that is in addition \emph{combinatorial}, i.e.\ is a locally presentable category and cofibrantly generated as a model category.
 \end{defn}
 
 This allows us to use the technology of algebraically-free monads and algebraic colimits of monads~\cite{kelly:transfinite,nlab:transfinite}.
@@ -874,7 +878,7 @@ is a morphism of $\dR$-algebras.
 \end{thm}
 \begin{proof}
   Consider the algebraic coproduct of monads $\dT_\N+\dR_1$.
-  This is an (accessible) monad such that a $(\dT_\N+\dR_1)$-algebra structure on an object $X$ is precisely a pair of an (unrelated) $\dT_\N$-algebra structure (i.e.\ an $F_\N$-endofunctor-algebra structure) and an $\dR_1$-algebra structure.
+  This is an (accessible) monad such that a $(\dT_\N+\dR_1)$-algebra structure on an object $X$ is precisely a pair of a $\dT_\N$-algebra structure (i.e.\ an $F_\N$-endofunctor-algebra structure) and an (unrelated) $\dR_1$-algebra structure.
   Let $\N$ be the initial $(\dT_\N+\dR_1)$-algebra, i.e.\ the free $(\dT_\N+\dR_1)$-algebra on the initial object, $\N =(\dT_\N+\dR_1)(\emptyset)$.
   Since $\N$ is a $\dT_\N$-algebra, it comes with $\zero$ and $\succ$; and since it is an $\dR_1$-algebra, it is fibrant.
 
@@ -885,10 +889,10 @@ is a morphism of $\dR$-algebras.
   But since $\N$ is the initial $(\dT_\N+\dR_1)$-algebra, any $(\dT_\N+\dR_1)$-algebra map with codomain $\N$ has a $(\dT_\N+\dR_1)$-algebra section, and hence in particular a $\dT_\N$-algebra section, as desired.
 \end{proof}
 
-In general it does not seem possible to prove that this natural numbers type is weakly stable, but with a small modification  we can.
+It is not clear to us whether these natural numbers types are weakly stable on $\fibm$ in general; but we can obtain weak stability with a small modification.
 Let $\Mf$ denote the subcategory of fibrant objects in $\sM$, and $\fibmf$ the restriction of the comprehension category $\fibm$ to $\Mf$.
 Note that $\Mf$ is the smallest subcategory of $\sM$ to which $\cF$ can be restricted and still be a comprehension category, since every fibrant object is the comprehension of some fibration over $1$.
-In particular, any semantics of type theory in $\fibm$ must land inside $\Mf$, so nothing important is lost by this restriction.
+In particular, any semantics of type theory in $\fibm$ must land inside $\Mf$, so not much is lost by this restriction.
 
 \begin{lem}
   For any good model category $\sM$, the comprehension category $\fibmf$ also satisfies~\eqref{eq:lf}.
@@ -901,7 +905,7 @@ Moreover, any weakly stable structure possesed by $\fibm$ is also possesed by $\
 Thus, all our preceding theorems about strictly stable structure in $\fibmbang$ also apply to $\fibmfbang$.
 
 \begin{thm}\label{thm:nat-stable}
-  If $\sM$ is an excellent model category, then $\fibmf$ has a weakly stable natural numbers type.
+  If $\sM$ is an excellent model category, then $\fibmf$ has weakly stable natural numbers types.
 \end{thm}
 \begin{proof}
   It suffices to show that any natural numbers type $\N$ over $1$ is weakly stable, which is to say that for any (fibrant!)\ object $\Gamma$ the pullback $\Gamma^* \N$ is a natural numbers type over $\Gamma$.
@@ -916,7 +920,7 @@ Thus, all our preceding theorems about strictly stable structure in $\fibmbang$ 
 \end{proof}
 
 \begin{cor}
-  If $\sM$ is an excellent model category, then $\fibmfbang$ has a strictly stable natural numbers type.\qed
+  If $\sM$ is an excellent model category, then $\fibmfbang$ has strictly stable natural numbers types.\qed
 \end{cor}
 
 
@@ -926,7 +930,7 @@ Thus, all our preceding theorems about strictly stable structure in $\fibmbang$ 
 The construction of \W-types is similar to that of natural numbers, with one additional wrinkle.
 Namely, the presence of parameters means that in weak stability we have to consider pullback along arbitrary morphisms $\sigma:\Delta\to\Gamma$ between fibrant objects, and in the case when $\Gamma$ is not terminal, fibrancy of $\Delta$ does not imply that $\sigma$ is a fibration.
 
-Since a good model category is locally cartesian closed, it has \emph{pseudo-stable $\Pi$-types}~\cite[Definition 3.4.2.8]{lw:localuniv}, so we can use the definition of \textbf{weakly stable \W-types} relative to these from~\cite[Definition 3.4.4.9]{lw:localuniv}.
+Since a good model category is locally cartesian closed, it carries a canonical structure of \emph{pseudo-stable $\Pi$-types}~\cite[Definition 3.4.2.8]{lw:localuniv}, so we can use the definition of \textbf{weakly stable \W-types} relative to these from~\cite[Definition 3.4.4.9]{lw:localuniv}.
 
 \begin{thm}
   If $\sM$ is an excellent model category, then $\fibm$ has \W-types.
@@ -939,7 +943,7 @@ Since a good model category is locally cartesian closed, it has \emph{pseudo-sta
   Then $\Gamma.\W\to \Gamma$ is a fibration, since it is an $\dR$-algebra, and its $F_{\W A B}$-endofunctor-algebra structure is exactly the map $\fold$ required of a \W-type.
 
   The input to the eliminator consists, as usual, of a fibration $p:\Gamma.\W.C\fib \Gamma.W$ that is a $F_{\W A B}$-algebra morphism.
-  This is not completely obvious as stated in~\cite[Definition 3.4.4.7]{lw:localuniv}; the point is that $\Gamma.A.\Pi[B,\W].\Pi[B,C[\mathsf{app}'_{B,W}]] \cong \Gamma.A.\Pi[B,\Sigma[\W,C]]$ by the mapping-in universal property of $\Sigma$-types; and by construction of $\Sigma$-types in $\sM$, the comprehension $\Gamma.\Sigma[\W,C]\fib\Gamma$ is just the composite $\Gamma.\W.C \fib \Gamma.W\fib \Gamma$.\footnote{Also, I think there is a typo in~\cite[Definition 3.4.4.7]{lw:localuniv}; the $\Gamma.\W.\dots$ in the diagrams should be $\Gamma.A.\dots$.})
+  This is not completely obvious, with the eliminator defined following syntax as in~\cite[Definition 3.4.4.7]{lw:localuniv}; the point is that $\Gamma.A.\Pi[B,\W].\Pi[B,C[\mathsf{app}'_{B,W}]] \cong \Gamma.A.\Pi[B,\Sigma[\W,C]]$ by the mapping-in universal property of $\Sigma$-types; and by construction of $\Sigma$-types in $\sM$, the comprehension $\Gamma.\Sigma[\W,C]\fib\Gamma$ is just the composite $\Gamma.\W.C \fib \Gamma.W\fib \Gamma$.\footnote{Note a typo in~\cite[Definition 3.4.4.7]{lw:localuniv}; each $\Gamma.\W.\dots$ in the left-hand columns of the diagrams should be $\Gamma.A.\dots$.})
   As before, we choose an $\dR$-algebra structure on $p$, making this composite $\Gamma.\W.C \fib \Gamma.W\fib \Gamma$ an $\dR$-algebra and the square
   \[
   \begin{tikzcd}
@@ -1017,7 +1021,7 @@ Since a good model category is locally cartesian closed, it has \emph{pseudo-sta
     (\sigma^*f)_* (\sigma^*B)^* C \ar[rr] \ar[dr] \ar[dd] && f_* B^* D \ar[dr,dashed] \ar[dd]\\
     & C \ar[rr,->,near end,"i",swap,crossing over] && D \ar[dd,->>,"q"] \\
     (\sigma^*f)_* (\sigma^*B)^* V \ar[rr] \ar[dr] && f_* B^* W \ar[dr] \\
-    & V \ar[rr,->,"j",swap] \ar[from=uu,crossing over,near end,"p"] && W
+    & V \ar[rr,->,"j",swap] \ar[from=uu,near end,"p",crossing over]  && W
   \end{tikzcd}
   \]
   This is equivalent to solving the following lifting problem:
@@ -1048,10 +1052,14 @@ Since a good model category is locally cartesian closed, it has \emph{pseudo-sta
 \section{A higher inductive type not constructible from pushouts}
 \label{sec:blass}
 
-As mentioned in \cref{sec:introduction}, it is known that (at least in the presence of a universe) many seemingly recursive higher inductive types can be constructed using only pushouts and the natural numbers, including all $n$-truncations and some localizations.
+As mentioned in \cref{sec:introduction}, it is known that (at least in the presence of a universe) many recursive higher inductive types can in fact be constructed using only pushouts and the natural numbers, including all $n$-truncations and some localizations.
 Thus, it seems worthwhile to give explicitly an example of a higher inductive type that \emph{cannot} be so constructed.
 
-Working internally, we write $x=y$ instead of $\id x y$.
+Briefly, higher inductive types can be used to construct free algebras for infinitary algebraic theories.
+However, Blass showed (modulo a large cardinal assumption) that these cannot be constructed in ZF \cite{blass:freealg}.
+Therefore, no higher inductive types that are modelled by ZF can suffice to construct these.
+
+To give this in detail, we work internally, and write $x=y$ instead of $\id x y$.
 Let $\mathsf{even},\mathsf{odd}:\N\to\N$ be the inclusions of the even and odd numbers respectively, and let $\mathsf{par}:\N\to\N+\N$ be the inverse of the bijection $[\mathsf{even},\mathsf{odd}]:\N+\N\to\N$.
 Given functions $f,g:\N\to A$, we write $f\cup g:\N\to A$ for the composite $\N \xto{\mathsf{par}} \N+\N \xto{[f,g]}A$.
 And given $a:A$, we write $\{a\}:\N\to A$ for the constant function at $a$.
@@ -1078,7 +1086,7 @@ Now let $\iF$ be the higher inductive type generated by the following constructo
 \item $\sup(\{0\}) = 0$.\label{item:f5}
 \end{enumerate}
 
-\begin{thm}[{\cite{blass:freealg}}]
+\begin{thm}[{cf.\ \cite[\sec9]{blass:freealg}}]
   Assuming excluded middle and the higher inductive type $\iF$, there exists an uncountable regular cardinal.
 \end{thm}
 \begin{proof}
@@ -1105,7 +1113,7 @@ Now let $\iF$ be the higher inductive type generated by the following constructo
 
 \begin{cor}
   If it is consistent with ZFC that there are arbitrarily large strongly compact cardinals, then ZF does not prove that the higher inductive type \iF exists in $\mathbf{Set}$.
-  In particular, since $\mathbf{Set}$ certainly has pushouts and natural numbers, under this assumption \iF cannot be constructed from pushouts and the natural numbers.
+  In particular, since $\mathbf{Set}$ models type theory with pushouts and natural numbers, under this assumption \iF cannot be constructed from pushouts and the natural numbers.
 \end{cor}
 \begin{proof}
   As in~\cite[\sec9]{blass:freealg}, this follows from Gitik's~\cite{gitik:unc-sing} construction of a model of ZF with no uncountable regular cardinals, assuming the stated large cardinal principle.
@@ -1119,7 +1127,7 @@ Thus, there is real extra power in recursive higher inductive types, above and b
 
 Having dealt with both higher path-constructors in \crefrange{sec:pushouts}{sec:pushouts-type-theory} and recursive point-constructors in \crefrange{sec:natural-numbers}{sec:w-types}, we now combine them and consider a type with a recursive path-constructor.
 One of the simplest such is the propositional truncation, whose type-theoretic rules are shown in \cref{fig:proptrunc}.
-There should officially be a second computation rule regarding $\treq$, but the typal form of this (which, as in \cref{sec:pushouts-type-theory}, is all we will obtain eventually) is automatic since everything is a proposition.
+According to the usual pattern, there should be a second computation rule regarding $\treq$; but the typal form of this (which, as in \cref{sec:pushouts-type-theory}, is all we will obtain eventually) follows automatically since everything is a proposition, so we do not bother to posit it separately.
 The semantic version of this definition is as follows.
 
 \begin{figure}
@@ -1440,16 +1448,16 @@ For the acyclic cofibration case, the relevant lemma will be the following analo
   It is easy to check that this property is preserved by algebraic pushouts and (possibly transfinite) composites of monad morphisms.
   Thus, it suffices to show that monad cells $\dT^{f,K} \to \dT^{f,L}$ have this property.
   In this case, generalizing the argument of \cref{thm:W-cofmnd}, we have the following commutative diagram of solid arrows and we want to construct a dashed arrow making the other squares commute:
-  \[
-  \begin{tikzcd}
-    (\sigma^*f)_* (\sigma^*B)^* C \otimes K \ar[rrr] \ar[dr] \ar[ddd] &&& f_* B^* D \otimes K \ar[dr] \ar[ddd] \ar[ddrr,bend left]\\
-    &(\sigma^*f)_* (\sigma^*B)^* C \otimes L \ar[rrr,crossing over] \ar[dr] &&& f_* B^* D \otimes L \ar[dr,dashed] \ar[ddd]\\
-    && C \ar[rrr,->,near end,crossing over] &&& D \ar[ddd,->>] \\
-    (\sigma^*f)_* (\sigma^*B)^* V \otimes K \ar[rrr] \ar[dr] &&& f_* B^* W \otimes K \ar[dr] \\
-    &(\sigma^*f)_* (\sigma^*B)^* V \otimes L \ar[rrr] \ar[dr] \ar[from=uuu,crossing over] &&& f_* B^* W \otimes L \ar[dr] \\
-    && V \ar[rrr,->] \ar[from=uuu,crossing over] &&& W
+  \[ \mathclap{
+  \begin{tikzcd}[ampersand replacement=\&]
+    (\sigma^*f)_* (\sigma^*B)^* C \otimes K \ar[rrr] \ar[dr] \ar[ddd] \&\&\& f_* B^* D \otimes K \ar[dr] \ar[ddd] \ar[ddrr,bend left]\\
+    \&(\sigma^*f)_* (\sigma^*B)^* C \otimes L \ar[rrr,crossing over] \ar[dr] \&\&\& f_* B^* D \otimes L \ar[dr,dashed] \ar[ddd]\\
+    \&\& C \ar[rrr,->,near end,crossing over] \&\&\& D \ar[ddd,->>] \\
+    (\sigma^*f)_* (\sigma^*B)^* V \otimes K \ar[rrr] \ar[dr] \&\&\& f_* B^* W \otimes K \ar[dr] \\
+    \&(\sigma^*f)_* (\sigma^*B)^* V \otimes L \ar[rrr] \ar[dr] \ar[from=uuu,crossing over] \&\&\& f_* B^* W \otimes L \ar[dr] \\
+    \&\& V \ar[rrr,->] \ar[from=uuu,crossing over] \&\&\& W
   \end{tikzcd}
-  \]
+  } \]
   This is equivalent to solving the following lifting problem:
   \[
   \begin{tikzcd}
@@ -1798,13 +1806,13 @@ This is all made clearer by a discussion of examples.
 \begin{eg}
   More general non-recursive higher inductive types are constructed in a similar way with nontrivial endofunctors.
   For instance, given $f_i : A \to B_i$ as in \crefrange{sec:pushouts}{sec:pushouts-type-theory}, we have a cell endofunctor
-  \[
-  \begin{tikzcd}
-    \emptyset \ar[rrr] &&& F^{\emptyset\to(B_1+B_2)} \ar[rrr] &&& F \\
-    & \emptyset \ar[ul] \ar[r] \ar[urr,phantom,near end,"\llcorner"] & F^{\emptyset \to (B_1+B_2)} \ar[ur] &
-    & F^{\emptyset\to A} \otimes \mathbf{2} \ar[ul,"{[\inl\circ f_1,\inr\circ f_2]}"] \ar[r] \ar[urr,phantom,near end,"\llcorner"] & F^{\emptyset\to A} \otimes \ivl \ar[ur]
+  \[ \mathclap{
+  \begin{tikzcd}[ampersand replacement=\&]
+    \emptyset \ar[rrr] \&\&\& F^{\emptyset\to(B_1+B_2)} \ar[rrr] \&\&\& F \\
+    \& \emptyset \ar[ul] \ar[r] \ar[urr,phantom,near end,"\llcorner"] \& F^{\emptyset \to (B_1+B_2)} \ar[ur] \&
+    \& F^{\emptyset\to A} \otimes \mathbf{2} \ar[ul,"{[\inl\circ f_1,\inr\circ f_2]}"] \ar[r] \ar[urr,phantom,near end,"\llcorner"] \& F^{\emptyset\to A} \otimes \ivl \ar[ur]
   \end{tikzcd}
-  \]
+  } \]
   Note that the endofunctor $F^{\emptyset\to B_1+B_2}$ is constant at $B_1+B_2$, while $F^{\emptyset\to A}\otimes \mathbf{2}$ is constant at $A\otimes \mathbf{2} \cong A+A$.
   Thus the map marked $[\inl\circ f_1,\inr\circ f_2]$ really is just such a copairing.
   Taking free monads then yields a cell monad whose higher inductive type is the pushout of $f_1$ and $f_2$.
