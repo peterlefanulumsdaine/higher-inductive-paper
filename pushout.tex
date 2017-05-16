@@ -133,7 +133,7 @@ As we will see, problem~\ref{item:p2} only arises in the recursive case; but on 
 
 We present (in \cref{sec:cell-monads-param}) a general context that solves problems~\ref{item:p1}--\ref{item:p3}, and partially solves~\ref{item:p4} in the following sense.
 We describe a \emph{semantic} construction (a ``cell monad'') that enables subsequent ``constructors'' to refer to previous ones, and determines a precise \emph{semantic} meaning for what the source and target of a path-constructor can be.
-However, although in particular cases it is easy to see that the \emph{syntactic} source and targets in the specification of a higher inductive type give rise to the desired semantic structure, we do not give a general syntactic characterization of allowable ``source and target terms''.\footnote{In~\cite{acdf:qiits} a similar semantic characterization is internalized literally, uing universes, under the assumption of UIP; but with present technology this does not generalize to type theory without UIP, since $(\infty,1)$-categories are not known to be definable internally.}
+However, although in particular cases it is easy to see that the \emph{syntactic} source and targets in the specification of a higher inductive type give rise to the desired semantic structure, we do not give a general syntactic characterization of allowable ``source and target terms''.\footnote{In~\cite{acdf:qiits} a similar semantic characterization is internalized literally, using universes, under the assumption of UIP; but with present technology this does not generalize to type theory without UIP, since $(\infty,1)$-categories are not known to be definable internally.}
 Moreover, there are some kinds of source and target terms that seem natural syntactically but do not fit into our semantic framework.
 
 For expositional clarity, instead of jumping right to the general context of cell monads, we begin (after preliminaries in \cref{sec:model-categ-type} and a warm-up in \cref{sec:coproducts}) in \crefrange{sec:pushouts}{sec:pushouts-type-theory} by considering in detail the case of pushouts.
@@ -810,7 +810,7 @@ Though a standard type constructor, this is not considered explicitly in~\cite{l
 \end{defn}
 
 Of course, if $\C$ has a terminal object (as it usually does), then the quantification over $\Gamma$ in the latter definition follows from the special case $\Gamma=1$.
-Strictly stable natural numbers typesa are the semantic version of the usual rules for a natural numbers type, shown in \cref{fig:nno}.
+Strictly stable natural numbers types are the semantic version of the usual rules for a natural numbers type, shown in \cref{fig:nno}.
 
 \begin{figure}
   \centering
