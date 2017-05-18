@@ -61,6 +61,10 @@
 \tikzset{idmap/.style={double equal sign distance,-}}
 \usetikzlibrary{decorations.pathmorphing}
 \def\pullback#1{\ar[#1,phantom,near start,"\lrcorner"]}
+\tikzset{commutative diagrams/cof/.style={tail}}
+\tikzset{commutative diagrams/fib/.style={two heads}}
+\tikzset{commutative diagrams/acyc/.style={"\sim" {sloped,above}}}
+\tikzset{commutative diagrams/acyc'/.style={"\sim" {sloped,below}}}
 
 % Display format for sections
 \crefformat{section}{\sec#2#1#3}
@@ -323,7 +327,10 @@ Thus, let $A_1 + A_2 \to A_1\oplus A_2 \fib \Gamma$ be an (acyclic cofibration, 
   Moreover, acyclic cofibrations are closed under coproducts (being the left class of a weak factorization system), so the induced map $\sigma^*A_1 +\sigma^*A_2 \to A_1+A_2$ is an acyclic cofibration.
   Moreover, since $\sigma^*$ is a left adjoint, it preserves coproducts.
   Thus, in the following square
-  \[ \xymatrix{ \sigma^*(A_1+A_2) \ar[r]^-\sim \ar[d] & A_1+A_2 \ar[d]^\sim \\ \sigma^*(A_1\oplus A_2) \ar[r]_-\sim & A_1\oplus A_2} \]
+  \[ \begin{tikzcd}
+    \sigma^*(A_1+A_2) \ar[r,acyc] \ar[d] & A_1+A_2 \arrow[d,acyc]
+    \\ \sigma^*(A_1\oplus A_2) \arrow[r, acyc] & A_1\oplus A_2
+  \end{tikzcd} \]
   all the marked maps are acyclic cofibrations, hence weak equivalences.
   Hence, by 2-out-of-3, so is the remaining map, which is what we wanted.
 \end{proof}
@@ -353,7 +360,10 @@ In \cref{sec:coherence-pushouts} we will rephrase this in type-theoretic languag
 \begin{proof}
   Give $f_1,f_2$, let $Q$ be their explicit homotopy pushout, meaning the pushout of the following diagram in \sM:
   % \[ \xymatrix@-.5pc{ & A \ar[r]^{f_1} \ar[d]^{i_1} & B_1 \\ A \ar[d]_{f_2} \ar[r]^-{i_2} & A\ten \ivl\\ B_2 } \]
-  \[ \xymatrix{ A+A \ar[r]^{\iota} \ar[d]_{f_1+f_2} & A\ten\ivl \\ B_1+B_2 } \]
+  \[ \begin{tikzcd}
+    A+A \ar[r,cof,"\iota"] \ar[d,"f_1+f_2"'] & A\ten\ivl
+    \\ B_1+B_2 
+  \end{tikzcd} \]
   By construction, this satisfies all parts of \cref{defn:ivl-pushout} except that it may not be a fibration over $\Gamma$.
   (And in this case it really isn't, even in simplicial sets.)
   Let $D$ be its fibrant replacement, i.e.\ we have a factorization $Q\to D \fib \Gamma$ as an acyclic cofibration followed by a fibration.
@@ -366,10 +376,10 @@ In \cref{sec:coherence-pushouts} we will rephrase this in type-theoretic languag
 
   Now consider the following commutative cube, in which the left-hand and right-hand faces are pushouts, and the objects $R$ and $S$ are also pushouts.
   \[\begin{tikzcd}
-    & \sigma^* A+\sigma^*A \arrow[dl] \arrow[rr] \arrow[dd] \ar[dr,phantom,"R"{name=sr}]
+    & \sigma^* A+\sigma^*A \arrow[dl,cof,acyc] \arrow[rr,cof,acyc] \arrow[dd] \ar[dr,phantom,"R"{name=sr}]
     & & A+A \arrow[dl] \arrow[dd] \ar[to=sr] \\
-    \sigma^*A\ten\ivl\arrow[dd] \ar[to=sr] & & A\ten\ivl \ar[from=sr] \\
-    & \sigma^*B_1+\sigma^*B_2 \arrow[dl] \arrow[rr] \ar[dr,phantom,"S"{name=tr}]
+    \sigma^*A\ten\ivl\arrow[dd] \ar[to=sr, crossing over] & & A\ten\ivl \ar[from=sr] \\
+    & \sigma^*B_1+\sigma^*B_2 \arrow[dl] \arrow[rr,cof,acyc] \ar[dr,phantom,"S"{name=tr}]
     \ar[from=sr,to=tr,crossing over]
     \arrow[from=ul,to=ur, crossing over]
     & & B_1+B_2 \arrow[dl] \ar[to=tr] \\
@@ -469,8 +479,8 @@ In \cref{sec:pushouts-type-theory} we will show that our construction also gives
 Similarly to the non-dependent case, the underlying data of a good dependent identity type and a good dependent reflexivity term consist of a factorization of the diagonal of $\Gamma.A.B$ that lies over a given factorization of the diagonal of $\Gamma.A$, such that the dashed pullback map shown below is a dependent projection:
 \[
 \begin{tikzcd}[row sep=huge,column sep=huge]
-  \Gamma.A.B \ar[r] \ar[d] & \Gamma.A.A.\Id_A.B.B.\Id^A_B \ar[rr] \ar[d] \ar[drr,phantom,near start,"\Gamma.A.A.\Id_A.B.B"{name=hi}] \ar[dashed,to=hi] && \Gamma.A.A.B.B \ar[d] \ar[from=hi] \\
-  \Gamma.A \ar[r] & \Gamma.A.A.\Id_A \ar[rr] \ar[from=hi] && \Gamma.A.A
+  \Gamma.A.B \ar[r] \ar[d,fib] & \Gamma.A.A.\Id_A.B.B.\Id^A_B \ar[rr] \ar[d] \ar[drr,phantom,near start,"\Gamma.A.A.\Id_A.B.B"{name=hi}] \ar[dashed,fib,to=hi] && \Gamma.A.A.B.B \ar[d] \ar[from=hi] \\
+  \Gamma.A \ar[r] & \Gamma.A.A.\Id_A \ar[rr,fib] \ar[from=hi] && \Gamma.A.A
 \end{tikzcd}
 \]
 
@@ -481,8 +491,8 @@ Similarly to the non-dependent case, the underlying data of a good dependent ide
   \item For each such object, the above factorization is given by the following diagram:
     \[
     \begin{tikzcd}[row sep=large]
-      \Gamma.A.B \ar[r] \ar[d] & (\Gamma.A.B)^\ivl_\Gamma \ar[rr] \ar[d] \ar[drr,phantom,near start,"\bullet"{name=hi}] \ar[dashed,to=hi] && \Gamma.A.A.B.B \ar[d] \ar[from=hi] \\
-      \Gamma.A \ar[r] & (\Gamma.A)^\ivl_\Gamma \ar[rr] \ar[from=hi] && \Gamma.A.A
+      \Gamma.A.B \ar[r] \ar[d,fib] & (\Gamma.A.B)^\ivl_\Gamma \ar[rr] \ar[d] \ar[drr,phantom,near start,"\bullet"{name=hi}] \ar[dashed,to=hi,fib] && \Gamma.A.A.B.B \ar[d] \ar[from=hi] \\
+      \Gamma.A \ar[r] & (\Gamma.A)^\ivl_\Gamma \ar[rr,fib] \ar[from=hi] && \Gamma.A.A
     \end{tikzcd}
     \]
     In particular, every good dependent identity type has a unique good dependent reflexivity term.
@@ -772,9 +782,9 @@ The following theorem could be stated for weakly stable structures in addition t
   Using the eliminators for dependent identity types in both directions (or equivalently the uniqueness-up-to-homotopy of weak factorization systems), we obtain maps in both directions making all the triangles commute:
   \[
   \begin{tikzcd}
-    & \Gamma.A.A.\Id_A.B.B.\Id^A_B \ar[dr] \ar[dd,shift left,"h"]\\
+    & \Gamma.A.A.\Id_A.B.B.\Id^A_B \ar[dr,fib] \ar[dd,shift left,"h"]\\
     \Gamma.A.B \ar[ur,"{\r^A_B}"] \ar[dr,swap,"{\rtwo{A}{B}}"] && \Gamma.A.A.\Id_A.B.B\\
-    & \Gamma.A.A.\Id_A.B.B.\Idtwo{A}{B} \ar[ur] \ar[uu,shift left,"k"]
+    & \Gamma.A.A.\Id_A.B.B.\Idtwo{A}{B} \ar[ur,fib] \ar[uu,shift left,"k"]
   \end{tikzcd}
   \]
   Similarly, we obtain homotopies over $\Gamma.A.A.\Id_A.B.B$ between the round-trip composites in both directions (i.e.\ maps $\Gamma.A.B \to \Gamma.A.A.\Id_A.B.B.\Id^A_B.\Id^A_B.\Id_{\Id^A_B}$ and similarly), giving a homotopy equivalence $\Id^A_B \simeq \Idtwo{A}{B}$.
@@ -868,7 +878,7 @@ In particular, when restricted to arrows with terminal codomain, we get an acces
 Moreover, the composite of two $\dR$-algebras $X \xfib{f} Y \xfib{g} Z$ naturally acquires an $\dR$-algebra structure such that the commutative square
 \[
 \begin{tikzcd}
-  X \ar[d,"gf",swap] \ar[r,"f"] & Y \ar[d,"g"] \\ Z \ar[r,idmap]& Z
+  X \ar[d,"gf",swap,fib] \ar[r,"f",fib] & Y \ar[d,"g",fib] \\ Z \ar[r,idmap]& Z
 \end{tikzcd}
 \]
 is a morphism of $\dR$-algebras.
@@ -943,11 +953,11 @@ Since a good model category is locally cartesian closed, the weakly stable $\Pi$
   Then $\Gamma.\W\to \Gamma$ is a fibration, since it is an $\dR$-algebra, and its $F_{\W A B}$-endofunctor-algebra structure is exactly the map $\fold$ required of a \W-type.
 
   The input to the eliminator consists, as usual, of a fibration $p:\Gamma.\W.C\fib \Gamma.W$ that is a $F_{\W A B}$-algebra morphism.
-  This is not completely obvious, with the eliminator defined following syntax as in~\cite[Definition 3.4.4.7]{lw:localuniv}; the point is that $\Gamma.A.\Pi[B,\W].\Pi[B,C[\mathsf{app}'_{B,W}]] \cong \Gamma.A.\Pi[B,\Sigma[\W,C]]$ by the mapping-in universal property of $\Sigma$-types; and by construction of $\Sigma$-types in $\sM$, the comprehension $\Gamma.\Sigma[\W,C]\fib\Gamma$ is just the composite $\Gamma.\W.C \fib \Gamma.W\fib \Gamma$.\footnote{Note a typo in~\cite[Definition 3.4.4.7]{lw:localuniv}; each $\Gamma.\W.\dots$ in the left-hand columns of the diagrams should be $\Gamma.A.\dots$.})
+  This is not completely obvious, with the eliminator defined following syntax as in~\cite[Definition 3.4.4.7]{lw:localuniv}; the point is that $\Gamma.A.\Pi[B,\W].\Pi[B,C[\mathsf{app}'_{B,W}]] \cong \Gamma.A.\Pi[B,\Sigma[\W,C]]$ by the mapping-in universal property of $\Sigma$-types; and by construction of $\Sigma$-types in $\sM$, the comprehension $\Gamma.\Sigma[\W,C]\fib\Gamma$ is just the composite $\Gamma.\W.C \fib \Gamma.W\fib \Gamma$.\footnote{Note a typo in~\cite[Definition 3.4.4.7]{lw:localuniv}: each $\Gamma.\W.\cdots$ in the left-hand columns of the diagrams should be $\Gamma.A.\cdots$.})
   As before, we choose an $\dR$-algebra structure on $p$, making this composite $\Gamma.\W.C \fib \Gamma.W\fib \Gamma$ an $\dR$-algebra and the square
   \[
   \begin{tikzcd}
-    \Gamma.\W.C \ar[d,->>] \ar[r,->>] & \Gamma.\W \ar[d,->>] \\ \Gamma \ar[r,idmap]& \Gamma
+    \Gamma.\W.C \ar[d,fib] \ar[r,fib] & \Gamma.\W \ar[d,fib] \\ \Gamma \ar[r,idmap]& \Gamma
   \end{tikzcd}
   \]
   an $\dR$-algebra map, hence also a $(\dT_{\W A B} + \dR_{\Gamma})$-algebra map.
@@ -970,7 +980,7 @@ Since a good model category is locally cartesian closed, the weakly stable $\Pi$
   Suppose given a fibration $C\fib \sigma^*\W$ over $\Delta$ with structure map $d$ over $\sigma^*(\fold)$:
   \[
   \begin{tikzcd}
-    (\sigma^* A)_! (\sigma^* f)_* (\sigma^*B)^* C \ar[rr,"d"] \ar[d] && C \ar[d] \\
+    (\sigma^* A)_! (\sigma^* f)_* (\sigma^*B)^* C \ar[rr,"d"] \ar[d] && C \ar[d,fib] \\
     (\sigma^* A)_! (\sigma^* f)_* (\sigma^*B)^* \sigma^* \W \ar[r,"\cong"] & \sigma^*(f_* B^* \W) \ar[r,"{\sigma^*(\fold)}",swap] & \sigma^*\W
   \end{tikzcd}
   \]
@@ -986,7 +996,7 @@ Since a good model category is locally cartesian closed, the weakly stable $\Pi$
   Now if we pull this back along the unit $\eta_\W : \W \to \sigma_* \sigma^* \W$ we get a map $d'$ satisfying
   \[
   \begin{tikzcd}
-    A_! f_* B^* \eta_\W^* \sigma_* C \ar[r,"d'"] \ar[d] & \eta_\W^* \sigma_* C \ar[d] \\
+    A_! f_* B^* \eta_\W^* \sigma_* C \ar[r,"d'"] \ar[d] & \eta_\W^* \sigma_* C \ar[d,fib] \\
     A_! f_* B^* \W \ar[r,"\fold"] & \W
   \end{tikzcd}
   \]
@@ -1004,13 +1014,13 @@ Since a good model category is locally cartesian closed, the weakly stable $\Pi$
   Suppose a pair of pullback squares in a good model category $\sM$:
   \[
   \begin{tikzcd}
-    C \ar[r,>->,squiggly,"i"] \ar[d,->>,"p",swap] \ar[dr,phantom,near start,"\lrcorner"] & D \ar[d,->>,"q"] \\
-    V \ar[r,>->,squiggly,"j"] \ar[d,->>] \ar[dr,phantom,near start,"\lrcorner"] & W \ar[d,->>] \\
-    \Delta \ar[r,>->,squiggly,"\sigma",swap] & \Gamma
+    C \ar[r,cof,acyc',"i"] \ar[d,fib,"p",swap] \ar[dr,phantom,near start,"\lrcorner"] & D \ar[d,fib,"q"] \\
+    V \ar[r,cof,acyc',"j"] \ar[d,fib] \ar[dr,phantom,near start,"\lrcorner"] & W \ar[d,fib] \\
+    \Delta \ar[r,cof,acyc',"\sigma"] & \Gamma
   \end{tikzcd}
   \]
   in which all objects are fibrant, the downward-pointing arrows are fibrations, and the rightward-pointing arrows are acyclic cofibrations.
-  Suppose moreover that for some fibration $f:B\to A$ between fibrant objects of $\sM/\Gamma$, the object $W$ of $\sM/\Gamma$ is a $F_{\W A B}$-endofunctor-algebra, the objects $C$ is a $F_{\W (\sigma^*A) (\sigma^*B)}$-endofunctor-algebra, and $p$ is a $F_{\W (\sigma^*A) (\sigma^*B)}$-morphism (when $V$ has its induced structure from $W$).
+  Suppose moreover that for some fibration $f:B\fib A$ between fibrant objects of $\sM/\Gamma$, the object $W$ of $\sM/\Gamma$ is a $F_{\W A B}$-endofunctor-algebra, the objects $C$ is a $F_{\W (\sigma^*A) (\sigma^*B)}$-endofunctor-algebra, and $p$ is a $F_{\W (\sigma^*A) (\sigma^*B)}$-morphism (when $V$ has its induced structure from $W$).
   Then there is a $F_{\W A B}$-endofunctor-algebra structure on $D$ inducing the structure on $C$ by pullback and making $q$ a $F_{\W A B}$-morphism.
 \end{lem}
 \begin{proof}
@@ -1019,7 +1029,7 @@ Since a good model category is locally cartesian closed, the weakly stable $\Pi$
   \[
   \begin{tikzcd}
     (\sigma^*f)_* (\sigma^*B)^* C \ar[rr] \ar[dr] \ar[dd] && f_* B^* D \ar[dr,dashed] \ar[dd]\\
-    & C \ar[rr,->,near end,"i",swap,crossing over] && D \ar[dd,->>,"q"] \\
+    & C \ar[rr,->,near end,"i",swap,crossing over] && D \ar[dd,fib,"q"] \\
     (\sigma^*f)_* (\sigma^*B)^* V \ar[rr] \ar[dr] && f_* B^* W \ar[dr] \\
     & V \ar[rr,->,"j",swap] \ar[from=uu,near end,"p",crossing over]  && W
   \end{tikzcd}
@@ -1027,7 +1037,7 @@ Since a good model category is locally cartesian closed, the weakly stable $\Pi$
   This is equivalent to solving the following lifting problem:
   \[
   \begin{tikzcd}
-    (\sigma^*f)_* (\sigma^*B)^* C \ar[r] \ar[d] & C \ar[r] & D \ar[d,->>] \\
+    (\sigma^*f)_* (\sigma^*B)^* C \ar[r] \ar[d] & C \ar[r] & D \ar[d,fib] \\
     f_* B^* D \ar[urr,dashed] \ar[r] & f_* B^* W \ar[r] & W
   \end{tikzcd}
   \]
@@ -1036,8 +1046,8 @@ Since a good model category is locally cartesian closed, the weakly stable $\Pi$
   But $(\sigma^*B)^*C$ is also the pullback of $B^* D$ along the map $B^*\sigma : \sigma^*B \to B$, so by the Beck-Chevalley condition for the pullback square
   \[
   \begin{tikzcd}
-    \sigma^* B \ar[r,"{B^*\sigma}"] \ar[d,"{\sigma^* f}",swap] & B \ar[d,"f"]\\
-    \sigma^* A \ar[r,"{A^*\sigma}",swap] & A
+    \sigma^* B \ar[r,"{B^*\sigma}",acyc',cof] \ar[d,"{\sigma^* f}",swap,fib] & B \ar[d,"f",fib]\\
+    \sigma^* A \ar[r,"{A^*\sigma}",acyc',cof] & A
   \end{tikzcd}
   \]
   we have $(\sigma^*f)_* (\sigma^*B)^* C \cong (A^*\sigma)^* f_* B^* D$.
@@ -1188,7 +1198,7 @@ Note that when interpreted with respect to the canonical identity types and depe
   And \ref{item:pd3}$\Rightarrow$\ref{item:pd1} by lifting in the square
   \[
   \begin{tikzcd}
-    X \ar[d,>->,squiggly] \ar[r,"\r"] & X^\ivl_\Gamma \ar[d,->>] \\
+    X \ar[d,cof,acyc] \ar[r,"\r"] & X^\ivl_\Gamma \ar[d,fib] \\
     X\times_\Gamma X \ar[r,idmap] & X\times_\Gamma X
   \end{tikzcd}
   \]
@@ -1210,8 +1220,8 @@ Note that when interpreted with respect to the canonical identity types and depe
   We have a pullback square
   \[
   \begin{tikzcd}
-    Y\times_X Y \ar[r,>->,squiggly] \ar[d] \ar[dr,phantom,near start,"\lrcorner"] & Y\times_\Gamma Y \ar[d,->>]\\
-    X \ar[r,>->,squiggly] & X\times_\Gamma X
+    Y\times_X Y \ar[r,cof,acyc] \ar[d] \ar[dr,phantom,near start,"\lrcorner"] & Y\times_\Gamma Y \ar[d,fib]\\
+    X \ar[r,cof,acyc] & X\times_\Gamma X
   \end{tikzcd}
   \]
   in which the right-hand map is a fibration (the product of two fibrations in $\sM/\Gamma$) and the bottom map is an acyclic cofibration by \cref{thm:prop-diag}, hence the top map is also an acyclic cofibration.
@@ -1219,7 +1229,7 @@ Note that when interpreted with respect to the canonical identity types and depe
   Moreover, in this case we can structure $Y$ as a proposition over $\Gamma$ making $Y\to X$ a map of propositions by lifting in the following square:
   \[
   \begin{tikzcd}
-    Y \ar[r] \ar[d,>->,squiggly] & Y^\ivl_\Gamma \ar[d,->>]\\
+    Y \ar[r] \ar[d,cof,acyc] & Y^\ivl_\Gamma \ar[d,fib]\\
     Y\times_\Gamma Y \ar[r] & (Y\times_\Gamma Y)\times_{(X\times_\Gamma X)} X^\ivl_\Gamma
   \end{tikzcd}
   \]
@@ -1277,7 +1287,7 @@ The following proof introduces one more new idea: algebraic pushouts of monads t
   Then $r^*C \fib \brck A$ is a fibration whose pullback along $\sigma$ is $C$, and by lifting in the following square
   \[
   \begin{tikzcd}
-    \sigma^*A \ar[d,>->,squiggly] \ar[r,"c"] & C \cong \sigma^*r^*C \ar[r] & r^*C \ar[d,->>]\\
+    \sigma^*A \ar[d,cof,acyc] \ar[r,"c"] & C \cong \sigma^*r^*C \ar[r] & r^*C \ar[d,fib]\\
     A \ar[rr] && \brck A
   \end{tikzcd}
   \]
@@ -1285,8 +1295,8 @@ The following proof introduces one more new idea: algebraic pushouts of monads t
   Moreover, since $C\cong \sigma^* r^* C$, we have the following commutative square
   \[
   \begin{tikzcd}
-    C \ar[d,squiggly] \ar[r,>->,squiggly] & r^* C \ar[d]\\
-    C\times_\Delta C \ar[r,squiggly] & r^*C \times_\Gamma r^*C
+    C \ar[d,acyc] \ar[r,cof,acyc] & r^* C \ar[d]\\
+    C\times_\Delta C \ar[r,acyc] & r^*C \times_\Gamma r^*C
   \end{tikzcd}
   \]
   in which all maps except the right-hand one are known to be weak equivalences: the left-hand one since $C$ is a proposition over $\Gamma$, the top since it is a pullback of the weak equivalence $\sigma$ along a fibration, and the bottom since it is a homotopy pullback of weak equivalences.
@@ -1429,9 +1439,9 @@ For the acyclic cofibration case, the relevant lemma will be the following analo
   Let $\dS\to\dT$ be a relative cell monad on an excellent model category, and suppose given a pair of pullback squares:
   \[
   \begin{tikzcd}
-    C \ar[r,>->,squiggly,"i"] \ar[d,->>,"p",swap] \ar[dr,phantom,near start,"\lrcorner"] & D \ar[d,->>,"q"] \\
-    V \ar[r,>->,squiggly,"j"] \ar[d,->>] \ar[dr,phantom,near start,"\lrcorner"] & W \ar[d,->>] \\
-    \Delta \ar[r,>->,squiggly,"\sigma",swap] & \Gamma
+    C \ar[r,cof,acyc',"i"] \ar[d,fib,"p",swap] \ar[dr,phantom,near start,"\lrcorner"] & D \ar[d,fib,"q"] \\
+    V \ar[r,cof,acyc',"j"] \ar[d,fib] \ar[dr,phantom,near start,"\lrcorner"] & W \ar[d,fib] \\
+    \Delta \ar[r,cof,acyc',"\sigma"] & \Gamma
   \end{tikzcd}
   \]
   in which all objects are fibrant, the downward-pointing arrows are fibrations, and the rightward-pointing arrows are acyclic cofibrations.
@@ -1452,7 +1462,7 @@ For the acyclic cofibration case, the relevant lemma will be the following analo
   \begin{tikzcd}[ampersand replacement=\&]
     (\sigma^*f)_* (\sigma^*B)^* C \otimes K \ar[rrr] \ar[dr] \ar[ddd] \&\&\& f_* B^* D \otimes K \ar[dr] \ar[ddd] \ar[ddrr,bend left]\\
     \&(\sigma^*f)_* (\sigma^*B)^* C \otimes L \ar[rrr,crossing over] \ar[dr] \&\&\& f_* B^* D \otimes L \ar[dr,dashed] \ar[ddd]\\
-    \&\& C \ar[rrr,->,near end,crossing over] \&\&\& D \ar[ddd,->>] \\
+    \&\& C \ar[rrr,->,near end,crossing over] \&\&\& D \ar[ddd,fib] \\
     (\sigma^*f)_* (\sigma^*B)^* V \otimes K \ar[rrr] \ar[dr] \&\&\& f_* B^* W \otimes K \ar[dr] \\
     \&(\sigma^*f)_* (\sigma^*B)^* V \otimes L \ar[rrr] \ar[dr] \ar[from=uuu,crossing over] \&\&\& f_* B^* W \otimes L \ar[dr] \\
     \&\& V \ar[rrr,->] \ar[from=uuu,crossing over] \&\&\& W
@@ -1461,7 +1471,7 @@ For the acyclic cofibration case, the relevant lemma will be the following analo
   This is equivalent to solving the following lifting problem:
   \[
   \begin{tikzcd}
-    ((\sigma^*f)_* (\sigma^*B)^* C \otimes L) \sqcup_{((\sigma^*f)_* (\sigma^*B)^* C \otimes K)} (f_* B^* D \otimes K) \ar[r] \ar[d] & D \ar[d,->>] \\
+    ((\sigma^*f)_* (\sigma^*B)^* C \otimes L) \sqcup_{((\sigma^*f)_* (\sigma^*B)^* C \otimes K)} (f_* B^* D \otimes K) \ar[r] \ar[d] & D \ar[d,fib] \\
     f_* B^* D \otimes L \ar[ur,dashed] \ar[r] & W
   \end{tikzcd}
   \]
@@ -1509,7 +1519,7 @@ Finally, we also have:
   Such an extension is a dotted arrow filling in the following diagram:
   \[
   \begin{tikzcd}
-    F^f_\Gamma(B) \otimes K \ar[rr] \ar[dr] \ar[dd] && B \ar[dd,->>]\\
+    F^f_\Gamma(B) \otimes K \ar[rr] \ar[dr] \ar[dd] && B \ar[dd,fib]\\
     & F^f_\Gamma(B) \otimes L \ar[ur,dashed] \\
     F^f_\Gamma(A) \otimes K \ar[rr] \ar[dr] && A\\
     & F^f_\Gamma(A) \otimes L \ar[ur] \ar[from=uu,crossing over]
@@ -1518,7 +1528,7 @@ Finally, we also have:
   We define the representing object to be the following pullback:
   \[
   \begin{tikzcd}[column sep=huge]
-    V \ar[r] \ar[d,->>] \ar[dr,phantom,near start,"\lrcorner"] & \left(B^{F^f_\Gamma(B)}_\Gamma\right)^L_\Gamma \ar[d,->>]\\
+    V \ar[r] \ar[d,fib] \ar[dr,phantom,near start,"\lrcorner"] & \left(B^{F^f_\Gamma(B)}_\Gamma\right)^L_\Gamma \ar[d,fib]\\
     \Gamma \ar[r] &
     \left(B^{F^f_\Gamma(B)}_\Gamma\right)^K_\Gamma \times_{\left(A^{F^f_\Gamma(B)}_\Gamma\right)^K_\Gamma} \left(A^{F^f_\Gamma(B)}_\Gamma\right)^L_\Gamma
   \end{tikzcd}
@@ -1564,7 +1574,7 @@ The forgetful functor $\D_{1,*} \to \D_1$ is a discrete fibration.
 
 \begin{defn}\label{defn:param-scheme}
   Let $(\C,\T)$ be a comprehension category.
-  We define the set of \textbf{parameter schemes over $(\C,\T)$} together with, for every such parameter scheme $\P$, a fibration $\cInst(\P)\to\C$ of \textbf{instantiations of \P}, by mutual induction as follows.
+  We define the set of \textbf{parameter schemes over $(\C,\T)$} together with, for every such parameter scheme $\P$, a fibration $\cInst(\P)\to\C$ of \textbf{instantiations of \P}, mutually inductively as follows.
   \begin{itemize}
   \item There is an \textbf{empty parameter scheme} $\emptyps$, and $\cInst(\emptyps) = \C$ (i.e.\ there is a unique instantiation of $\emptyps$ over every $\Gamma\in\C$).
   \item If \P is a parameter scheme, an \textbf{extension of \P by a type parameter} is a new parameter scheme $\typeps{\P}{\al}$ determined by a cartesian functor $\al:\cInst(\P)\to\D$ over \C.
