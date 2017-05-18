@@ -1,3 +1,5 @@
+%% Originally based on "alpha.bst"; url support added by urlbst; further modified according to https://tex.stackexchange.com/a/5794/1635.
+
 %%% Modification of BibTeX style file /usr/local/texlive/2016/texmf-dist/bibtex/bst/base/alpha.bst
 %%% ... by urlbst, version 0.7 (marked with "% urlbst")
 %%% See <http://purl.org/nxg/dist/urlbst>
@@ -302,6 +304,29 @@ FUNCTION {or}
     'skip$
   if$
 }
+
+% added from https://tex.stackexchange.com/a/119689/1635
+INTEGERS{ l }
+FUNCTION{ string.length }
+{
+  #1 'l :=
+  {duplicate$ duplicate$ #1 l substring$ = not}
+    { l #1 + 'l :=}
+  while$
+  pop$ l
+}
+
+INTEGERS {find.length find.startpos}
+STRINGS {find.string find.pattern}
+FUNCTION {endswith}
+{
+  'find.pattern :=
+  'find.string :=
+  find.pattern string.length 'find.length :=
+  find.string string.length find.length - #1 + 'find.startpos :=
+  find.string find.startpos find.length substring$ find.pattern =
+}
+
 
 FUNCTION {new.block.checka}
 { empty$
@@ -792,18 +817,23 @@ FUNCTION {output.web.refs}
   inlinelinks
     'skip$ % links were inline -- don't repeat them
     {
-      output.url
       addeprints eprint empty$ not and
-        { format.eprint output.nonnull }
-        'skip$
+	{ format.eprint output.nonnull }
+	'skip$
       if$
       adddoiresolver doi empty$ not and
-        { format.doi output.nonnull }
-        'skip$
-      if$
-      addpubmedresolver pubmed empty$ not and
-        { format.pubmed output.nonnull }
-        'skip$
+	{ 
+	  url empty$
+            { format.doi output.nonnull }
+            {
+              url doi endswith     
+		{ format.doi output.nonnull }
+		{ format.doi output.nonnull output.url }
+              if$  
+            } 
+	  if$  
+	}
+	{ output.url }
       if$
     }
   if$
