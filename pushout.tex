@@ -63,8 +63,8 @@
 \def\pullback#1{\ar[#1,phantom,near start,"\lrcorner"]}
 \tikzset{commutative diagrams/cof/.style={tail}}
 \tikzset{commutative diagrams/fib/.style={two heads}}
-\tikzset{commutative diagrams/acyc/.style={tail,"\sim" {sloped,above}}}
-\tikzset{commutative diagrams/acyc'/.style={tail,"\sim" {sloped,below}}}
+\tikzset{commutative diagrams/acyc/.style={"\sim" {sloped,above}}}
+\tikzset{commutative diagrams/acyc'/.style={"\sim" {sloped,below}}}
 
 % Display format for sections
 \crefformat{section}{\sec#2#1#3}
@@ -328,7 +328,7 @@ Thus, let $A_1 + A_2 \to A_1\oplus A_2 \fib \Gamma$ be an (acyclic cofibration, 
   Moreover, since $\sigma^*$ is a left adjoint, it preserves coproducts.
   Thus, in the following square
   \[ \begin{tikzcd}
-    \sigma^*(A_1+A_2) \ar[r,acyc] \ar[d] & A_1+A_2 \arrow[d,acyc]
+    \sigma^*(A_1+A_2) \ar[r,acyc,cof] \ar[d] & A_1+A_2 \arrow[d,acyc,cof]
     \\ \sigma^*(A_1\oplus A_2) \arrow[r, acyc] & A_1\oplus A_2
   \end{tikzcd} \]
   all the marked maps are acyclic cofibrations, hence weak equivalences.
