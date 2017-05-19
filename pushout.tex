@@ -232,11 +232,20 @@ We will work throughout in the following context.
   \end{enumerate}
 \end{defn}
 
-In particular, a \emph{Cisinski model category}~\cite{cisinski:topos,cisinski:presheaves} is a model structure on a Grothendieck topos whose cofibrations are the monomorphisms.
+\begin{eg}
+A \emph{Cisinski model category}~\cite{cisinski:topos,cisinski:presheaves} is a model structure on a Grothendieck topos whose cofibrations are the monomorphisms.
 Therefore, any right proper simplicial Cisinski model category is a good model category.
+\end{eg}
 
-On the other hand, any complete and cocomplete locally cartesian closed category with its trivial model structure (the weak equivalences are the isomorphisms and all morphisms are cofibrations and fibrations) is also a good model category.
+\begin{eg}
+Any complete and cocomplete locally cartesian closed category with its trivial model structure (the weak equivalences are the isomorphisms and all morphisms are cofibrations and fibrations) is also a good model category.
 Thus, we also include the standard examples of semantics for extensional type theory.
+\end{eg}
+
+\begin{noneg}
+The category of groupoids, which was the first homotopical model of type theory~\cite{hs:gpd-typethy}, satisfies all the axioms of a good model category except that it is not locally cartesian closed: only fibrations of groupoids are exponentiable.
+It is possible that with some care our method could be generalized to such examples, at the expense of increased awkwardness (for instance, \cref{thm:free-fibred} would no longer be true exactly as stated).
+\end{noneg}
 
 Assumption~\ref{item:m0} tells us that \sM is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product and pullback-corner axioms.
 This enables us to construct path objects (which model identity types) as simplicial powers.
@@ -1410,7 +1419,7 @@ It is familiar from homotopy theory that an algebraic theory (such as an operad 
 Cofibrant objects, in turn, are generally constructed as ``cell complexes''.
 Inspecting our proofs of weak stability in the preceding sections leads us to the following definitions.
 
-\begin{lem}
+\begin{lem}\label{thm:free-fibred}
   Let \sM be a locally presentable category, and $F$ a fibred endofunctor of \sM such that each fiber $F_\Gamma$ is accessible.
   Let $\dT_\Gamma$ be the algebraically-free monad on $F_\Gamma$.
   Then these monads $\dT_\Gamma$ are also indexed, i.e.\ we have coherent isomorphisms $\dT_\Delta \circ \sigma^* \cong \sigma^* \circ \dT_\Gamma$ commuting with the monad structures, and hence induce a fibred monad $\dT$.
