@@ -640,9 +640,10 @@ Modulo the initiality theorem, the above strictly stable structure corresponds t
     \inferrule{\Gamma\types A\type \\ \Gamma,x:A \types B\type \\ \Gamma,x:A,y:A,e:\id[A]{x}{y}, u:B, v:B[y/x], d:\idover[B]{u}{v}{e} \types C\type \\ \Gamma,x:A,u:B \types c:C[x/y,\refl_x/e,u/v,\drefl_u/d]}
     %\\\\ \Gamma \types a_1:A \\ \Gamma\types a_2:A \\ \Gamma\types p:\id[A]{a_1}{a_2} \\\\
     %\Gamma \types b_1:B[a_1/x] \\ \Gamma\types b_2:B[a_2/x] \\ \Gamma\types q:\idover[B]{b_1}{b_2}{p}}
-    {\Gamma, a_1:A, a_2:A, p:\id[A]{a_1}{a_2}, b_1:B[a_1/x], b_2:B[a_2/x], q:\idover[B]{b_1}{b_2}{p} \\ \hspace{2cm}\types \J'(xyeuvd.C,xu.c,a_1,a_2,p,b_1,b_2,q):C[a_1/x,a_2/y,p/e,b_1/u,b_2/v,q/d] \\ %\and
+    {\Gamma, a_1:A, a_2:A, p:\id[A]{a_1}{a_2}, b_1:B[a_1/x], b_2:B[a_2/x], q:\idover[B]{b_1}{b_2}{p} \hspace{3em} \\ 
+      \hspace{1em} \types \J'(xyeuvd.C,xu.c,a_1,a_2,p,b_1,b_2,q):C[a_1/x,a_2/y,p/e,b_1/u,b_2/v,q/d] \\ %\and
     %\inferrule{\Gamma\types A\type \\ \Gamma,x:A \types B\type \\ \Gamma,x:A,y:A,e:\id[A]{x}{y}, u:B, v:B[y/x], d:\idover[B]{u}{v}{e} \types C\type \\ \Gamma,x:A,u:B \types c:C[x/y,\refl_x/e,u/v,\drefl_u/d]} % \\\\ \Gamma \types a:A \\ \Gamma \types b:B[a/x]
-    \Gamma, a:A, b:B[a/x]\types \J'(xyeuvd.C,xu.c,a,a,\refl_a,b,b,\drefl_b) \jdeq c[a/x,b/u]}
+    \Gamma, a:A, b:B[a/x]\types \J'(xyeuvd.C,xu.c,a,a,\refl_a,b,b,\drefl_b) \jdeq c[a/x,b/u] \hspace{1em}}
   \end{mathpar}
   \caption{Dependent identity types}
   \label{fig:depid}
