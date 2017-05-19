@@ -1808,7 +1808,7 @@ The ``dimension'' of the constructor determines the simplicial cofibration $K\to
 Finally, in the case of path-constructors, the source and target of the path determine the ``attaching map'' of the cell.
 This is all made clearer by a discussion of examples.
 
-\begin{eg}
+\begin{eg} \label{eg:ordinary-inductives}
   Ordinary inductive types are the special case of higher inductive types that have no path-constructors.
   In this case, each cell is of the form $\emptyset \to \dT_{\W A B}$, so instead of a ``cell complex'' we are really just building a \emph{coproduct} of the monads $\dT_{\W A B}$ corresponding to each constructor.
   In the case of only one constructor, we just get $\dT_{\W A B}$ itself, as we used in \cref{sec:w-types}.
@@ -1817,7 +1817,7 @@ This is all made clearer by a discussion of examples.
   The former yields the monad for pointed objects, the latter the monad for objects with an endomorphism; thus their algebraic coproduct is the monad for pointed objects with an endomorphism, the same one we used in \cref{sec:natural-numbers}.
 \end{eg}
 
-\begin{eg}\label{thm:glob-cx}
+\begin{eg}\label{eg:glob-cx}
   Any cell complex construction of a simplicial set $K$ using ``globular'' cells can be translated into a cell monad for a higher inductive version of $K$.
   For instance, the circle has a 0-dimensional cell and a 1-dimensional cell:
   \[
@@ -1833,7 +1833,7 @@ This is all made clearer by a discussion of examples.
   In such cases, of course, the technology of cell monads is overkill; we can simply take the simplicial copower $1\otimes K$ and fibrantly replace it, arguing as in \crefrange{sec:pushouts}{sec:pushouts-type-theory}.
 \end{eg}
 
-\begin{eg}
+\begin{eg} \label{eg:non-rec}
   More general non-recursive higher inductive types are constructed in a similar way with nontrivial endofunctors.
   For instance, given $f_i : A \to B_i$ as in \crefrange{sec:pushouts}{sec:pushouts-type-theory}, we have a cell endofunctor
   \[ \mathclap{
@@ -1857,7 +1857,7 @@ This is all made clearer by a discussion of examples.
   This is always obvious, so subsequently we omit to mention it.
 \end{eg}
 
-\begin{eg}
+\begin{eg} \label{eg:prop-trunc}
   The propositional truncation (\cref{sec:prop-trunc}) expressed as a higher inductive type has two constructors:
   \begin{itemize}
   \item $\tr:A \to\brck{A}$
@@ -1883,7 +1883,7 @@ This is all made clearer by a discussion of examples.
 In general, when describing the attaching maps of a cell monad it is useful to know that monad morphisms $\dS\to\dT$ are equivalent to functors $\dT\alg\to\dS\alg$ over \sM, i.e.\ natural ways to assign an \dS-algebra structure to any \dT-algebra.
 In particular, if \dS is algebraically-free on an endofunctor $F$, then such a morphism is determined by a natural way to assign an $F$-endofunctor-algebra to any \dT-algebra.
 
-\begin{eg}
+\begin{eg} \label{eg:james}
   The \textbf{James construction} $JA$ of a type $A$ equipped with a point $\star : A$, as defined in~\cite{brunerie:thesis}, has three constructors:
   \begin{itemize}
   \item $\varepsilon : JA$
@@ -1902,7 +1902,7 @@ In particular, if \dS is algebraically-free on an endofunctor $F$, then such a m
   We leave it to the reader to translate from typal initial algebras to dependent identity types as in \cref{thm:transfer-depid}.
 \end{eg}
 
-\begin{eg}
+\begin{eg} \label{eg:localization}
   Given a type $I$, two types $i:I\types S_i\type$ and $i:I\types T_i\type$, and a family of functions $i:I,s:S_i \types f_i(s) : T_i$, corresponding to a map $f:S\to T$ in $\sM/I$, the \textbf{$f$-localization} of a type $A$, as defined in~\cite{rss:modalities}, has five constructors:
   \begin{itemize}
   \item $\mathsf{loc}:A\to L_f A$
@@ -1931,13 +1931,58 @@ Then our new monad cell glues in a simplicial square with the appropriate bounda
 We leave the details to the interested reader.
 
 In particular, any simplicial set $K$ with finitely many nondegenerate simplices can be constructed as a finite complex of ``simplicial cells'' involving the boundary cofibrations $\partial\Delta^n \to \Delta^n$.
-Thus, this method yields a higher inductive type representing $K$; although as in \cref{thm:glob-cx} such a simple example can be obtained more easily as a fibrant replacement of $1\otimes K$.
+Thus, this method yields a higher inductive type representing $K$; although as in \cref{eg:glob-cx} such a simple example can be obtained more easily as a fibrant replacement of $1\otimes K$.
 
 The general workaround applies also to many other examples, but is not universally applicable.
 In particular, it does not apply to constructor~\ref{item:f4} from \cref{sec:blass}, which uses \N-induction to define the source and target!
 However, this problem goes away when \sM has a trivial model structure, such as $\mathbf{Set}$, so at least in that case our construction does apply to yield the \iF that is unachievable within ZF.
 
+\section{Summary}
+\label{sec:summary}
 
+Through the course of the paper, we have accumulated a large amount of machinery.
+%
+For reference, therefore, we give here a self-contained summary of what we have obtained, and what it yields specifically for the semantics of higher inductive types.
+
+\begin{theorem}
+  Let $\sM$ be an excellent model category: that is, simplicial, combinatorial, right proper, locally cartesian closed, and with all monos cofibrations, and cofibrations stable under limits.
+  %
+  Let $\dT$ be a cell monad on M.
+  %
+  Then :
+  %
+  \begin{enumerate}
+  \item \fibmf has weakly stable typal initial $\dT\algf$-algebras (\cref{thm:cell-wkstab-param}), where \fibmf is the comprehension category of fibrant objects of \sM and fibrations of \sM;
+  \item $\dT\algf$ has representable lifts (\cref{thm:cell-replift-param}), and \Mf satisfies condition \eqref{eq:lf}; 
+  \item hence by \cref{thm:lu-str-param}, its local universe splitting $\fibmfbang$ has strictly stable typal initial $\dT\algf$-algebras (\cref{thm:cellmndparam}).
+  \end{enumerate}
+\end{theorem}
+
+From this general result along with \cref{eg:non-rec,eg:prop-trunc,eg:james,eg:localization}, and/or by the warm-up cases treated individually in \cref{sec:coproducts,sec:pushouts,sec:coherence-pushouts,sec:pushouts-type-theory,sec:natural-numbers,sec:w-types,sec:prop-trunc}, we obtain:
+% 
+\begin{theorem}
+  Suppose $\sM$ an excellent model category.  
+  % 
+  Then the comprehension category \fibmf (resp.\ its local universes splitting $\fibmfbang$) has weakly (resp.\ strictly) stable structure for:
+  \begin{enumerate}
+  \item pushout types;
+  \item a natural numbers type;
+  \item $\W$-types;
+  \item propositional truncations;
+  \item James constructions;
+  \item localizations;
+  \item a torus type.
+  \end{enumerate}
+  
+  Some of these moreover do not require the assumption of combinatoriality on $\sM$, and extend to structure on the whole of $\fibm$ (resp.\ $\fibmbang$).
+\end{theorem}
+
+We therefore confidently expect that $\fibmfbang$ will interpret the syntax of type theory with all the above types, given suitable initiality theorems for syntax.
+
+Moreover, we expect cell monads with parameters to suffice for obtaining many other higher inductive types, under the limitation that constructors cannot involve “fibrant structure”, i.e.\ eliminations into the higher inductive type itself.
+
+Finally, we recall that the “excellent” model categories to which these results apply include sets and simplicial sets (with their standard model structures), and more generally all right proper simplicial Cisinski model categories.
+ 
 \bibliographystyle{alphamod}
 \bibliography{basictex/all}
 
