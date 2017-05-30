@@ -220,7 +220,7 @@ Open problems include the following.
 \section{Good model categories}
 \label{sec:model-categ-type}
 
-We will work throughout in the following context.
+We will work throughout in the following contexts.
 
 \begin{defn}
   A \textbf{good model category} is a model category \sM with the following additional properties.
@@ -231,16 +231,22 @@ We will work throughout in the following context.
   \item \sM is right proper, i.e.\ weak equivalences are preserved by pullback along fibrations.\label{item:m2}
   \item As a category, \sM is locally cartesian closed.\label{item:m3}
   \end{enumerate}
+  An \textbf{excellent model category} is a good model category that is in addition combinatorial, i.e.\ it satisfies the following further properties.
+  \begin{enumerate}[resume]
+  \item \sM is cofibrantly generated.
+  \item As a category, \sM is locally presentable.
+  \end{enumerate}
 \end{defn}
 
 \begin{eg}
-A \emph{Cisinski model category}~\cite{cisinski:topos,cisinski:presheaves} is a model structure on a Grothendieck topos whose cofibrations are the monomorphisms.
-Therefore, any right proper simplicial Cisinski model category is a good model category.
+A \emph{Cisinski model category}~\cite{cisinski:topos,cisinski:presheaves} is a cofibrantly generated model structure on a Grothendieck topos whose cofibrations are the monomorphisms.
+Therefore, any right proper simplicial Cisinski model category is an excellent model category.
 Cisinski~\cite{cisinski:lccc-rpcmc} and Gepner--Kock~\cite{gk:univlcc} have shown that any locally presentable locally cartesian closed $(\infty,1)$-category (and in particular any Grothendieck $(\infty,1)$-topos~\cite{lurie:higher-topoi}) can be presented by such a model category.
 \end{eg}
 
 \begin{eg}
 Any complete and cocomplete locally cartesian closed category with its trivial model structure (the weak equivalences are the isomorphisms and all morphisms are cofibrations and fibrations) is also a good model category.
+If it is locally presentable, then it is an excellent model category.
 Thus, we also include the standard examples of semantics for extensional type theory.
 \end{eg}
 
@@ -889,12 +895,8 @@ Recall that an \textbf{endofunctor-algebra} for $F_\N$ is an object $X$ together
 A natural numbers object in the ordinary sense is precisely an \emph{initial} such endofunctor-algebra.
 And a natural numbers type over the terminal object is precisely a fibrant $F_\N$-algebra $\N$ such that any fibration $C\to\N$ that is also a map of $F_\N$-algebras has an $F_\N$-algebra section.
 This suggests that $\N$ is an ``initial fibrant $F_\N$-algebra''; we now make this precise using the technology of \emph{algebraic weak factorization systems}~\cite{gt:nwfs,garner:soa,riehl:nwfs-model}.
-For this we strengthen our standing assumptions as follows.
 
-\begin{defn}
-  An \textbf{excellent model category} $\sM$ is a good model category that is in addition \emph{combinatorial}, i.e.\ is a locally presentable category and cofibrantly generated as a model category.
-\end{defn}
-
+From now on, therefore, we will assume that $\sM$ is an \emph{excellent} model category, i.e.\ that in addition to being good it is a combinatorial model category.
 This allows us to use the technology of algebraically-free monads and algebraic colimits of monads~\cite{kelly:transfinite,nlab:transfinite}.
 Let $\dT_\N$ denote the algebraically-free monad on $F_\N$, which exists since $F_\N$ is an accessible endofunctor.
 This is means it is a monad whose monad-algebras are precisely the endofunctor-algebras for $F_\N$.
