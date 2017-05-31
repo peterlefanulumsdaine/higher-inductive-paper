@@ -9,14 +9,6 @@
 %\newcommand{\comment}[1]{\textcolor{red}{#1}}
 \newcommand{\todo}[1]{\textcolor{red}{#1}}
 
-%%%%%%
-% Theorem-style environments
-
-\theoremstyle{plain}
-\newtheorem{theorem}{Theorem}[section]
-\theoremstyle{definition}
-\newtheorem{definition}[theorem]{Definition}
-
 %%%%%
 % Text in typefaces
 
@@ -279,6 +271,14 @@
   %% This command tells cleveref's \cref what to call things
   \crefname{#1}{#2}{#3}% following brace must be on separate line to support poorman cleveref sed file
 }
+\def\defrmk#1#2#3{%
+  %% Ensure all theorem types are numbered with the same counter
+  \newaliascnt{#1}{thm}
+  \newnumbered{#1}[#1]{#2}
+  \aliascntresetthe{#1}
+  %% This command tells cleveref's \cref what to call things
+  \crefname{#1}{#2}{#3}% following brace must be on separate line to support poorman cleveref sed file
+}
 
 % Now define a bunch of theorem-type environments.
 \newtheorem{thm}{Theorem}[section]
@@ -290,15 +290,13 @@
 \defthm{sch}{Scholium}{Scholia}
 % Proof-relevant theorems, i.e. definitions that require a "proof"
 \defthm{prob}{Problem}{Problems}
-\newenvironment{constr}{\begin{proof}[Construction]}{\end{proof}}
-\theoremstyle{definition}
-\defthm{defn}{Definition}{Definitions}
-\theoremstyle{remark}
-\defthm{rmk}{Remark}{Remarks}
-\defthm{eg}{Example}{Examples}
-\defthm{noneg}{Non-example}{Non-examples}
-\defthm{egs}{Examples}{Examples}
-\defthm{notes}{Notes}{Notes}
+\newenvironment{constr}{\begin{proof}[Construction.]}{\end{proof}}
+\defrmk{defn}{Definition}{Definitions}
+\defrmk{rmk}{Remark}{Remarks}
+\defrmk{eg}{Example}{Examples}
+\defrmk{noneg}{Non-example}{Non-examples}
+\defrmk{egs}{Examples}{Examples}
+\defrmk{notes}{Notes}{Notes}
 
 % Also number formulas with the theorem counter
 \let\c@equation\c@thm

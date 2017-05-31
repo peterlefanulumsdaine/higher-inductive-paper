@@ -1,4 +1,4 @@
-\documentclass{amsart}
+\documentclass[referee]{psp}
 \pdfoutput=1
 
 \input{decls}
@@ -79,9 +79,7 @@
 
 \title{Semantics of higher inductive types}
 
-\author{Peter LeFanu Lumsdaine}
-\author{Michael Shulman}
-\thanks{This material is based on research sponsored by The United States Air Force Research Laboratory under agreement number FA9550-15-1-0053.  The U.S. Government is authorized to reproduce and distribute reprints for Governmental purposes notwithstanding any copyright notation thereon.  The views and conclusions contained herein are those of the author and should not be interpreted as necessarily representing the official policies or endorsements, either expressed or implied, of the United States Air Force Research Laboratory, the U.S. Government, or Carnegie Mellon University.}
+\author[Peter LeFanu Lumsdaine and Michael Shulman]{PETER LEFANU LUMSDAINE \and\ MICHAEL SHULMAN\thanks{This material is based on research sponsored by The United States Air Force Research Laboratory under agreement number FA9550-15-1-0053.  The U.S. Government is authorized to reproduce and distribute reprints for Governmental purposes notwithstanding any copyright notation thereon.  The views and conclusions contained herein are those of the author and should not be interpreted as necessarily representing the official policies or endorsements, either expressed or implied, of the United States Air Force Research Laboratory, the U.S. Government, or Carnegie Mellon University.}}
 
 \begin{document}
 
@@ -710,7 +708,7 @@ We now briefly sketch the local universe coherence theorems for all of these str
 \begin{thm}
   If $\C$ has a stable class of dependent identity types and satisfies~\eqref{eq:lf}, then $\C_!$ has strictly stable dependent identity types.
 \end{thm}
-\begin{proof}
+\begin{proof*}
   If $A\in\T_!(\Gamma)$ and $B\in\T_!(\Gamma.A)$ is represented by $E_A\in\T(V_A)$ and $E_B\in\T(V_B)$, then $\Id^A_B\in\T_!(\Gamma.A.A.\Id_A.B.B)$ is represented by a chosen good dependent identity type for $E_B$ over $E_A$, with the local universe
   \begin{align*}
     [ a:V_A, b: (V_B)^{E_A(a)} ]
@@ -726,7 +724,7 @@ We now briefly sketch the local universe coherence theorems for all of these str
     & c:\prod x,x':E_A(a), y:\Id_{E_A}(a,x,x'), u:E_B(b(x)), u':E_B(b(x')), z:\Id^{E_A}_{E_B}(a,x,x',y,b,u,u'). V_C,\\
     & d:\prod x:E_A(a), u:E_B(b(x)) . E_C(c(x,x,\r_{E_A}(a,x),u,u,\r^{E_A}_{E_B}(a,x,u)))].\qedhere
   \end{align*}
-\end{proof}
+\end{proof*}
 
 It is perhaps worth emphasizing how the above local universes are obtained essentially algorithmically from the rules in \cref{fig:depid}, once given that the latter are written in the style of \cref{rmk:rule-style}.
 Namely, each premise of a rule corresponds to one term in the iterated $\Sigma$-type, which is a $\Pi$-type of the consequent of that premise over the additional variables (beyond the arbitrary context $\Gamma$) in the context of that premise.
@@ -734,14 +732,14 @@ Namely, each premise of a rule corresponds to one term in the iterated $\Sigma$-
 \begin{thm}
   If $\C$ has a stable class of identity applications and satisfies~\eqref{eq:lf}, then $\C_!$ has strictly stable identity applications.
 \end{thm}
-\begin{proof}
+\begin{proof*}
   The local universe is
   \begin{align*}
     [ & a:V_A \\
     & b:\prod x:E_A(a). V_B,\\
     & f:\prod x:E_A(a). E_B(b(x)) ].\qedhere
   \end{align*}
-\end{proof}
+\end{proof*}
 
 \begin{thm}\label{thm:lu-pushout}
   If $\C$ has a stable class of typal pushouts and satisfies~\eqref{eq:lf}, then $\C_!$ has strictly stable typal pushouts.
@@ -870,7 +868,7 @@ Strictly stable natural numbers types are the semantic version of the usual rule
 \begin{thm}
   If $\C$ satisfies~\eqref{eq:lf} and has weakly stable natural numbers types, then $\C_!$ has strictly stable natural numbers types.
 \end{thm}
-\begin{proof}
+\begin{proof*}
   Condition~\eqref{eq:lf} provides a terminal object.
   We take this to be to be the local universe for the formation and introduction rules, choosing a weakly stable natural numbers type over it.
   For the elimination and computation rules, the local universe is
@@ -879,7 +877,7 @@ Strictly stable natural numbers types are the semantic version of the usual rule
     &z: E_C(c(\zero)),\\
     &s: \prod x:E_{\N}, y:E_C(c(x)) . E_C(c(\succ(x))) ].\qedhere
   \end{align*}
-\end{proof}
+\end{proof*}
 
 In a good model category, the obvious candidate for a natural numbers type is the countable coproduct $\coprod_{n:\dN} 1$ of copies of the terminal object, which is automatically a ``natural numbers object'' in the usual sense of category theory.
 As usual, the problem is that in general this may not be fibrant (though it is in many examples, such as simplicial sets).
@@ -1104,7 +1102,8 @@ Given functions $f,g:\N\to A$, we write $f\cup g:\N\to A$ for the composite $\N 
 And given $a:A$, we write $\{a\}:\N\to A$ for the constant function at $a$.
 
 Now let $\iF$ be the higher inductive type generated by the following constructors (some numbered for later reference).
-\begin{enumerate}[label=(\arabic*)]%\setcounter{enumi}{-1}
+\begin{enumerate}
+\renewcommand{\theenumi}{(\arabic{enumi})}
 \item[$\bullet$] $0:\iF$.
 \item[$\bullet$] $\iS:\iF\to\iF$.
 \item[$\bullet$] $\sup : (\N\to\iF)\to\iF$.
@@ -1416,7 +1415,8 @@ We record:
 \end{lem}
 
 The question, therefore, is what conditions we can impose on \dT to ensure that
-\begin{enumerate}[label=(\arabic*)]
+\begin{enumerate}
+\renewcommand{\theenumi}{(\arabic{enumi})}
 \item \fibmf has weakly stable initial $\dT\algf$-structures, and
 \item $\dT\algf$ has representable lifts.
 \end{enumerate}
