@@ -1912,7 +1912,8 @@ In particular, if \dS is algebraically-free on an endofunctor $F$, then such a m
 \end{eg}
 
 \begin{eg} \label{eg:localization}
-  Given a type $I$, two types $i:I\types S_i\type$ and $i:I\types T_i\type$, and a family of functions $i:I,s:S_i \types f_i(s) : T_i$, corresponding to a map $f:S\to T$ in $\sM/I$, the \textbf{$f$-localization} of a type $A$, as defined in~\cite{rss:modalities}, has five constructors:
+  Given a type $I$, two types $i:I\types S_i\type$ and $i:I\types T_i\type$, and a family of functions $i:I,s:S_i \types f_i(s) : T_i$, corresponding to a map $f:S\to T$ in $\sM/I$, an object $X\in \sM$ is \textbf{internally $f$-local} if the induced precomposition map $(I^*X)^T \to (I^*X)^S$ in $\sM/I$ is an equivalence.
+  The \textbf{$f$-localization} of a type $A$ can be defined as a higher inductive type with the following five constructors:
   \begin{itemize}
   \item $\mathsf{loc}:A\to L_f A$
   \item $\mathsf{ext}:\prod_{i:I} \prod_{g:S_i \to L_f A} T_i \to L_f A$
@@ -1920,7 +1921,10 @@ In particular, if \dS is algebraically-free on an endofunctor $F$, then such a m
   \item $\mathsf{rtr}:\prod_{i:I} \prod_{g:S_i \to L_f A} \prod_{s:S_i} \id[L_f A]{g(s)}{\mathsf{ext}(i,g,f_i(s))}$
   \item $\mathsf{rtr}':\prod_{i:I} \prod_{h:T_i \to L_f A} \prod_{t:T_i} \id[L_f A]{h(s)}{\mathsf{ext}'(i,h\circ f_i,t)}$
   \end{itemize}
-  The parameter scheme has one type parameter with $\al$ constant at $1_\Gamma$, two more type parameters with $\al(I) = (\Gamma.I\to\Gamma)$, and one term parameter with $\al(I,S,T) = (\Gamma.I.S\to \Gamma.I\to\Gamma)$ and $\be(I,S,T) = (\Gamma.I.S.T[S] \to \Gamma.I.S)$.
+  The first constructor $\mathsf{loc}$ equips $L_f A$ with a map from $A$, while the other four ensure that $L_f A$ is internally $f$-local, being essentially a reorganization of the ``bi-invertibility'' definition of equivalence from~\cite[Chapter 4]{hottbook}: $\mathsf{ext}$ and $\mathsf{ext}'$ give two maps in the opposite direction, while $\mathsf{rtr}$ and $\mathsf{rtr}'$ ensure that they are a section and a retraction of the precomposition map.
+  (In~\cite{rss:modalities} localizations are constructed instead using pushouts and an auxilary higher inductive type $\mathcal{J}_f A$, which is just $L_f A$ with $\mathsf{ext}'$ and $\mathsf{rtr}'$ omitted.)
+
+  The parameter scheme for $L_f A$ has one type parameter with $\al$ constant at $1_\Gamma$, two more type parameters with $\al(I) = (\Gamma.I\to\Gamma)$, and one term parameter with $\al(I,S,T) = (\Gamma.I.S\to \Gamma.I\to\Gamma)$ and $\be(I,S,T) = (\Gamma.I.S.T[S] \to \Gamma.I.S)$.
   The first cell is $\emptyset \to F^{\emptyset\to A}$.
   The second and third cells are both $\emptyset \to F^{T^*S \to T}$, where $T^*S$ denotes the pullback of $S\to I$ along $T\to I$.
   Finally, the fourth and fifth cells are $F^{S^*S\to S} \otimes (\mathbf{2}\to \ivl)$ and $F^{T^*T\to T} \otimes (\mathbf{2}\to \ivl)$, while the attaching maps can be obtained by interpreting the terms $g(s)$, ${\mathsf{ext}(i,g,f_i(s))}$, $h(s)$, and ${\mathsf{ext}'(i,h\circ f_i,t)}$ in the internal \emph{extensional} type theory of the locally cartesian closed category \sM.
