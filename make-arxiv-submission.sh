@@ -3,7 +3,7 @@
 # Create a .zip file containing all files needed for arXiv submission,
 # for easy uploading
 
-master_name=pushout
+master_name=pushout-arxiv
 
 latexmk -bibtex -pdf ${master_name}
 
@@ -18,6 +18,7 @@ cp *.tex ${submission_dir_name}/
 cp ${master_name}.bbl ${submission_dir_name}/
 # remove any files *not* to be included in submission
 cd $submission_dir_name
+rm pushout-mpcps.tex
 rm higher-inductive-semantics.tex
 
 # create zip archive, from inside temp directory so files are at root level of archive
