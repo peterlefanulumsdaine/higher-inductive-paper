@@ -1,7 +1,7 @@
 \documentclass[referee]{psp}
 
-% Note: a \newif might seem cleaner, but does not nest correctly; see https://tex.stackexchange.com/a/2951/  So we roll our own conditionals.
-\newcommand{\ifmpcps}[2]{#1}
+\newif\ifmpcps
+\mpcpstrue
 
 \input{pushout.tex}
 

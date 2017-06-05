@@ -12,12 +12,12 @@
 %%%%%%		
 % Theorem-style environments		
 		
-\ifmpcps{}{
+\ifmpcps\else
 \theoremstyle{plain}		
 \newtheorem{theorem}{Theorem}[section]		
 \theoremstyle{definition}		
 \newtheorem{definition}[theorem]{Definition}		
-}
+\fi
 
 %%%%%
 % Text in typefaces
@@ -281,7 +281,7 @@
   %% This command tells cleveref's \cref what to call things
   \crefname{#1}{#2}{#3}% following brace must be on separate line to support poorman cleveref sed file
 }
-\ifmpcps{
+\ifmpcps
 \def\defrmk#1#2#3{%
   %% Ensure all theorem types are numbered with the same counter
   \newaliascnt{#1}{thm}
@@ -289,8 +289,7 @@
   \aliascntresetthe{#1}
   %% This command tells cleveref's \cref what to call things
   \crefname{#1}{#2}{#3}% following brace must be on separate line to support poorman cleveref sed file
-}} % else if not mpcps
-{}
+}\fi
 
 % Now define a bunch of theorem-type environments.
 \newtheorem{thm}{Theorem}[section]
@@ -302,7 +301,7 @@
 \defthm{sch}{Scholium}{Scholia}
 % Proof-relevant theorems, i.e. definitions that require a "proof"
 \defthm{prob}{Problem}{Problems}
-\ifmpcps{
+\ifmpcps
   \newenvironment{constr}{\begin{proof}[Construction.]}{\end{proof}}
   \defrmk{defn}{Definition}{Definitions}
   \defrmk{rmk}{Remark}{Remarks}
@@ -310,7 +309,7 @@
   \defrmk{noneg}{Non-example}{Non-examples}
   \defrmk{egs}{Examples}{Examples}
   \defrmk{notes}{Notes}{Notes}
-}{
+\else
   \newenvironment{constr}{\begin{proof}[Construction]}{\end{proof}}
   \theoremstyle{definition}
   \defthm{defn}{Definition}{Definitions}
@@ -320,7 +319,7 @@
   \defthm{noneg}{Non-example}{Non-examples}
   \defthm{egs}{Examples}{Examples}
   \defthm{notes}{Notes}{Notes}
-}
+\fi
 % Also number formulas with the theorem counter
 \let\c@equation\c@thm
 \numberwithin{equation}{section}

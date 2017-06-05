@@ -17,13 +17,13 @@
   \ifx\uncover\undefined\beamerfalse\else\beamertrue\fi
 \fi
 
-\ifmpcps{}{\iftac\else\usepackage{amsthm}\fi}
+\ifmpcps\else\iftac\else\usepackage{amsthm}\fi\fi
 \usepackage[all,2cell]{xy}
 %\UseAllTwocells
 \usepackage{tikz-cd}
 %\usetikzlibrary{arrows}
 \ifbeamer\else
-  \ifmpcps{}{\usepackage{enumitem}}
+  \ifmpcps\else\usepackage{enumitem}\fi
   \usepackage{xcolor}
   \usepackage[hyphens]{url} % loaded explicitly (instead of automatically by hyperref) to allow url linebreaks at hyphens
   \definecolor{darkgreen}{rgb}{0,0.45,0} 
@@ -263,7 +263,7 @@
 \DeclareMathOperator\Ho{Ho}
 \DeclareMathOperator\Aut{Aut}
 \DeclareMathOperator\End{End}
-\ifmpcps{}{\DeclareMathOperator\Hom{Hom}}
+\ifmpcps\else\DeclareMathOperator\Hom{Hom}\fi
 \DeclareMathOperator\Map{Map}
 
 %% ARROWS
@@ -415,12 +415,12 @@
 \fi
 
 % Left margins for enumitem		
-\ifmpcps{}{ %else
+\ifmpcps\else
 \ifbeamer\else		
   \setitemize[1]{leftmargin=2em}		
   \setenumerate[1]{leftmargin=*}		
 \fi		
-}
+\fi
 
 % Only show numbers for equations that are actually referenced (or
 % whose tags are specified manually) - uses mathtools.  All equations
@@ -498,10 +498,10 @@
 % )%
 % \endgroup
 
-\ifmpcps{
+\ifmpcps
   \def\qed{\unskip\hskip 1pc\nolinebreak\proofbox}
   \def\qedhere{\unskip\hskip 1pc\nolinebreak\proofbox}
-}{}
+\fi
 
 \makeatother
 
