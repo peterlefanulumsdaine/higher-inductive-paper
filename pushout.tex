@@ -1373,7 +1373,8 @@ In this section we consider ``higher inductive types'' without parameters; in th
 We start with a very general notion of ``typal initial algebra'' in the comprehension category context for which we can isolate the conditions necessary to prove the local universes coherence theorem.
 
 \begin{defn}
-  For any category $\C$, a \textbf{fibred category of structures} over $\C$ is a comprehension category structure $(\C,\S)$ such that the functor $\S\to\C^\to$ is a faithful amnestic isofibration.
+  For any category $\C$, a \textbf{fibred category of structures} over $\C$ is a comprehension category structure $(\C,\S)$ such that the functor $\S\to\C^\to$ is a faithful amnestic isofibration.\footnote{Recall that a functor $U:\cA\to\cB$ is \emph{amnestic} if whenever $f:a\cong b$ is an isomorphism in $\cA$ such that $U a = U b$ and $U f = 1_{U a}$, then also $a = b$ and $f = 1_a$.
+  It is an \emph{isofibration} if for any isomorphism $g:U a \cong b$, there exists an isomorphism $f:a\cong a'$ such that $U a' = b$ and $U f = g$.}
   We call an object of $\S$ an \textbf{\S-algebra}, and we call a lifting of $(X\to \Gamma)\in\C^\to$ to \S an \textbf{\S-structure} on it.
   We call a morphism in \S an \textbf{\S-morphism}.
 \end{defn}
