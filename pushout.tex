@@ -93,6 +93,11 @@
 
 \maketitle
 
+\ifmpcps
+\else
+ \vspace{-1.7\baselineskip} % to fit TOC on first page
+\fi
+
 \begin{abstract}
   \emph{Higher inductive types} are a class of type-forming rules, introduced to provide basic (and not-so-basic) homotopy-theoretic constructions in a type-theoretic style.
   They have proven very fruitful for the ``synthetic'' development of homotopy theory within type theory, as well as in formalizing ordinary set-level mathematics in type theory.
