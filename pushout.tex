@@ -223,6 +223,32 @@ Open problems include the following.
 \end{itemize}
 
 
+\begin{rmk}
+Since this paper constructs models of type theory, we should say a little about the initiality of syntax.
+%
+\todo{Work over the following remark, and then remove/adapt remarks about initiality elsewhere as appropriate:}
+
+Cartmell indicated in \todo{\cite{??}} how the syntax of a type theory should be initial among contextual categories with appropriate structure,
+%
+and Streicher gave \todo{\cite{??}} a thorough proof of this for a specific non-toy type theory, the Calculus of Constructions.
+%
+Workers in the field have generally agreed that adapting this proof to further similar type theories is essentially straightforward, while being too long and bureaucratic for anyone to want to write (or read) in detail.
+%
+This justifies taking appropriately structured contextual categories --- or the corresponding homomorphisms from the initial one --- as one’s notion of “models of type theory”.
+
+Voevodsky (from around \todo{¿2010?}) raised doubts regarding this consensus, suggesting that the extension to further type theories was not sufficiently understood, and that initiality should not be accepted as established for theories beyond the Calculus of Constructions.
+
+We feel that these concerns are in part valid, but somewhat overstated.
+%
+We agree that it would be more satisfactory to have a precisely stated general initiality theorem, for many purposes.
+%
+However, we also generally agree with the traditional heuristic understanding: that Streicher’s proof of initiality extends to specific type theories unproblematically (including those considered here), straightforwardly enough that treating it as established is within usual standards of mathematical practice.
+
+In any case, the use of type theoretic syntax as \emph{notation} for algebraic structure is certainly within usual mathematical standards --- does one ask analysts to prove correctness of variable-binding notation for integrals?
+%
+So readers skeptical of initiality will, we trust, grant us such notation, and may then read “models of type theory” as “homomorphisms from the initial suitably-structured contextual category” throughout, to get the main results of this paper in a form not reliant on any form of initiality for syntax.
+\end{rmk}
+
 \section{Good model categories}
 \label{sec:model-categ-type}
 
