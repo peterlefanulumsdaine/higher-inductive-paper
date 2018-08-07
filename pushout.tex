@@ -194,10 +194,16 @@ We also discuss some limitations of our construction; most importantly, the fact
 This includes concatenation of paths, as used for instance in the standard presentaiton of the torus; however, for this and many other examples, we show how to work around the issue by using more general cofibrations.
 In \cref{sec:summary} we summarize our results for quick reference.
 
-In all cases, we use the \emph{local universes coherence method}~\cite{lw:localuniv} to improve ``weakly stable'' structure to the strictly pullback-stable structure that is necessary to interpret type theory.
-We do not address the also-needed theorem about the initiality of syntax; we restrict ourselves to constructing strictly stable structure on split comprehension categories.
-In \cref{sec:coproducts,sec:w-types} we can use local universes theorems from~\cite{lw:localuniv} verbatim, while in other sections we have to prove the analogous theorems ourselves.
-This is generally straightforward, although it is worth noting that the ``cofibrancy'' of a cell monad plays a role not only in the weak stability of its homotopy-initial algebras but also the ``representability'' of its structures, both of which are necessary for the local universes theorem.
+\begin{rmk}
+  Since type-theoretic laws hold up to strict equality, whereas categorical constructions are well-behaved only up to isomorphism (or homotopy), the standard way to interpret dependent type theory into categories involves an intermediate ``strictification'' step.
+  For this we will use the \emph{local universes coherence method}~\cite{lw:localuniv}, which replaces any well-behaved comprehension category by a split one in such a way that any ``weakly stable'' structure possessed by the original becomes ``strictly stable'' structure in the splitting.
+  In \cref{sec:coproducts,sec:w-types} we use results from~\cite{lw:localuniv} verbatim, while elsewhere we have to prove the analogous theorems ourselves; this is generally straightforward, although it is worth noting that the ``cofibrancy'' of a cell monad plays a role not only in the weak stability of its homotopy-initial algebras but also the ``representability'' of its structures, both of which are necessary for the local universes theorem.
+
+  Once such a strict algebraic structure has been constructed from a desired categorical model, the interpretation is completed by constructing the \emph{initial} such algebraic structure out of the syntax of type theory, so that there is a unique structured map interpreting all the syntax into the desired model.
+  Such an initiality theorem was suggested by~\cite{cartmell:gatcc}, and proven thoroughly by~\cite{streicher:semtt} for a specific non-toy type theory, the Calculus of Constructions.
+  Such proofs are too long and bureaucratic for anyone to want to write or read in detail, but opinions differ as to whether they are straightforward enough that initiality for other type theories (such as those considered here) may be considered established.
+  We take no position on this question; our only goal is to construct split comprehension categories with the appropriate structure to model higher inductive types, and so we will simply refer to these as ``models of type theory''.
+\end{rmk}
 
 Our perspective on higher inductive types can be summarized as follows.
 It is well-known that ordinary inductive types can be described as initial algebras for polynomial endofunctors (and this remains true in homotopy type theory~\cite{ags:it-hott}).
@@ -228,6 +234,32 @@ Open problems include the following.
   A starting point would be to unify our approach with that of~\cite{acdf:qiits}.
 \end{itemize}
 
+
+% \begin{rmk}
+% Since this paper constructs models of type theory, we should say a little about the initiality of syntax.
+% %
+% \todo{Work over the following remark, and then remove/adapt remarks about initiality elsewhere as appropriate:}
+
+% Cartmell indicated in \todo{\cite{??}} how the syntax of a type theory should be initial among contextual categories with appropriate structure,
+% %
+% and Streicher gave \todo{\cite{??}} a thorough proof of this for a specific non-toy type theory, the Calculus of Constructions.
+% %
+% Workers in the field have generally agreed that adapting this proof to further similar type theories is essentially straightforward, while being too long and bureaucratic for anyone to want to write (or read) in detail.
+% %
+% This justifies taking appropriately structured contextual categories --- or the corresponding homomorphisms from the initial one --- as one’s notion of “models of type theory”.
+
+% Voevodsky (from around \todo{¿2010?}) raised doubts regarding this consensus, suggesting that the extension to further type theories was not sufficiently understood, and that initiality should not be accepted as established for theories beyond the Calculus of Constructions.
+
+% We feel that these concerns are in part valid, but somewhat overstated.
+% %
+% We agree that it would be more satisfactory to have a precisely stated general initiality theorem, for many purposes.
+% %
+% However, we also generally agree with the traditional heuristic understanding: that Streicher’s proof of initiality extends to specific type theories unproblematically (including those considered here), straightforwardly enough that treating it as established is within usual standards of mathematical practice.
+
+% In any case, the use of type theoretic syntax as \emph{notation} for algebraic structure is certainly within usual mathematical standards --- does one ask analysts to prove correctness of variable-binding notation for integrals?
+% %
+% So readers skeptical of initiality will, we trust, grant us such notation, and may then read “models of type theory” as “homomorphisms from the initial suitably-structured contextual category” throughout, to get the main results of this paper in a form not reliant on any form of initiality for syntax.
+% \end{rmk}
 
 \section{Good model categories}
 \label{sec:model-categ-type}
@@ -281,13 +313,13 @@ Every good model category is a type-theoretic model category in the sense of~\ci
 In particular, cofibrations are stable under pullback, so acyclic cofibrations are stable under pullback along fibrations, and hence dependent products of fibrations along fibrations are fibrations.
 Taken together, this implies that the fibrations in a good model category $\sM$ form a \emph{comprehension category} $\fibm$ that has the categorical structure corresponding to type theory with dependent sums (including a unit type), dependent products, and identity types.
 
-To actually construct such an interpretation requires a coherence theorem\footnote{And also an ``initiality theorem''.} making all the structure strictly stable under pullback.
+To actually construct such an interpretation requires a coherence theorem making all the structure strictly stable under pullback.
 We will use the coherence method of~\cite{lw:localuniv}, which applies to many different kinds of structure.
 The input to this method is a general comprehension category $(\C,\T)$.
 One then defines the \textbf{left adjoint splitting} $(\C,\T_!)$ (or just $\C_!$ for short) in which a type $A\in \T_!(\Gamma)$ consists of an object $V_A\in\C$, a type $E_A\in\T(V_A)$, and a map $\name{A}:\Gamma\to V_A$.
 We call $V_A$ the ``local universe'' and think of this as a representative of the pullback of $E_A$ along $\name{A}$.
 Reindexing of such types is done by simple composition ($A[f]$ is $\name{A}\circ f$) which is strictly associative.
-The local universes technique then shows that if $\C$ satisfies a technical condition (see~\eqref{eq:lf} below) and $\C$ has ``weakly stable'' structure of some sort, meaning that it exists in each fiber $\T(\Gamma)$ and the reindexing of \emph{a} structure is \emph{a} structure, then $\C_!$ admits \emph{strictly} stable structure (obtained by constructing weakly stable structure once in the ``universal case''), and thus (modulo an appropriate ``initiality theorem'') provides semantics for the corresponding type-theoretic rules.
+The local universes technique then shows that if $\C$ satisfies a technical condition (see~\eqref{eq:lf} below) and $\C$ has ``weakly stable'' structure of some sort, meaning that it exists in each fiber $\T(\Gamma)$ and the reindexing of \emph{a} structure is \emph{a} structure, then $\C_!$ admits \emph{strictly} stable structure (obtained by constructing weakly stable structure once in the ``universal case''), and thus provides semantics for the corresponding type-theoretic rules.
 See~\cite{lw:localuniv} for details.
 
 We summarize the above discussion as follows.
@@ -600,9 +632,6 @@ Finally, we can define a type-theoretic notion of pushout.
 \label{sec:pushouts-type-theory}
 
 Finally, we move to strict stability and type theory.
-As in~\cite{lw:localuniv}, we do not formally make the connection all the way to syntactic type theory; we stop with strictly stable structure on a split comprehension category.
-(The gap requires an ``initiality theorem'' for syntax, which is expected to be straightforward but tedious, and involves very different techniques.)
-
 Recall the basic condition on a comprehension category $(\C,\T)$ that makes local universe theorems work:
 \begin{equation}
   \label{eq:lf}
@@ -623,7 +652,7 @@ Of course, since a good model category $\sM$ is locally cartesian closed, $\fibm
 \end{defn}
 
 Our strictly stable identity types are easily seen to be equivalent to~\cite[Definition 3.4.3.1]{lw:localuniv} with the ``Frobenius'' condition omitted (which we don't bother with since our intended models all have $\Pi$-types).
-Modulo the initiality theorem, the above strictly stable structure corresponds to the type-theoretic rules shown in \cref{fig:id,fig:depid,fig:ap,fig:pushouts}.
+Syntactically, the above strictly stable structure corresponds to the type-theoretic rules shown in \cref{fig:id,fig:depid,fig:ap,fig:pushouts}.
 
 \begin{rmk}\label{rmk:rule-style}
   Because we are not concerned with syntactic properties such as admissibility of substitution, we have no qualms about adding variables to the context of the conclusion.
@@ -1814,8 +1843,8 @@ In particular, note that in \cref{defn:cell-param} we did not assume any compati
 However, we did assume that the resulting monads fit together into a cartesian morphism from instantiations to \emph{fibred} monads, which implies that \emph{however} the parameters are being used in the construction of the monads $\dT(\Th)$ \emph{must} be stable under reindexing, and this is all that is required for \cref{thm:cell-wkstab-param,thm:cell-replift-param}.
 In fact, the internals of $\cInst(\P)$ are only needed to prove the local universes coherence theorem, \cref{thm:lu-str-param}; for \cref{thm:cell-wkstab-param,thm:cell-replift-param}, $\cInst(\P)$ could just as well be \emph{any} fibration over $\C$.
 
-Although \cref{thm:cellmndparam} is very general, unlike our results in \crefrange{sec:pushouts-type-theory}{sec:prop-trunc} it is missing more than just an initiality theorem to yield a result about models of syntactic type theory.
-Specifically, in order to apply it to any particular syntactic higher inductive type $\iH$, we have to do the following.
+Although \cref{thm:cellmndparam} is very general, unlike our results in \crefrange{sec:pushouts-type-theory}{sec:prop-trunc} it requires more work to extract from \cref{thm:cellmndparam} a statement about models of type theory.
+Specifically, in order to apply it to any particular higher inductive type $\iH$, we have to do the following.
 \begin{enumerate}
 \item Manually translate the parameters of $\iH$ to a parameter scheme (\cref{defn:param-scheme}).
   This is practically algorithmic along the lines discussed above: for each parameter, $\al$ corresponds to the extended context of that parameter, and in the case of a term parameter, $\be$ corresponds to the type of that parameter.
@@ -2012,7 +2041,7 @@ From this general result along with \cref{eg:non-rec,eg:prop-trunc,eg:james,eg:l
   % Moreover, some of these do not require the assumption of combinatoriality on $\sM$, and extend to structure on the whole of $\fibm$ (resp.\ $\fibmbang$).
 \end{thm}
 
-We therefore confidently expect that $\fibmfbang$ will interpret the syntax of type theory with all the above types, given suitable initiality theorems for syntax.
+%We therefore confidently expect that $\fibmfbang$ will interpret the syntax of type theory with all the above types, given suitable initiality theorems for syntax.
 
 Moreover, we expect cell monads with parameters to suffice for obtaining many other higher inductive types, under the limitation that the constructors do not involve ``fibrant structure'', i.e.\ eliminations into the higher inductive type itself.
 
