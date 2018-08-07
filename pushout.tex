@@ -1572,7 +1572,7 @@ Finally, we also have:
 \end{thm}
 \begin{proof}
   To make the induction go through, we will prove the following stronger result.
-  Let $\dS\to\dT$ be a \emph{relative} cell monad.
+  Let $\dS\to\dT$ be a \emph{relative} cell monad and let $\Gamma$ be a fibrant object.
   For any fibrations $B\fib A\fib \Gamma$ such that $A\fib \Gamma$ is a $\dT_\Gamma$-algebra and $B\fib\Gamma$ is an $\dS_\Gamma$-algebra and $B\to A$ is an $\dS_\Gamma$-algebra map, we will show that there is a representing object $V$ for extensions of the \dS-algebra structure on $B$ to a \dT-algebra structure making $B\to A$ into a \dT-algebra map, and that moreover the map $V\to\Gamma$ is a fibration.
 
   In particular, this property implies that $V$ is fibrant, as it must be since we are considering $\dT\algf$ rather than $\dT\alg$.
@@ -2017,6 +2017,7 @@ From this general result along with \cref{eg:non-rec,eg:prop-trunc,eg:james,eg:l
   % 
   Then the comprehension category \fibmf has weakly stable structure, and its local universes splitting $\fibmfbang$ has strictly stable structure, for the following type formers:
   \begin{enumerate}
+  \item coproduct types;
   \item pushout types;
   \item a natural numbers type;
   \item $\W$-types;
