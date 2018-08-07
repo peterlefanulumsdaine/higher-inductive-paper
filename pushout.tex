@@ -1138,11 +1138,9 @@ Intuitively, $\iF$ can be thought of as a set of notations for countable ordinal
 \item For any $f,g:\N\to\N$ such that $\forall n. ((\exists m. f(m)=n) \leftrightarrow (\exists m. g(m)=n))$, and any $h:\N\to \iF$, we have $\sup(h\circ f) = \sup(h\circ g)$.\label{item:f1}
 \item For any $f,g:\N\to\iF$ we have $\sup(f \cup \{\sup(f\cup g)\}) = \sup(f\cup g)$.\label{item:f2}
 \item For any $f,g:\N\to\iF$ we have $\sup(f \cup \{\iS(\sup(f\cup g))\}) = \iS(\sup(f\cup g))$.\label{item:f3}
-\item Suppose $b,c:\N\to\N$ are jointly surjective, and that $L:\N\to\N\to\N$ is such that $\forall n. \exists m,\ell. (L(b(m),\ell)=c(n))$ and $\forall n. \exists m,\ell. (L(c(m),\ell)=b(n))$.
-  Given $h:\N\to\iF$, define $h'(n) = \sup(h\circ L(n))$.
-  By induction define $h_0 = h$ and $h_{k+1} = h_k'$, while $f_k = h_k \circ b$ and $g_k = h_k \circ c$.
-  Finally, let $\mathsf{pair}:\N\times\N\to \N$ be a bijection and define $\fbar(\mathsf{pair}(k,n)) = f_k(n)$ and $\gbar(\mathsf{pair}(k,n)) = g_k(n)$.
-  Then we have $\sup(\fbar) = \sup(\gbar)$.\label{item:f4}
+\item This constructor requires some setup. Fix a bijection $\mathsf{pair}:\N\times\N\to \N$; then suppose given $b,c:\N\to\N$ jointly surjective, and $L:\N\to\N\to\N$ such that $\forall n. \exists m,\ell. (L(b(m),\ell)=c(n))$ and $\forall n. \exists m,\ell. (L(c(m),\ell)=b(n))$.  For $h:\N\to\iF$, set $h'(n) = \sup(h\circ L(n))$.  Now given such $h$, take by induction $h_0 = h$, $h_{k+1} = h_k'$; then set $f_k = h_k \circ b$ and $g_k = h_k \circ c$, and finally $\fbar(\mathsf{pair}(k,n)) = f_k(n)$ and $\gbar(\mathsf{pair}(k,n)) = g_k(n)$. Note that for each $i$, $\fbar(i)$, $\gbar(i)$ are algebraic expressions in the variables $h$ under the operation $\sup$.
+
+  Now the constructor says: for each such $b$, $c$, $L$, and $h$, $\sup(\fbar) = \sup(\gbar)$.\label{item:f4}
 \item $\sup(\{0\}) = 0$.\label{item:f5}
 \end{enumerate}
 
