@@ -899,7 +899,7 @@ Thus, we have to be more clever.
 Let $F_\N$ denote the endofunctor of $\sM$ defined by $F_\N(X) = X+1$.
 Recall that an \textbf{endofunctor-algebra} for $F_\N$ is an object $X$ together with a map $F_\N(X) \to X$.
 A natural numbers object in the ordinary sense is precisely an \emph{initial} such endofunctor-algebra.
-And a natural numbers type over the terminal object is precisely a fibrant $F_\N$-algebra $\N$ such that any fibration $C\to\N$ that is also a map of $F_\N$-algebras has an $F_\N$-algebra section.
+And a natural numbers type over the terminal object is precisely a fibrant $F_\N$-algebra $\N$ such that any fibration $C\fib\N$ that is also a map of $F_\N$-algebras has an $F_\N$-algebra section.
 This suggests that $\N$ is an ``initial fibrant $F_\N$-algebra''; we now make this precise using the technology of \emph{algebraic weak factorization systems}~\cite{gt:nwfs,garner:soa,riehl:nwfs-model}.
 
 From now on, therefore, we will assume that $\sM$ is an \emph{excellent} model category, i.e.\ that in addition to being good it is a combinatorial model category.
@@ -1291,7 +1291,7 @@ The following proof introduces one more new idea: algebraic pushouts of monads t
   And if $\dT_{\mathbf{2}}$ and $\dT_\ivl$ denote the algebraically-free monads on these (accessible) endofunctors, we have an induced monad morphism $\dT_{\mathbf{2}} \to \dT_\ivl$ that has the same effect on algebras.
 
   Let $\dId$ denote the identity functor with its unique monad structure, so that every object has a unique $\dId$-algebra structure.
-  Every object also has a canonical (though not unique) $\dT_{\mathbf{2}}$-algebra structure consisting of the two projections, so there is a monad morphism $\dT_{\mathbf{2}} \to \dId$.
+  Every object also has a natural (though not unique) $\dT_{\mathbf{2}}$-algebra structure consisting of the two projections, so there is a monad morphism $\dT_{\mathbf{2}} \to \dId$.
   Let $\dtprop$ be the algebraic monad pushout:
   \[
   \begin{tikzcd}
@@ -1373,14 +1373,14 @@ Note that by the assumptions on $\S$, the collection of \S-structures on any $X\
   Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures over \C.
   Given $A\in\T(\Gamma)$ and $B\in\T(\Gamma.A)$ and any \S-structure $\sA$ on $\Gamma.A\to\Gamma$, an \textbf{\S-lift} of $\sA$ to $B$ is an \S-structure on the composite $\Gamma.A.B\to\Gamma.A\to\Gamma$ such that $\Gamma.A.B\to\Gamma.A$ becomes an \S-morphism over $\Gamma$.
   We say that \S has \textbf{representable lifts} if for any $A,B,\sA$, the functor $(\C/\Gamma)\op \to \mathbf{Set}$ defined by
-  \begin{equation*}
+  \begin{equation}\label{eq:replift}
     (\sigma:\Delta\to\Gamma) \mapsto \{ \text{\S-lifts of $\sA[\sigma]$ to $B[\sigma]$}\}
-  \end{equation*}
+  \end{equation}
   is representable.
   In other words, there exists a map $\varpi:V_{\sA,B}\to\Gamma$ and an $\S$-lift $\sB$ of $\sA[\varpi]$ to $B[\varpi]$, such that for any $\sigma:\Delta\to\Gamma$ and any $\S$-lift $\sB'$ of $\sA[\sigma]$ to $B[\sigma]$, there is a unique map $\tau:\Delta\to V_{\sA,B}$ such that $\varpi \circ \tau = \sigma$ and $\sB' = \sB[\tau]$.
 \end{defn}
 
-Note that the notion of representable lift \emph{does} involve both \S and \T, and also that the assumptions on \S ensure that this functor really does sensibly take values in (partially ordered) \emph{sets} (rather than groupoids or categories).
+Note that the notion of representable lift \emph{does} involve both \S and \T, and also that the assumptions on \S ensure that the functor~\eqref{eq:replift} really does sensibly take values in (partially ordered) \emph{sets} (rather than groupoids or categories).
 
 \begin{lem}
   Let $(\C,\T)$ be a comprehension category and \S a fibred category of structures over \C.
@@ -1414,7 +1414,7 @@ To obtain a \emph{fibred} category of algebras, we need to consider fibred monad
 In particular, such a \dT induces a monad $\dT_\Gamma$ on each slice category $\C/\Gamma$, and each pullback functor $\sigma^* : \C/\Gamma \to \C/\Delta$ is a \emph{strong monad morphism}, i.e.\ it satisfies $\sigma^* \dT_\Gamma \cong \dT_\Delta \sigma^*$ coherently.
 That is, a fibred monad is equivalently an \emph{indexed} monad.
 
-Let $\dT\alg$ denote the category of \dT-algebras, which is again fibred over \C; the fiberwiseness of $\eta$ means that its fiber over $\Gamma$ is $\dT_\Gamma\alg$.
+Let $\dT\alg$ denote the category of \dT-algebras, which is again fibred over \C; the fiberwiseness of $\eta$ means that the fiber of $\dT\alg$ over $\Gamma$ is $\dT_\Gamma\alg$.
 We record:
 
 \begin{lem}
