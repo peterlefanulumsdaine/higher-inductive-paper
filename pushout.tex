@@ -190,10 +190,16 @@ We also discuss some limitations of our construction; most importantly, the fact
 This includes concatenation of paths, as used for instance in the standard presentaiton of the torus; however, for this and many other examples, we show how to work around the issue by using more general cofibrations.
 In \cref{sec:summary} we summarize our results for quick reference.
 
-In all cases, we use the \emph{local universes coherence method}~\cite{lw:localuniv} to improve ``weakly stable'' structure to the strictly pullback-stable structure that is necessary to interpret type theory.
-We do not address the also-needed theorem about the initiality of syntax; we restrict ourselves to constructing strictly stable structure on split comprehension categories.
-In \cref{sec:coproducts,sec:w-types} we can use local universes theorems from~\cite{lw:localuniv} verbatim, while in other sections we have to prove the analogous theorems ourselves.
-This is generally straightforward, although it is worth noting that the ``cofibrancy'' of a cell monad plays a role not only in the weak stability of its homotopy-initial algebras but also the ``representability'' of its structures, both of which are necessary for the local universes theorem.
+\begin{rmk}
+  Since type-theoretic laws hold up to strict equality, whereas categorical constructions are well-behaved only up to isomorphism (or homotopy), the standard way to interpret dependent type theory into categories involves an intermediate ``strictification'' step.
+  For this we will use the \emph{local universes coherence method}~\cite{lw:localuniv}, which replaces any well-behaved comprehension category by a split one in such a way that any ``weakly stable'' structure possessed by the original becomes ``strictly stable'' structure in the splitting.
+  In \cref{sec:coproducts,sec:w-types} we use results from~\cite{lw:localuniv} verbatim, while elsewhere we have to prove the analogous theorems ourselves; this is generally straightforward, although it is worth noting that the ``cofibrancy'' of a cell monad plays a role not only in the weak stability of its homotopy-initial algebras but also the ``representability'' of its structures, both of which are necessary for the local universes theorem.
+
+  Once such a strict algebraic structure has been constructed from a desired categorical model, the interpretation is completed by constructing the \emph{initial} such algebraic structure out of the syntax of type theory, so that there is a unique structured map interpreting all the syntax into the desired model.
+  Such an initiality theorem was suggested by~\cite{cartmell:gatcc}, and proven thoroughly by~\cite{streicher:semtt} for a specific non-toy type theory, the Calculus of Constructions.
+  Such proofs are too long and bureaucratic for anyone to want to write or read in detail, but opinions differ as to whether they are straightforward enough that initiality for other type theories (such as those considered here) may be considered established.
+  We take no position on this question; our only goal is to construct split comprehension categories with the appropriate structure to model higher inductive types, and so we will simply refer to these as ``models of type theory''.
+\end{rmk}
 
 Our perspective on higher inductive types can be summarized as follows.
 It is well-known that ordinary inductive types can be described as initial algebras for polynomial endofunctors (and this remains true in homotopy type theory~\cite{ags:it-hott}).
@@ -223,31 +229,31 @@ Open problems include the following.
 \end{itemize}
 
 
-\begin{rmk}
-Since this paper constructs models of type theory, we should say a little about the initiality of syntax.
-%
-\todo{Work over the following remark, and then remove/adapt remarks about initiality elsewhere as appropriate:}
+% \begin{rmk}
+% Since this paper constructs models of type theory, we should say a little about the initiality of syntax.
+% %
+% \todo{Work over the following remark, and then remove/adapt remarks about initiality elsewhere as appropriate:}
 
-Cartmell indicated in \todo{\cite{??}} how the syntax of a type theory should be initial among contextual categories with appropriate structure,
-%
-and Streicher gave \todo{\cite{??}} a thorough proof of this for a specific non-toy type theory, the Calculus of Constructions.
-%
-Workers in the field have generally agreed that adapting this proof to further similar type theories is essentially straightforward, while being too long and bureaucratic for anyone to want to write (or read) in detail.
-%
-This justifies taking appropriately structured contextual categories --- or the corresponding homomorphisms from the initial one --- as one’s notion of “models of type theory”.
+% Cartmell indicated in \todo{\cite{??}} how the syntax of a type theory should be initial among contextual categories with appropriate structure,
+% %
+% and Streicher gave \todo{\cite{??}} a thorough proof of this for a specific non-toy type theory, the Calculus of Constructions.
+% %
+% Workers in the field have generally agreed that adapting this proof to further similar type theories is essentially straightforward, while being too long and bureaucratic for anyone to want to write (or read) in detail.
+% %
+% This justifies taking appropriately structured contextual categories --- or the corresponding homomorphisms from the initial one --- as one’s notion of “models of type theory”.
 
-Voevodsky (from around \todo{¿2010?}) raised doubts regarding this consensus, suggesting that the extension to further type theories was not sufficiently understood, and that initiality should not be accepted as established for theories beyond the Calculus of Constructions.
+% Voevodsky (from around \todo{¿2010?}) raised doubts regarding this consensus, suggesting that the extension to further type theories was not sufficiently understood, and that initiality should not be accepted as established for theories beyond the Calculus of Constructions.
 
-We feel that these concerns are in part valid, but somewhat overstated.
-%
-We agree that it would be more satisfactory to have a precisely stated general initiality theorem, for many purposes.
-%
-However, we also generally agree with the traditional heuristic understanding: that Streicher’s proof of initiality extends to specific type theories unproblematically (including those considered here), straightforwardly enough that treating it as established is within usual standards of mathematical practice.
+% We feel that these concerns are in part valid, but somewhat overstated.
+% %
+% We agree that it would be more satisfactory to have a precisely stated general initiality theorem, for many purposes.
+% %
+% However, we also generally agree with the traditional heuristic understanding: that Streicher’s proof of initiality extends to specific type theories unproblematically (including those considered here), straightforwardly enough that treating it as established is within usual standards of mathematical practice.
 
-In any case, the use of type theoretic syntax as \emph{notation} for algebraic structure is certainly within usual mathematical standards --- does one ask analysts to prove correctness of variable-binding notation for integrals?
-%
-So readers skeptical of initiality will, we trust, grant us such notation, and may then read “models of type theory” as “homomorphisms from the initial suitably-structured contextual category” throughout, to get the main results of this paper in a form not reliant on any form of initiality for syntax.
-\end{rmk}
+% In any case, the use of type theoretic syntax as \emph{notation} for algebraic structure is certainly within usual mathematical standards --- does one ask analysts to prove correctness of variable-binding notation for integrals?
+% %
+% So readers skeptical of initiality will, we trust, grant us such notation, and may then read “models of type theory” as “homomorphisms from the initial suitably-structured contextual category” throughout, to get the main results of this paper in a form not reliant on any form of initiality for syntax.
+% \end{rmk}
 
 \section{Good model categories}
 \label{sec:model-categ-type}
