@@ -252,7 +252,7 @@ We will work throughout in the following contexts.
   \item Every monomorphism in \sM is a cofibration.\label{item:m1}
   \item Cofibrations in \sM are stable under arbitrary limits.\label{item:m1a}
   \item \sM is right proper, i.e.\ weak equivalences are preserved by pullback along fibrations.\label{item:m2}
-  \item As a category, \sM is locally cartesian closed.\label{item:m3}
+  \item \sM is locally cartesian closed, as a simplicial category.\label{item:m3}
   \end{enumerate}
   An \textbf{excellent model category} is a good model category that is in addition combinatorial, i.e.\ it satisfies the following further properties.
   \msnote{We should either remark that this is unrelated to the ``excellent model categories'' of~\cite[A.3.2.16]{lurie:higher-topoi}, or use a different word.}
@@ -264,7 +264,7 @@ We will work throughout in the following contexts.
 
 \begin{eg}
 A \emph{Cisinski model category}~\cite{cisinski:topos,cisinski:presheaves} is a cofibrantly generated model structure on a Grothendieck topos whose cofibrations are the monomorphisms.
-Therefore, any right proper simplicial Cisinski model category is an excellent model category.
+Therefore, any right proper simplicially locally cartesian closed Cisinski model category is an excellent model category.
 Cisinski~\cite{cisinski:lccc-rpcmc} and Gepner--Kock~\cite{gk:univlcc} have shown that any locally presentable locally cartesian closed $(\infty,1)$-category (and in particular any Grothendieck $(\infty,1)$-topos~\cite{lurie:higher-topoi}) can be presented by such a model category.
 \end{eg}
 
@@ -279,7 +279,12 @@ The category of groupoids, which was the first homotopical model of type theory~
 It is possible that with some care our method could be generalized to such examples, at the expense of increased awkwardness (for instance, \cref{thm:free-fibred} would no longer be true exactly as stated).
 \end{noneg}
 
-Assumption~\ref{item:m0} tells us that \sM is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product and pullback-corner axioms.
+\begin{rmk}
+The first version of this paper omitted the condition that good model categories should be \emph{simplicially} locally cartesian closed, required for copowers to be stable under pullback.
+It seems possible this condition may be automatic, at least for Cisinski model categories, but this is not clear to the authors; see \cite{MO:enriched-cccs}.    
+\end{rmk}
+
+Assumption~\ref{item:m0} tells us that \sM is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product and pullback-corner axioms, and preserved by pullbacks.
 This enables us to construct path objects (which model identity types) as simplicial powers.
 Specifically, if $\ivl$ denotes the 1-simplex (the simplicial interval), then for any fibrant object $A$, the power $A^\ivl$ is a path-object for $A$.
 Likewise, if $p:A\fib \Gamma$ is a fibration, then the ``fibred power'' $A^\ivl_\Gamma = A^\ivl \times_{\Gamma^\ivl} \Gamma$ is a path-object for $A$ regarded as a type over $\Gamma$; see \cref{thm:stable-id}.
