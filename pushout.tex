@@ -107,7 +107,7 @@
   We then show that any suitable model category has \emph{weakly stable typal initial algebras} for any cell monad with parameters.
   When combined with the local universes construction to obtain strict stability, this specializes to give models of specific higher inductive types, including spheres, the torus, pushout types, truncations, the James construction, and general localisations.
 
-  Our results apply in any sufficiently nice Quillen model category, including any right proper simplicial Cisinski model category (such as simplicial sets) and any locally presentable locally cartesian closed category (such as sets) with its trivial model structure.
+  Our results apply in any sufficiently nice Quillen model category, including any right proper simplicially locally cartesian closed Cisinski model category (such as simplicial sets) and any locally presentable locally cartesian closed category (such as sets) with its trivial model structure.
   In particular, any locally presentable locally cartesian closed $(\infty,1)$-category is presented by some model category to which our results apply.
 \end{abstract}
 
@@ -280,8 +280,7 @@ It is possible that with some care our method could be generalized to such examp
 \end{noneg}
 
 \begin{rmk}
-The first version of this paper omitted the condition that good model categories should be \emph{simplicially} locally cartesian closed, required for copowers to be stable under pullback.
-It seems possible this condition may be automatic, at least for Cisinski model categories, but this is not clear to the authors; see \cite{MO:enriched-cccs}.    
+The first version of this paper omitted the condition that good model categories should be \emph{simplicially} locally cartesian closed, required for copowers to be stable under pullback; see \cite{MO:enriched-cccs} and followups.    
 \end{rmk}
 
 Assumption~\ref{item:m0} tells us that \sM is simplicially enriched, with powers and copowers\footnote{Also known as cotensors and tensors, respectively.} satisfying the pushout-product and pullback-corner axioms, and preserved by pullbacks.
@@ -2006,7 +2005,7 @@ Through the course of the paper, we have accumulated a large amount of machinery
 For reference, therefore, we give here a self-contained summary of what we have obtained, and what it yields specifically for the semantics of higher inductive types.
 
 \begin{thm}
-  Let $\sM$ be an excellent model category: that is, simplicial, combinatorial, right proper, locally cartesian closed, and with all monos cofibrations, and cofibrations stable under limits.
+  Let $\sM$ be an excellent model category: that is, simplicial, combinatorial, right proper, simplicially locally cartesian closed, and with all monos cofibrations, and cofibrations stable under limits.
   %
   Let $\dT$ be a cell monad with parameters on $\sM$.
   %
@@ -2042,7 +2041,7 @@ From this general result along with \cref{eg:non-rec,eg:prop-trunc,eg:james,eg:l
 
 Moreover, we expect cell monads with parameters to suffice for obtaining many other higher inductive types, under the limitation that the constructors do not involve ``fibrant structure'', i.e.\ eliminations into the higher inductive type itself.
 
-Finally, we recall that the ``excellent'' model categories to which these results apply include sets and simplicial sets (with their standard model structures); and more generally all locally presentable locally cartesian closed 1-categories with a trivial model structure, and all right proper simplicial Cisinski model categories, which suffice to present all locally presentable locally cartesian closed $(\infty,1)$-categories, including all Grothendieck $(\infty,1)$-toposes.
+Finally, we recall that the ``excellent'' model categories to which these results apply include sets and simplicial sets (with their standard model structures); and more generally all locally presentable locally cartesian closed 1-categories with a trivial model structure, and all right proper simplicially locally cartesian closed Cisinski model categories, which suffice to present all locally presentable locally cartesian closed $(\infty,1)$-categories, including all Grothendieck $(\infty,1)$-toposes.
  
 \bibliographystyle{alphamod}
 \bibliography{basictex/all}
