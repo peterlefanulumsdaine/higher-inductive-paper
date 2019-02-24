@@ -435,12 +435,12 @@ In \cref{sec:coherence-pushouts} we will rephrase this in type-theoretic languag
 
   Now consider the following commutative cube, in which the left-hand and right-hand faces are pushouts, and the objects $R$ and $S$ are also pushouts.
   \[\begin{tikzcd}
-    & \sigma^* A+\sigma^*A \arrow[dl,cof,acyc] \arrow[rr,cof,acyc] \arrow[dd] \ar[dr,phantom,"R"{name=sr}]
-    & & A+A \arrow[dl] \arrow[dd] \ar[to=sr] \\
+    & \sigma^* A+\sigma^*A \arrow[dl,cof] \arrow[rr,cof,acyc] \arrow[dd] \ar[dr,phantom,"R"{name=sr}]
+    & & A+A \arrow[dl,cof] \arrow[dd] \ar[to=sr] \\
     \sigma^*A\ten\ivl\arrow[dd] \ar[to=sr, crossing over] & & A\ten\ivl \ar[from=sr] \\
-    & \sigma^*B_1+\sigma^*B_2 \arrow[dl] \arrow[rr,cof,acyc] \ar[dr,phantom,"S"{name=tr}]
+    & \sigma^*B_1+\sigma^*B_2 \arrow[dl] \arrow[rr,cof,near end,"\sim"] \ar[dr,phantom,"S"{name=tr}]
     \ar[from=sr,to=tr,crossing over]
-    \arrow[from=ul,to=ur, crossing over]
+    \arrow[from=ul,to=ur, crossing over,cof,near start,"\sim"']
     & & B_1+B_2 \arrow[dl] \ar[to=tr] \\
     \sigma^*Q \arrow[rr] \ar[to=tr] & & Q \arrow[from=uu, crossing over]
     \ar[from=tr] \\
