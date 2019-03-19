@@ -799,7 +799,7 @@ Namely, each premise of a rule corresponds to one term in the iterated $\Sigma$-
 
 This is almost, but not quite, the result we want.
 The pushout rules in \cref{fig:pushouts} differ from those commonly used (e.g.\ in~\cite{hottbook}) by the presence of the additional rules in \cref{fig:depid,fig:ap}.
-The usual approach is instead to start with only identity types as in \cref{fig:id}, and then \emph{define} dependent identity types using one of the methods~\ref{item:idover1}--\ref{item:idover3} listed on page~\pageref{idover}, similarly define $\ap$ using the eliminator of identity types, and then state rules such as those in \ref{fig:pushouts} relative to these defined structures.
+The usual approach is instead to start with only identity types as in \cref{fig:id}, and then \emph{define} dependent identity types using one of the methods~\ref{item:idover1}--\ref{item:idover3} listed \ifmpcps preceding \cref{defn:dep-id}\else on page~\pageref{idover}\fi, similarly define $\ap$ using the eliminator of identity types, and then state rules such as those in \ref{fig:pushouts} relative to these defined structures.
 
 Such definitions certainly give \emph{some} classes of dependent identity types and identity applications, which are strictly stable if the identity types we started with are strictly stable.
 However, if such constructions are performed in $\fibmbang$, the resulting strictly stable classes will not generally be the \emph{same} as those obtained from the canonical weakly stable ones by the local universes construction.
@@ -812,7 +812,7 @@ They will indeed be \emph{equivalent}, and we can transfer the structure of a pu
 
 Of course, typal pushouts are also weak typal pushouts, since if $\ap_s\circ \mu = m$ we can compose this map with $\r$ to get $v$.
 The corresponding modified elimination rule in syntactic type theory is shown in~\cref{fig:wk-pushout}.
-In the case when the dependent identity types and identity applications are defined from the ordinary identity types as on page~\pageref{idover}, this yields exactly the notion of pushout type used in~\cite[\sec6.8]{hottbook}.
+In the case when the dependent identity types and identity applications are defined from the ordinary identity types as \ifmpcps described preceding \cref{defn:dep-id}\else on page~\pageref{idover}\fi, this yields exactly the notion of pushout type used in~\cite[\sec6.8]{hottbook}.
 Some reasons for choosing a weak computation rule for the path-constructor are adumbrated in~\cite[\sec6.2 and Chapter 6 Notes]{hottbook}, one of which (non-strictness of the equivalence between left and right homotopies) is roughly the same reason such a rule appears here.
 
 \begin{figure}
@@ -860,7 +860,7 @@ The following theorem could be stated for weakly stable structures in addition t
 \end{proof}
 
 \begin{cor}
-  For any good model category $\sM$, the split comprehension category $\fibmbang$ has strictly stable weak typal pushouts, relative to the strictly stable identity types obtained by strictifying its canonical weakly stable ones, and the dependent identity types obtained from any of~\ref{item:idover1}--\ref{item:idover3} on page~\pageref{idover} and the identity applications obtained from $\Id$-elimination.\qed
+  For any good model category $\sM$, the split comprehension category $\fibmbang$ has strictly stable weak typal pushouts, relative to the strictly stable identity types obtained by strictifying its canonical weakly stable ones, and the dependent identity types obtained from any of~\ref{item:idover1}--\ref{item:idover3} \ifmpcps preceding \cref{defn:dep-id} \else on page~\pageref{idover} \fi and the identity applications obtained from $\Id$-elimination.\qed
 \end{cor}
 
 \begin{rmk}
