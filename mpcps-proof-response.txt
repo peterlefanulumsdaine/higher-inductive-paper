@@ -1,0 +1,71 @@
+ANSWERS TO QUERIES:
+
+Q1: The first author's surname is just "Lumsdaine".  "LeFanu" is a middle name.
+
+Q2: 18C50 (primary), 03B15, 18G55
+
+Q3: Please just ignore this, it was a leftover note to ourselves.
+
+CORRECTIONS:
+
+Reference [KL12] is now about to be published; its BibTeX entry can be replaced by:
+
+@article{klv:ssetmodel,
+    author = {Kapulkin, Chris and Lumsdaine, Peter LeFanu},
+    title = {The simplicial model of univalent foundations (after {V}oevodsky)},
+    year = {2019},
+    journal = {Journal of the European Mathematical Society},
+    note = {to appear},
+    eprint = {1211.2851},
+}
+
+l.265 should not be indented: a "Non-example" should be formatted
+in the same way as an "Example".
+
+The alignment of the continuation line in the display following l.611
+should match that of the continuation line in the display following
+l.599.
+
+In the displays following l.1211 and l.1503, instead of scaling down
+the whole diagrams to make them fit between the margins, we
+suggest... ??
+
+In l.1625, "eg:localization" should be "12.21".
+
+In l.1357, "$\rho:$" should be "$\rho$:" -- the colon should be
+outside the math mode (this was our typo).
+
+In the displays after lines 496, 501, 521, 658, 835, 858, 1211, 1212,
+1254, 1255, 1303, 1307, 1354, 1357, 1494, 1503 (and possibly l379),
+the copyeditor added punctuation to the displayed diagrams.  We would
+prefer the punctuation be removed again; it is not required because
+the lines preceding the diagrams end in colons.  However, if house
+style dictates that punctuation must be included, then the punctuation
+marks should go *inside* the 'tikzcd' environments: at the end of the
+bottom-right corner entry in the cases where there is one, and in
+other cases probably at the end of the bottom entry in the right-most
+column.
+
+In the lists on lines 415-430, 436-442, 465-474, 499-504, 1299-1307,
+and 1452-1467, the copyeditor changed the first word of each entry to
+be lowercase and changed the periods at the end of each entry to
+semicolons, and also in some cases changed the punctuation of the
+sentences preceding these lists.  These changes are all grammatically
+incorrect and should be reverted back, because these list items
+consist *individually* of *multiple sentences*.  (If there is
+something really unacceptable about our original versions, can you
+please send us the exact house style rules so that we can do the
+re-wording ourselves to comply?)
+
+The analogous changes to the lists on lines 985-987 and 998-1001 are
+not grammatically wrong, but they are semantically wrong because
+mathematically the items are independent conditions being compared
+rather than items being joined with a connective, and should also be
+reverted back.  For improved clarity, we would also like to change
+l.984 and l.997 to say "The following conditions are equivalent"
+instead of "The following are equivalent".
+
+Throughout the paper our un-numbered "itemize" lists have been changed
+to numbered "enumerate" lists.  Please revert these changes as well;
+we had specific reasons for choosing numbered or un-numbered lists in
+each case.
