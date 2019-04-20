@@ -1,3 +1,11 @@
+
+COVER NOTE:
+
+Many thanks to the production editors for a generally good and thorough job!
+
+A comment/suggestion for the future: it would make this proofreading stage MUCH easier for authors (and probably also the production editors) if they could send a “diff” of the LaTeX source files along with the pdf proof, so that authors can see a list of all changes made.  (Authors need to carefully check all changes, because while most are good, inevitably a few introduce errors; but many of the changes are quite inconspicuous, so searching for them all in the pdf is very time-consuming.)  Many journals now provide such diff files, and it really makes it much easier to check the proofs efficiently and thoroughly.
+
+
 ANSWERS TO QUERIES:
 
 Q1: The first author's surname is just "Lumsdaine".  "LeFanu" is a middle name.
@@ -6,9 +14,59 @@ Q2: 18C50 (primary), 03B15, 18G55
 
 Q3: Please just ignore this, it was a leftover note to ourselves.
 
+
 CORRECTIONS:
 
-Reference [KL12] is now about to be published; its BibTeX entry can be replaced by:
+l.265 should not be indented: a "Non-example" should be formatted in the same way as an "Example".
+
+
+The alignment of the continuation line in the display following l.611 should match that of the continuation line in the display following l.599.  (Thanks for fixing our overwide lines in both of these!)
+
+
+In the displays following l.1211 and l.1503, instead of scaling down the whole diagrams to fit the page width, we suggest the following narrower versions of the diagrams:
+
+following l.1211:
+
+  \begin{tikzcd}[column sep={2.2cm,between origins},ampersand replacement=\&]
+    (\sigma^*f)_* (\sigma^*B)^* C \otimes K \ar[rrr] \ar[dr] \ar[ddd] \&\&\& f_* B^* D \otimes K \ar[dr] \ar[ddd] \ar[ddrr,bend left] \& \& \\
+    \&(\sigma^*f)_* (\sigma^*B)^* C \otimes L \ar[rrr,crossing over] \ar[dr] \&\&\& f_* B^* D \otimes L \ar[dr,dashed] \ar[ddd]\\
+    \&\& C \ar[rrr,->,near end,crossing over] \&\&\& D \ar[ddd,fib] \\
+    (\sigma^*f)_* (\sigma^*B)^* V \otimes K \ar[rrr] \ar[dr] \&\&\& f_* B^* W \otimes K \ar[dr] \\
+    \&(\sigma^*f)_* (\sigma^*B)^* V \otimes L \ar[rrr] \ar[dr] \ar[from=uuu,crossing over] \&\&\& f_* B^* W \otimes L \ar[dr] \\
+    \&\& V \ar[rrr,->] \ar[from=uuu,crossing over] \&\&\& W
+  \end{tikzcd}
+
+following l.1503:
+
+  \begin{tikzcd}[column sep={0.8cm,between origins},ampersand replacement=\&]
+    \emptyset \ar[rrr] \&\&[3cm]\& F^{\emptyset\to(B_1+B_2)} \ar[rrr] \&[0.7cm]\&[3cm]\& F \\
+    \& \emptyset \ar[ul] \ar[r] \ar[urr,phantom,pos=0.88,"\llcorner"] \& F^{\emptyset \to (B_1+B_2)} \ar[ur] \&
+    \& F^{\emptyset\to A} \otimes \mathbf{2} \ar[ul,"{[\inl\circ f_1,\inr\circ f_2]}" description,pos=0.45] \ar[r] \ar[urr,phantom,pos=0.71,"\llcorner"] \& F^{\emptyset\to A} \otimes \ivl \ar[ur]
+  \end{tikzcd}
+ 
+
+In l.1625, "eg:localization" should appear as "12.21" (i.e. presumably "\ref{eg:localization}" in the source).
+
+
+In l.1357, "$\rho:$" should be "$\rho$:" -- the colon should be outside the math mode (our typo).
+
+
+In the displays after lines 496, 501, 521, 658, 835, 858, 1211, 1212, 1254, 1255, 1303, 1307, 1354, 1357, 1494, 1503 (and possibly l379), the copyeditor added punctuation to the displayed diagrams.  We would prefer the punctuation be removed again; it is not required because the lines preceding the diagrams end in colons.  However, if house style dictates that punctuation must be included, then the punctuation marks should go *inside* the 'tikzcd' environments: at the end of the bottom-right corner entry in the cases where there is one, and in other cases probably at the end of the bottom entry in the right-most column.
+
+
+In the lists on lines 415-430, 436-442, 465-474, 499-504, 1299-1307, and 1452-1467, the copyeditor changed the first word of each entry to be lowercase and changed the periods at the end of each entry to semicolons, and also in some cases changed the punctuation of the sentences preceding these lists.  These changes create several grammatical errors and should be reverted back, because some of the list items consist *individually* of *multiple sentences*.  (If there is something really unacceptable about our original versions, can you please send us the exact house style rules so that we can do the re-wording ourselves to comply?)
+
+The analogous changes to the lists on lines 985-987 and 998-1001 are not grammatically wrong, but they are mathematically wrong, because the items are independent conditions being compared rather than items being joined with a connective; so these should also be reverted back.  For improved clarity, we suggest changing l.984 and l.997 to say "The following conditions are equivalent" instead of "The following are equivalent".
+
+
+Since our un-numbered lists have been changed to numbered, the parenthetical phrase in line 884–5 no longer makes sense.  We suggest changing “(some numbered for later reference)” to “(with path-constructors numbered (1)–(5) to match the axioms in [Bla83])”, i.e. in the source “(with path-constructors numbered~\ref{item:f1}--\ref{item:f5} to match the axioms in \cite{blass:freealg})”
+
+
+l.1648, reference [ACDF16]: the url is a redundant copy of the arXiv link, and should be removed.  (Our error.) This is entry "acdf:qiits" in .bib file. 
+
+l.1669–1676: references [Cis02]–[Cis14]: Cisinski’s initials “D.-C.” appear with an en-dash, which should be a hyphen.
+
+l.1697: reference [KL12] is now about to be published; its entry in the .bib file should be updated to:
 
 @article{klv:ssetmodel,
     author = {Kapulkin, Chris and Lumsdaine, Peter LeFanu},
@@ -19,20 +77,6 @@ Reference [KL12] is now about to be published; its BibTeX entry can be replaced 
     eprint = {1211.2851},
 }
 
-l.265 should not be indented: a "Non-example" should be formatted in the same way as an "Example".
+l.1709, reference [Rie13]: the doi appears incorrectly and with broken link; also the url is redundant and should be removed. (Our error.) This is entry "riehl:mon-ams" in .bib file; its doi field should be changed to "10.1016/j.jpaa.2012.09.029".
 
-The alignment of the continuation line in the display following l.611 should match that of the continuation line in the display following l.599.
-
-In the displays following l.1211 and l.1503, instead of scaling down the whole diagrams to make them fit between the margins, we suggest... ??
-
-In l.1625, "eg:localization" should be "12.21".
-
-In l.1357, "$\rho:$" should be "$\rho$:" -- the colon should be outside the math mode (this was our typo).
-
-In the displays after lines 496, 501, 521, 658, 835, 858, 1211, 1212, 1254, 1255, 1303, 1307, 1354, 1357, 1494, 1503 (and possibly l379), the copyeditor added punctuation to the displayed diagrams.  We would prefer the punctuation be removed again; it is not required because the lines preceding the diagrams end in colons.  However, if house style dictates that punctuation must be included, then the punctuation marks should go *inside* the 'tikzcd' environments: at the end of the bottom-right corner entry in the cases where there is one, and in other cases probably at the end of the bottom entry in the right-most column.
-
-In the lists on lines 415-430, 436-442, 465-474, 499-504, 1299-1307, and 1452-1467, the copyeditor changed the first word of each entry to be lowercase and changed the periods at the end of each entry to semicolons, and also in some cases changed the punctuation of the sentences preceding these lists.  These changes are all grammatically incorrect and should be reverted back, because these list items consist *individually* of *multiple sentences*.  (If there is something really unacceptable about our original versions, can you please send us the exact house style rules so that we can do the re-wording ourselves to comply?)
-
-The analogous changes to the lists on lines 985-987 and 998-1001 are not grammatically wrong, but they are semantically wrong because mathematically the items are independent conditions being compared rather than items being joined with a connective, and should also be reverted back.  For improved clarity, we would also like to change l.984 and l.997 to say "The following conditions are equivalent" instead of "The following are equivalent".
-
-Throughout the paper our un-numbered "itemize" lists have been changed to numbered "enumerate" lists.  Please revert these changes as well; we had specific reasons for choosing numbered or un-numbered lists in each case.
+l.1723, reference [Shu15b]: bad double punctuation at the end of the entry (it looks like a doi has been removed, but its punctuation has remained).  This is "shulman:invdia" in .bib file.
