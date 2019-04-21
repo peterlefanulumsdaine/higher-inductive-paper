@@ -27,22 +27,26 @@ In the displays following l.1211 and l.1503, instead of scaling down the whole d
 
 following l.1211:
 
-  \begin{tikzcd}[column sep={2.2cm,between origins},ampersand replacement=\&]
-    (\sigma^*f)_* (\sigma^*B)^* C \otimes K \ar[rrr] \ar[dr] \ar[ddd] \&\&\& f_* B^* D \otimes K \ar[dr] \ar[ddd] \ar[ddrr,bend left] \& \& \\
-    \&(\sigma^*f)_* (\sigma^*B)^* C \otimes L \ar[rrr,crossing over] \ar[dr] \&\&\& f_* B^* D \otimes L \ar[dr,dashed] \ar[ddd]\\
-    \&\& C \ar[rrr,->,near end,crossing over] \&\&\& D \ar[ddd,fib] \\
-    (\sigma^*f)_* (\sigma^*B)^* V \otimes K \ar[rrr] \ar[dr] \&\&\& f_* B^* W \otimes K \ar[dr] \\
-    \&(\sigma^*f)_* (\sigma^*B)^* V \otimes L \ar[rrr] \ar[dr] \ar[from=uuu,crossing over] \&\&\& f_* B^* W \otimes L \ar[dr] \\
-    \&\& V \ar[rrr,->] \ar[from=uuu,crossing over] \&\&\& W
+  \[ 
+  \begin{tikzcd}[column sep={2.2cm,between origins}]
+    (\sigma^*f)_* (\sigma^*B)^* C \otimes K \ar[rrr] \ar[dr] \ar[ddd] &&& f_* B^* D \otimes K \ar[dr] \ar[ddd] \ar[ddrr,bend left] & & \\
+    &(\sigma^*f)_* (\sigma^*B)^* C \otimes L \ar[rrr,crossing over] \ar[dr] &&& f_* B^* D \otimes L \ar[dr,dashed] \ar[ddd]\\
+    && C \ar[rrr,->,near end,crossing over] &&& D \ar[ddd,fib] \\
+    (\sigma^*f)_* (\sigma^*B)^* V \otimes K \ar[rrr] \ar[dr] &&& f_* B^* W \otimes K \ar[dr] \\
+    &(\sigma^*f)_* (\sigma^*B)^* V \otimes L \ar[rrr] \ar[dr] \ar[from=uuu,crossing over] &&& f_* B^* W \otimes L \ar[dr] \\
+    && V \ar[rrr,->] \ar[from=uuu,crossing over] &&& W
   \end{tikzcd}
+  \]
 
 following l.1503:
 
-  \begin{tikzcd}[column sep={0.8cm,between origins},ampersand replacement=\&]
-    \emptyset \ar[rrr] \&\&[3cm]\& F^{\emptyset\to(B_1+B_2)} \ar[rrr] \&[0.7cm]\&[3cm]\& F \\
-    \& \emptyset \ar[ul] \ar[r] \ar[urr,phantom,pos=0.88,"\llcorner"] \& F^{\emptyset \to (B_1+B_2)} \ar[ur] \&
-    \& F^{\emptyset\to A} \otimes \mathbf{2} \ar[ul,"{[\inl\circ f_1,\inr\circ f_2]}" description,pos=0.45] \ar[r] \ar[urr,phantom,pos=0.71,"\llcorner"] \& F^{\emptyset\to A} \otimes \ivl \ar[ur]
+  \[ 
+  \begin{tikzcd}[column sep={1.6cm,between origins}]
+    \emptyset \ar[rrr] &&[1.5cm]& F^{\emptyset\to(B_1+B_2)} \ar[rrr] &&[1.5cm]& F \\
+    & \emptyset \ar[ul] \ar[r] \ar[urr,phantom,pos=0.88,"\llcorner"] & F^{\emptyset \to (B_1+B_2)} \ar[ur] &
+    & F^{\emptyset\to A} \otimes \mathbf{2} \ar[ul,"{[\inl\circ f_1,\inr\circ f_2]}"',pos=0.15] \ar[r] \ar[urr,phantom,pos=0.71,"\llcorner"] & F^{\emptyset\to A} \otimes \ivl \ar[ur]
   \end{tikzcd}
+  \]
  
 
 In l.1625, "eg:localization" should appear as "12.21" (i.e. presumably "\ref{eg:localization}" in the source).
